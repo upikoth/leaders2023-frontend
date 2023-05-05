@@ -10,7 +10,7 @@ import {
 	>
 		<iframe
 			class="documentation-view__iframe"
-			src="/starter-docs/index.html"
+			src="/leaders2023-admin-docs/index.html"
 			title="Документация"
 		/>
 	</ion-page>
