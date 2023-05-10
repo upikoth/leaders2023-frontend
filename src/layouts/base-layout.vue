@@ -12,7 +12,7 @@ import {
 	IonSplitPane,
 	IonMenu,
 } from '@ionic/vue';
-import { home, documentText } from 'ionicons/icons';
+import { home, documentText, people, statsChart, business, arrowRedo } from 'ionicons/icons';
 import { useRouter, useRoute } from 'vue-router'
 
 import { ViewName } from '@/router'
@@ -39,6 +39,34 @@ const navigationItems = [
 		name: ViewName.DocumentationView,
 		icon: documentText,
 		handler: () => router.push({ name: ViewName.DocumentationView }),
+	},
+	{
+		title: 'Пользователи',
+		href: router.resolve({ name: ViewName.UsersView }).href,
+		name: ViewName.UsersView,
+		icon: people,
+		handler: () => router.push({ name: ViewName.UsersView }),
+	},
+	{
+		title: 'Статистика',
+		href: router.resolve({ name: ViewName.StatsView }).href,
+		name: ViewName.StatsView,
+		icon: statsChart,
+		handler: () => router.push({ name: ViewName.StatsView }),
+	},
+	{
+		title: 'Креативные площадки',
+		href: router.resolve({ name: ViewName.CreativeSpacesView }).href,
+		name: ViewName.CreativeSpacesView,
+		icon: business,
+		handler: () => router.push({ name: ViewName.CreativeSpacesView }),
+	},
+	{
+		title: 'История аренды',
+		href: router.resolve({ name: ViewName.RentalHistory }).href,
+		name: ViewName.RentalHistory,
+		icon: arrowRedo,
+		handler: () => router.push({ name: ViewName.RentalHistory }),
 	}
 ]
 </script>
