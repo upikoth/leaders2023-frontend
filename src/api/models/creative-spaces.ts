@@ -1,13 +1,15 @@
-export interface ICreativeSpaceShort {
+export interface ICreativeSpaceListItem {
 	id: number
+	landlordId: number
+	description: string
 	photos: string[]
 	pricePerHour: number
 	metroStations: {
+		id: number
 		name: string
 		color: string
 		distanceInMinutes: number
 	}[]
-	address: string
 	coordinate: {
 		latitude: number
 		longitude: number
@@ -18,11 +20,14 @@ export interface ICreativeSpaceShort {
 	}
 }
 
-export interface ICreativeSpaceFull {
+export interface ICreativeSpace {
 	id: number
+	landlordId: number
+	description: string
 	photos: string[]
 	pricePerHour: number
 	metroStations: {
+		id: number
 		name: string
 		color: string
 		distanceInMinutes: number
@@ -35,6 +40,4 @@ export interface ICreativeSpaceFull {
 		startAt: string
 		endAt: string
 	}
-	landlordInfo: {}
-	description: string
 }

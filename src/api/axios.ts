@@ -3,7 +3,7 @@ import axios from 'axios'
 import { MILLISECONDS_IN_MINUTE, ApiErrorCode } from '@/constants'
 
 import router, { ViewName } from '@/router'
-import type { IResponseError } from '@/api'
+import type { IResponse, IResponseError } from '@/api'
 import { useUserStore } from '@/stores'
 
 const axiosInstance = axios.create({
@@ -13,19 +13,25 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
 	(res) => {
-		return res.data
+		const responseData = res.data as IResponse
+
+		if (!responseData.success) {
+			return Promise.reject(responseData.error)
+		}
+
+		return responseData.data
 	},
 	async (err) => {
-		const res = err.response.data as IResponseError
+		const responseData = err.response.data as IResponseError
 		const userStore = useUserStore()
 
-		if (res.error.code === ApiErrorCode.ErrUserNotAuthorized) {
+		if (responseData.error.code === ApiErrorCode.ErrUserNotAuthorized) {
 			userStore.setUnauthorized()
 
 			await router.push({ name: ViewName.SignIn })
 		}
 
-		return Promise.reject(err)
+		return Promise.reject(responseData.error)
 	}
 )
 

@@ -1,11 +1,14 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { IonicVue } from '@ionic/vue';
+import { register } from 'swiper/element/bundle';
 
 import App from './app.vue'
 import router from './router'
 
 import './assets/css/index.css'
+
+register();
 
 const app = createApp(App)
 

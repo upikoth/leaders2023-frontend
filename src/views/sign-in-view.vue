@@ -9,10 +9,11 @@ import {
 
 import api from '@/api'
 import { ViewName } from '@/router'
-import { useUserStore } from '@/stores'
+import { useUserStore, useNotificationsStore } from '@/stores'
 
 const router = useRouter()
 const userStore = useUserStore()
+const notificationsStore = useNotificationsStore()
 
 const formData = ref({
 	email: '',
@@ -30,8 +31,8 @@ async function handleFormSubmit() {
 
 		userStore.setAuthorized()
 		router.push({ name: ViewName.HomeView })
-	} catch {
-		// Пока ничего не делаем.
+	} catch (err) {
+		notificationsStore.error('Ошибка при авторизации пользователя')
 	}
 }
 </script>

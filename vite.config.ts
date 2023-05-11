@@ -6,7 +6,13 @@ import vue from '@vitejs/plugin-vue'
 const env = loadEnv('', process.cwd())
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue({
+		template: {
+			compilerOptions: {
+				isCustomElement: (tag) => tag.startsWith('swiper-')
+			}
+		}
+	})],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

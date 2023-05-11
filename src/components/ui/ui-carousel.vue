@@ -1,0 +1,53 @@
+<script setup lang="ts">
+import { toRefs } from 'vue'
+import type { PropType } from 'vue'
+
+const props = defineProps({
+	images: {
+		type: Array as PropType<string[]>,
+		default: () => []
+	},
+	height: {
+		type: String as PropType<string>,
+		required: true,
+	}
+})
+
+const { height } = toRefs(props)
+</script>
+
+<template>
+	<swiper-container
+		class="ui-carousel"
+		navigation="true"
+		pagination="true"
+		loop="true"
+	>
+		<swiper-slide
+			v-for="(image, index) in props.images"
+			:key="index"
+		>
+			<img
+				class="ui-carousel__image"
+				:src="image"
+				alt=""
+			>
+		</swiper-slide>
+	</swiper-container>
+</template>
+
+<style lang="scss" scoped>
+.ui-carousel {
+	height: v-bind(height);
+
+	--swiper-theme-color: var(--ion-color-primary);
+	--swiper-navigation-size: 24px;
+
+	&__image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+</style>
