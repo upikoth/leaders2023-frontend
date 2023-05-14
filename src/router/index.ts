@@ -7,6 +7,7 @@ export enum ViewName {
 	UsersView = 'USERS_VIEW',
 	StatsView = 'STATS_VIEW',
 	CreativeSpacesView = 'CREATIVE_SPACES',
+	CreativeSpacesCreateView = 'CREATIVE_SPACES_CREATE',
 	RentalHistory = 'RENTAL_HISTORY',
 	SignIn = 'SIGN_IN',
 }
@@ -47,12 +48,12 @@ const router = createRouter({
 				{
 					path: 'creative-spaces',
 					name: ViewName.CreativeSpacesView,
-					component: () => import('@/views/creative-spaces-view.vue')
+					component: () => import('@/views/creative-spaces/creative-spaces-view.vue')
 				},
 				{
-					path: 'creative-spaces',
-					name: ViewName.CreativeSpacesView,
-					component: () => import('@/views/creative-spaces-view.vue')
+					path: 'creative-spaces/create',
+					name: ViewName.CreativeSpacesCreateView,
+					component: () => import('@/views/creative-spaces/creative-spaces-create-view.vue')
 				},
 				{
 					path: 'rental-history',

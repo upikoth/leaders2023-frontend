@@ -80,6 +80,7 @@ const images = computed((): string[] => props.creativeSpace.photos)
 <style lang="scss" scoped>
 .creative-space-card {
 	height: 440px;
+	margin: 0;
 
 	&__info-metro,
 	&__subtitle,

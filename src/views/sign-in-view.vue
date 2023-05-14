@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useVuelidate } from '@vuelidate/core';
+import { required, minLength, helpers } from '@vuelidate/validators';
 import {
 	IonPage,
 	IonInput,
@@ -29,11 +31,50 @@ const formData = ref({
 	password: ''
 })
 
+const rules = {
+	formData: {
+		phone: {
+			required: helpers.withMessage('Введите телефон', required),
+			minLength: helpers.withMessage('Введите корректный телефон', minLength(18))
+		},
+		password: {
+			required: helpers.withMessage('Введите пароль', required),
+		},
+	}
+};
+
+const v$ = useVuelidate(rules, { formData });
+
+const phoneError = computed((): string => {
+	if (!v$.value.formData.phone.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.phone.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const passwordError = computed((): string => {
+	if (!v$.value.formData.password.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.password.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
 const classList = computed(() => ({
-	'sign-in-view_xs': screenStore.isXs
+	'sign-in-view_xs': screenStore.isXs,
 }))
 
 async function handleFormSubmit() {
+	const isFormValid = await v$.value.$validate();
+	if (!isFormValid) {
+		return;
+	}
+
 	const { phone, password } = formData.value
 
 	try {
@@ -68,22 +109,26 @@ async function handleFormSubmit() {
 						v-model="formData.phone"
 						v-mask="maskPhone"
 						class="sign-in-view__phone-input"
+						:class="phoneError && ['ion-invalid', 'ion-touched']"
 						label="Телефон"
 						inputmode="tel"
 						type="tel"
 						autocomplete="on"
 						label-placement="floating"
-						error-text=" "
+						helper-text=" "
+						:error-text="phoneError"
 					/>
 					<ion-input
 						v-model="formData.password"
 						class="sign-in-view__password-input"
+						:class="passwordError && ['ion-invalid', 'ion-touched']"
 						label="Пароль"
 						type="password"
 						inputmode="text"
 						label-placement="floating"
 						autocomplete="on"
-						error-text=" "
+						helper-text=" "
+						:error-text="passwordError"
 					/>
 					<ion-button
 						class="sign-in-view__submit-button"
