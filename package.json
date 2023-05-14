@@ -27,6 +27,7 @@
     "@ionic/vue": "^7.0.1",
     "@ionic/vue-router": "^7.0.1",
     "@upikoth/leaders2023-admin-docs": "^1.0.0",
+    "imask": "^6.6.1",
     "pinia": "^2.0.32",
     "swiper": "^9.3.1",
     "vue": "^3.2.47",

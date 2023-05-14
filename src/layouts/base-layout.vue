@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import {
 	IonList,
 	IonItem,
@@ -12,11 +13,11 @@ import {
 	IonSplitPane,
 	IonMenu,
 } from '@ionic/vue';
-import { home, documentText, people, statsChart, business, arrowRedo } from 'ionicons/icons';
+import { documentText, people, statsChart, business, arrowRedo } from 'ionicons/icons';
 import { useRouter, useRoute } from 'vue-router'
 
 import { ViewName } from '@/router'
-import { useScreenStore } from '@/stores'
+import { useScreenStore, useUserStore } from '@/stores'
 
 const CONTENT_ID = 'base-layout-content'
 
@@ -24,51 +25,52 @@ const router = useRouter()
 const route = useRoute()
 
 const screenStore = useScreenStore()
+const userStore = useUserStore()
 
-const navigationItems = [
-	{
-		title: 'Главная',
-		href: router.resolve({ name: ViewName.HomeView }).href,
-		name: ViewName.HomeView,
-		icon: home,
-		handler: () => router.push({ name: ViewName.HomeView }),
-	},
-	{
-		title: 'Документация',
-		href: router.resolve({ name: ViewName.DocumentationView }).href,
-		name: ViewName.DocumentationView,
-		icon: documentText,
-		handler: () => router.push({ name: ViewName.DocumentationView }),
-	},
-	{
-		title: 'Пользователи',
-		href: router.resolve({ name: ViewName.UsersView }).href,
-		name: ViewName.UsersView,
-		icon: people,
-		handler: () => router.push({ name: ViewName.UsersView }),
-	},
-	{
-		title: 'Статистика',
-		href: router.resolve({ name: ViewName.StatsView }).href,
-		name: ViewName.StatsView,
-		icon: statsChart,
-		handler: () => router.push({ name: ViewName.StatsView }),
-	},
-	{
-		title: 'Креативные площадки',
-		href: router.resolve({ name: ViewName.CreativeSpacesView }).href,
-		name: ViewName.CreativeSpacesView,
-		icon: business,
-		handler: () => router.push({ name: ViewName.CreativeSpacesView }),
-	},
-	{
-		title: 'История аренды',
-		href: router.resolve({ name: ViewName.RentalHistory }).href,
-		name: ViewName.RentalHistory,
-		icon: arrowRedo,
-		handler: () => router.push({ name: ViewName.RentalHistory }),
-	}
-]
+const navigationItems = computed(() => (
+	[
+		{
+			title: 'Статистика',
+			href: router.resolve({ name: ViewName.StatsView }).href,
+			name: ViewName.StatsView,
+			icon: statsChart,
+			handler: () => router.push({ name: ViewName.StatsView }),
+			isVisible: userStore.isAdmin || userStore.isLandlord
+		},
+		{
+			title: screenStore.isXs ? 'Площадки' : 'Креативные площадки',
+			href: router.resolve({ name: ViewName.CreativeSpacesView }).href,
+			name: ViewName.CreativeSpacesView,
+			icon: business,
+			handler: () => router.push({ name: ViewName.CreativeSpacesView }),
+			isVisible: true
+		},
+		{
+			title: screenStore.isXs ? 'История' : 'История аренды',
+			href: router.resolve({ name: ViewName.RentalHistory }).href,
+			name: ViewName.RentalHistory,
+			icon: arrowRedo,
+			handler: () => router.push({ name: ViewName.RentalHistory }),
+			isVisible: true
+		},
+		{
+			title: 'Пользователи',
+			href: router.resolve({ name: ViewName.UsersView }).href,
+			name: ViewName.UsersView,
+			icon: people,
+			handler: () => router.push({ name: ViewName.UsersView }),
+			isVisible: userStore.isAdmin
+		},
+		{
+			title: 'Документация',
+			href: router.resolve({ name: ViewName.DocumentationView }).href,
+			name: ViewName.DocumentationView,
+			icon: documentText,
+			handler: () => router.push({ name: ViewName.DocumentationView }),
+			isVisible: true
+		},
+	].filter(({ isVisible }) => isVisible)
+))
 </script>
 
 <template>

@@ -1,10 +1,10 @@
 export interface IUser {
 	id: number
 	phone: string
-	role: IUserRole
+	role: UserRole
 }
 
-export enum IUserRole {
+export enum UserRole {
 	Admin = 'admin',
 	Tenant = 'tenant',
 	Landlord = 'landlord'

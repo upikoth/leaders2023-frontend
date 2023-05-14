@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
 	IonPage,
@@ -12,37 +12,38 @@ import {
 } from '@ionic/vue'
 
 import api from '@/api'
-import { ViewName } from '@/router'
+import { getMainViewName } from '@/router'
 import { useUserStore, useNotificationsStore } from '@/stores'
+import { maskPhone, unmaskPhone } from '@/utils'
+import { vMask } from '@/directives'
+import { useScreenStore } from '@/stores'
 
 const router = useRouter()
 const userStore = useUserStore()
 const notificationsStore = useNotificationsStore()
 
-const phoneInputRef = ref<typeof IonInput>()
+const screenStore = useScreenStore()
 
 const formData = ref({
 	phone: '',
 	password: ''
 })
 
-onMounted(() => {
-	setTimeout(() => {
-		phoneInputRef.value?.$el.setFocus()
-	}, 100);
-})
+const classList = computed(() => ({
+	'sign-in-view_xs': screenStore.isXs
+}))
 
 async function handleFormSubmit() {
 	const { phone, password } = formData.value
 
 	try {
 		await api.session.post({
-			phone,
-			password
+			password,
+			phone: unmaskPhone(phone),
 		})
 
-		userStore.setAuthorized()
-		router.push({ name: ViewName.HomeView })
+		await userStore.checkAuthorization()
+		router.push({ name: getMainViewName() })
 	} catch (err) {
 		notificationsStore.error('Ошибка при авторизации пользователя')
 	}
@@ -50,7 +51,10 @@ async function handleFormSubmit() {
 </script>
 
 <template>
-	<ion-page class="sign-in-view">
+	<ion-page
+		class="sign-in-view"
+		:class="classList"
+	>
 		<ion-card class="sign-in-view__card">
 			<ion-card-header class="sign-in-view__card-header">
 				<ion-card-title>Вход в личный кабинет</ion-card-title>
@@ -61,8 +65,8 @@ async function handleFormSubmit() {
 					@keyup.enter="handleFormSubmit"
 				>
 					<ion-input
-						ref="phoneInputRef"
 						v-model="formData.phone"
+						v-mask="maskPhone"
 						class="sign-in-view__phone-input"
 						label="Телефон"
 						inputmode="tel"
@@ -102,6 +106,14 @@ async function handleFormSubmit() {
 	&__card {
 		width: 400px;
 		margin: 0;
+
+		.sign-in-view_xs & {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			flex-direction: column;
+			justify-content: center;
+		}
 	}
 
 	&__card-header {

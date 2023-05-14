@@ -5,7 +5,7 @@ import {
 	IonRouterOutlet
 } from '@ionic/vue'
 
-import { checkIsView, UNAUTHORIZED_VIEWS, ViewName } from '@/router'
+import { checkIsView, getMainViewName, UNAUTHORIZED_VIEWS } from '@/router'
 import { useUserStore } from '@/stores'
 
 const router = useRouter()
@@ -21,7 +21,7 @@ async function checkAuthorization() {
 
 	// Если авторизован и на странице не требующие авторизации, редиректим на главную страницу.
 	if (checkIsView(route.name) && UNAUTHORIZED_VIEWS.has(route.name)) {
-		await router.push(ViewName.HomeView)
+		await router.push({ name: getMainViewName() })
 	}
 	// Если не авторизован, то переход на страницу авторизации будет сделан в axios interceptor.
 }

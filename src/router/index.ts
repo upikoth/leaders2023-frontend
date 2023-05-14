@@ -2,10 +2,7 @@ import { createRouter, createWebHashHistory } from '@ionic/vue-router'
 
 import { useUserStore } from '@/stores'
 
-import HomeView from '@/views/home-view.vue'
-
 export enum ViewName {
-	HomeView = 'HOME_VIEW',
 	DocumentationView = 'DOCUMENTAITION_VIEW',
 	UsersView = 'USERS_VIEW',
 	StatsView = 'STATS_VIEW',
@@ -30,12 +27,7 @@ const router = createRouter({
 			children: [
 				{
 					path: '',
-					redirect: () => ({ name: ViewName.HomeView }),
-				},
-				{
-					path: 'home',
-					name: ViewName.HomeView,
-					component: HomeView
+					redirect: () => ({ name: getMainViewName() }),
 				},
 				{
 					path: 'docs',
@@ -89,11 +81,25 @@ const router = createRouter({
 			redirect: () => {
 				const userStore = useUserStore()
 
-				return userStore.isAuthorized ? { name: ViewName.HomeView } : { name: ViewName.SignIn }
+				return userStore.isAuthorized ? { name: getMainViewName() } : { name: ViewName.SignIn }
 			},
 		},
   ]
 })
+
+export function getMainViewName() {
+	const userStore = useUserStore()
+
+	if (userStore.isTenant) {
+		return ViewName.CreativeSpacesView
+	}
+
+	if (userStore.isAdmin || userStore.isLandlord) {
+		return ViewName.StatsView
+	}
+
+	return ViewName.StatsView
+}
 
 router.beforeEach((to, _, next) => {
 	if (!checkIsView(to.name)) {
@@ -117,7 +123,7 @@ router.beforeEach((to, _, next) => {
 		UNAUTHORIZED_VIEWS.has(to.name) &&
 		userStore.isAuthorized
 	) {
-		return next({ name: ViewName.HomeView })
+		return next({ name: getMainViewName() })
 	}
 
 	return next()
