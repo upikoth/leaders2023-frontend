@@ -6,6 +6,6 @@ import {
 
 <template>
 	<ion-page class="ion-padding">
-		Пользователи
+		Раздел в разработке
 	</ion-page>
 </template>

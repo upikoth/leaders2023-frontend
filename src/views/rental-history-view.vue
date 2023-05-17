@@ -6,6 +6,6 @@ import {
 
 <template>
 	<ion-page class="ion-padding">
-		История аренды креативных площадок
+		Раздел в разработке
 	</ion-page>
 </template>

@@ -2,6 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router';
 import debounce from 'lodash.debounce';
+import { useVuelidate } from '@vuelidate/core';
 import {
 	IonInput,
 	IonButton,
@@ -12,11 +13,13 @@ import {
 	IonCol,
 } from '@ionic/vue'
 import { addOutline } from 'ionicons/icons';
+import { required, minLength, helpers } from '@vuelidate/validators';
 
-import { getFilesFromComputer, getBase64FromFile, declOfNum } from '@/utils'
+import { getFilesFromComputer, getBase64FromFile, declOfNum, maskPricePerHour } from '@/utils'
 import api from '@/api'
 import { useScreenStore, useNotificationsStore } from '@/stores'
 import { ViewName } from '@/router';
+import { vMask } from '@/directives'
 
 import UiSelect from '@/components/ui/ui-select.vue'
 import UiImage from '@/components/ui/ui-image.vue'
@@ -45,6 +48,29 @@ const formData = ref({
 	}
 })
 
+const rules = {
+	formData: {
+		title: {
+			required: helpers.withMessage('Введите название', required),
+		},
+		pricePerHour: {
+			required: helpers.withMessage('Введите стоимость аренды', required),
+		},
+		address: {
+			required: helpers.withMessage('Введите адрес', required),
+		},
+		description: {
+			required: helpers.withMessage('Введите описание', required),
+		},
+		photos: {
+			required: helpers.withMessage('Добавьте фотографию', required),
+			minLength: helpers.withMessage('Добавьте фотографию', minLength(4))
+		},
+	}
+};
+
+const v$ = useVuelidate(rules, { formData });
+
 const addresses = ref<InstanceType<typeof UiSelect>['$props']['items']>([])
 const addressSearch = ref(formData.value.address || 'Москва')
 
@@ -54,6 +80,56 @@ const photosInfoText = computed(() => {
 	const photosLeftCount = MAX_PHOTOS_COUNT - formData.value.photos.length
 	return `Можно добавить еще ${photosLeftCount} ${declOfNum(photosLeftCount, ['фотографию', 'фотографии', 'фотографий'])}`
 })
+
+const titleError = computed((): string => {
+	if (!v$.value.formData.title.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.title.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const pricePerHourError = computed((): string => {
+	if (!v$.value.formData.pricePerHour.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.pricePerHour.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const addressError = computed((): string => {
+	if (!v$.value.formData.address.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.address.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const descriptionError = computed((): string => {
+	if (!v$.value.formData.description.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.description.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const photosError = computed((): string => {
+	if (!v$.value.formData.photos.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.photos.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
 
 watch(() => addressSearch.value, () => {
 	debouncedUpdateAddresses()
@@ -96,7 +172,12 @@ function deletePhoto(index: number) {
 	formData.value.photos.splice(index, 1)
 }
 
-function handleFormSubmit() {
+async function handleFormSubmit() {
+	const isFormValid = await v$.value.$validate();
+	if (!isFormValid) {
+		return;
+	}
+
 	createCreativeSpace()
 }
 
@@ -128,10 +209,13 @@ async function createCreativeSpace() {
 
 function addFiles() {
 	getFilesFromComputer(async (files) => {
-		Array.from(files).forEach(async (file) => {
-			const fileInBase64 = await getBase64FromFile(file)
-			formData.value.photos.push(fileInBase64)
-		})
+		console.log(files)
+		Array.from(files)
+			.filter(file => file.type.startsWith('image/'))
+			.forEach(async (file) => {
+				const fileInBase64 = await getBase64FromFile(file)
+				formData.value.photos.push(fileInBase64)
+			})
 	}, { multiple: true, accept: 'image/*' })
 }
 
@@ -154,12 +238,14 @@ created()
 				>
 					<ion-input
 						v-model="formData.title"
+						:class="titleError && ['ion-invalid', 'ion-touched']"
 						label="Название *"
 						inputmode="text"
 						label-placement="floating"
 						:counter="true"
 						:maxlength="100"
 						helper-text="&nbsp;"
+						:error-text="titleError"
 					/>
 				</ion-col>
 				<ion-col
@@ -169,13 +255,16 @@ created()
 				>
 					<ion-input
 						v-model="formData.pricePerHour"
+						v-mask="maskPricePerHour"
+						:class="pricePerHourError && ['ion-invalid', 'ion-touched']"
 						label="Стоимость аренды (₽/час) *"
 						type="number"
 						inputmode="numeric"
 						label-placement="floating"
-						error-text=" "
+						:error-text="pricePerHourError"
 						helper-text="&nbsp;"
 						:min="0"
+						:max="100000"
 					/>
 				</ion-col>
 			</ion-row>
@@ -184,10 +273,11 @@ created()
 					<ui-select
 						v-model="formData.address"
 						class="creative-space-form__address"
+						:class="addressError && ['ion-invalid', 'ion-touched']"
 						:items="addresses"
 						label="Адрес *"
 						label-placement="floating"
-						error-text=" "
+						:error-text="addressError"
 						search-label="Поиск адреса"
 						searchable
 						@update:search-value="addressSearch = $event"
@@ -199,12 +289,13 @@ created()
 				<ion-col>
 					<ion-textarea 
 						v-model="formData.description"
+						:class="descriptionError && ['ion-invalid', 'ion-touched']"
 						label="Описание *"
 						label-placement="floating"
 						:counter="true"
 						:maxlength="1000"
 						auto-grow
-						error-text=" "
+						:error-text="descriptionError"
 					/>
 				</ion-col>
 			</ion-row>
@@ -218,6 +309,13 @@ created()
 						Добавить фото
 					</ion-button>
 					<p>{{ photosInfoText }}</p>
+					<p
+						v-if="!formData.photos.length"
+						class="creative-space-form__photo-required-info"
+						:class="photosError ? 'creative-space-form__photo-required-info_error' : ''"
+					>
+						Обязательно добавьте хотя бы одну фотографию
+					</p>
 				</ion-col>
 			</ion-row>
 			<ion-row>
@@ -229,7 +327,7 @@ created()
 							v-for="(photo, i) in formData.photos"
 							:key="i"
 							:src="photo"
-							:size="screenStore.isXs ? '260px' : '180px'"
+							:size="screenStore.isXs ? '100%' : '180px'"
 							@delete="deletePhoto(i)"
 						/>
 					</div>
@@ -266,6 +364,12 @@ created()
 
 	&__submit-buttton {
 		margin-top: 32px;
+	}
+
+	&__photo-required-info {
+		&_error {
+			color: red;
+		}
 	}
 }
 </style>

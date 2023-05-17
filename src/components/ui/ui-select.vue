@@ -116,6 +116,7 @@ function closeDropdown() {
 			inputmode="text"
 			readonly
 			helper-text="&nbsp;"
+			v-bind="$attrs"
 		/>
 		<ion-popover
 			class="ui-select__popover"
