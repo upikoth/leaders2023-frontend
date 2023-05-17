@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import {
+	useIonRouter,
 	IonApp,
 	IonRouterOutlet
 } from '@ionic/vue'
@@ -8,8 +9,8 @@ import {
 import { checkIsView, getMainViewName, UNAUTHORIZED_VIEWS } from '@/router'
 import { useUserStore } from '@/stores'
 
-const router = useRouter()
 const route = useRoute()
+const ionRouter = useIonRouter()
 const userStore = useUserStore()
 
 function created() {
@@ -21,7 +22,7 @@ async function checkAuthorization() {
 
 	// Если авторизован и на странице не требующие авторизации, редиректим на главную страницу.
 	if (checkIsView(route.name) && UNAUTHORIZED_VIEWS.has(route.name)) {
-		await router.push({ name: getMainViewName() })
+		await ionRouter.push({ name: getMainViewName() })
 	}
 	// Если не авторизован, то переход на страницу авторизации будет сделан в axios interceptor.
 }

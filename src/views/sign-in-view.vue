@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, helpers } from '@vuelidate/validators';
 import {
+	useIonRouter,
 	IonPage,
 	IonInput,
 	IonButton,
@@ -20,7 +20,7 @@ import { maskPhone, unmaskPhone } from '@/utils'
 import { vMask } from '@/directives'
 import { useScreenStore } from '@/stores'
 
-const router = useRouter()
+const ionRouter = useIonRouter()
 const userStore = useUserStore()
 const notificationsStore = useNotificationsStore()
 
@@ -84,7 +84,7 @@ async function handleFormSubmit() {
 		})
 
 		await userStore.checkAuthorization()
-		router.push({ name: getMainViewName() })
+		ionRouter.push({ name: getMainViewName() })
 	} catch (err) {
 		notificationsStore.error('Ошибка при авторизации пользователя')
 	}

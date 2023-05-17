@@ -2,18 +2,23 @@
 import { computed } from 'vue'
 import type { PropType } from 'vue'
 import {
+	useIonRouter,
 	IonCard,
 	IonCardTitle,
 	IonCardSubtitle,
 	IonCardHeader,
-	IonCardContent
+	IonCardContent,
+	IonButton,
 } from '@ionic/vue'
 
 import type { ICreativeSpaceListItem } from '@/api';
 import { formatPrice } from '@/utils'
+import { ViewName } from '@/router';
 
 import UiCarousel from '@/components/ui/ui-carousel.vue'
 import UiDot from '@/components/ui/ui-dot.vue'
+
+const ionRouter = useIonRouter()
 
 const props = defineProps({
 	creativeSpace: {
@@ -23,14 +28,20 @@ const props = defineProps({
 })
 
 const images = computed((): string[] => props.creativeSpace.photos)
+
+function redirectToCreativeSpacesDetailPage() {
+	ionRouter.push({ name: ViewName.CreativeSpacesDetailsView, params: { id: props.creativeSpace.id } })
+}
 </script>
 
 <template>
 	<ion-card class="creative-space-card">
-		<ui-carousel
-			:images="images"
-			height="200px"
-		/>
+		<div>
+			<ui-carousel
+				:images="images"
+				height="200px"
+			/>
+		</div>
 
 		<ion-card-header>
 			<ion-card-title class="creative-space-card__title">
@@ -41,7 +52,7 @@ const images = computed((): string[] => props.creativeSpace.photos)
 			</ion-card-subtitle>
 		</ion-card-header>
 
-		<ion-card-content>
+		<ion-card-content class="creative-space-card__conent">
 			<p>
 				<b>Стоимость:</b>
 				{{ formatPrice(props.creativeSpace.pricePerHour) }}/час
@@ -73,14 +84,29 @@ const images = computed((): string[] => props.creativeSpace.photos)
 				<b>Описание:</b>
 				{{ props.creativeSpace.description }}
 			</p>
+			<ion-button
+				class="creative-space-card__details-button"
+				fill="outline"
+				@click="redirectToCreativeSpacesDetailPage"
+			>
+				Подробнее
+			</ion-button>
 		</ion-card-content>
 	</ion-card>
 </template>
 
 <style lang="scss" scoped>
 .creative-space-card {
-	height: 440px;
+	display: flex;
+	height: 476px;
+	flex-direction: column;
 	margin: 0;
+
+	&__conent {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+	}
 
 	&__info-metro,
 	&__subtitle,
@@ -108,6 +134,11 @@ const images = computed((): string[] => props.creativeSpace.photos)
 		overflow: hidden;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 4;
+	}
+
+	&__details-button {
+		margin-top: auto;
+		margin-left: auto;
 	}
 }
 </style>

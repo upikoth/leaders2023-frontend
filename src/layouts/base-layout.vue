@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
+	useIonRouter,
 	IonList,
 	IonItem,
 	IonIcon,
@@ -22,6 +23,7 @@ import { useScreenStore, useUserStore } from '@/stores'
 const CONTENT_ID = 'base-layout-content'
 
 const router = useRouter()
+const ionRouter = useIonRouter()
 const route = useRoute()
 
 const screenStore = useScreenStore()
@@ -34,7 +36,7 @@ const navigationItems = computed(() => (
 			href: router.resolve({ name: ViewName.StatsView }).href,
 			name: ViewName.StatsView,
 			icon: statsChart,
-			handler: () => router.push({ name: ViewName.StatsView }),
+			handler: () => ionRouter.push({ name: ViewName.StatsView }),
 			isVisible: userStore.isAdmin || userStore.isLandlord
 		},
 		{
@@ -42,7 +44,7 @@ const navigationItems = computed(() => (
 			href: router.resolve({ name: ViewName.CreativeSpacesView }).href,
 			name: ViewName.CreativeSpacesView,
 			icon: business,
-			handler: () => router.push({ name: ViewName.CreativeSpacesView }),
+			handler: () => ionRouter.push({ name: ViewName.CreativeSpacesView }),
 			isVisible: true
 		},
 		{
@@ -50,7 +52,7 @@ const navigationItems = computed(() => (
 			href: router.resolve({ name: ViewName.RentalHistory }).href,
 			name: ViewName.RentalHistory,
 			icon: arrowRedo,
-			handler: () => router.push({ name: ViewName.RentalHistory }),
+			handler: () => ionRouter.push({ name: ViewName.RentalHistory }),
 			isVisible: true
 		},
 		{
@@ -58,7 +60,7 @@ const navigationItems = computed(() => (
 			href: router.resolve({ name: ViewName.UsersView }).href,
 			name: ViewName.UsersView,
 			icon: people,
-			handler: () => router.push({ name: ViewName.UsersView }),
+			handler: () => ionRouter.push({ name: ViewName.UsersView }),
 			isVisible: userStore.isAdmin
 		},
 		{
@@ -66,7 +68,7 @@ const navigationItems = computed(() => (
 			href: router.resolve({ name: ViewName.DocumentationView }).href,
 			name: ViewName.DocumentationView,
 			icon: documentText,
-			handler: () => router.push({ name: ViewName.DocumentationView }),
+			handler: () => ionRouter.push({ name: ViewName.DocumentationView }),
 			isVisible: true
 		},
 	].filter(({ isVisible }) => isVisible)

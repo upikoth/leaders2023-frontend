@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router';
 import {
+	onIonViewWillEnter,
+	useIonRouter,
 	IonPage,
 	IonHeader,
 	IonTitle,
@@ -23,7 +24,7 @@ import { ViewName } from '@/router';
 
 import CreativeSpaceCard from '@/components/creative-spaces/creative-space-card.vue'
 
-const router = useRouter()
+const ionRouter = useIonRouter()
 
 const notificationsStore = useNotificationsStore()
 const screenStore = useScreenStore()
@@ -31,9 +32,9 @@ const userStore = useUserStore()
 
 const creativeSpaces = ref<ICreativeSpaceListItem[]>([])
 
-function created() {
+onIonViewWillEnter(() => {
 	updateCreativeSpaces()
-}
+})
 
 async function updateCreativeSpaces() {
 	try {
@@ -44,10 +45,9 @@ async function updateCreativeSpaces() {
 }
 
 function redirectToCreativeSpacesCreatePage() {
-	router.push({ name: ViewName.CreativeSpacesCreateView })
+	ionRouter.push({ name: ViewName.CreativeSpacesCreateView })
 }
 
-created()
 </script>
 
 <template>
