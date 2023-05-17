@@ -34,17 +34,17 @@ const images = computed((): string[] => props.creativeSpace.photos)
 
 		<ion-card-header>
 			<ion-card-title class="creative-space-card__title">
-				Заголовка пока нет, надо сделать! фывафыв афыв фыва фывафывафыв афывафыва
+				{{ props.creativeSpace.title }}
 			</ion-card-title>
 			<ion-card-subtitle class="creative-space-card__subtitle">
-				Здесь должен быть адрес, его пока нет, надо сделать!asd fasdfasdfasdf
+				{{ props.creativeSpace.address }}
 			</ion-card-subtitle>
 		</ion-card-header>
 
 		<ion-card-content>
 			<p>
 				<b>Стоимость:</b>
-				{{ formatPrice(props.creativeSpace.pricePerHour) }} / час
+				{{ formatPrice(props.creativeSpace.pricePerHour) }}/час
 			</p>
 			<p>
 				<b>Часы работы:</b>

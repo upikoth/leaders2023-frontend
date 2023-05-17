@@ -2,6 +2,8 @@ import { axiosInstance } from '@/api/axios'
 import type { ICreativeSpaceListItem, ICreativeSpace } from '@/api'
 
 export interface ICreateCreativeSpaceRequestData {
+	title: string
+	address: string
 	description: string
 	photos: string[]
 	pricePerHour: number
@@ -34,6 +36,8 @@ export interface IGetCreativeSpaceResponseData {
 }
 
 export interface IPatchCreativeSpaceRequestBody {
+	title?: string
+	address?: string
 	description?: string
 	photos?: string[]
 	pricePerHour?: number
@@ -62,7 +66,7 @@ export default {
 		return axiosInstance.get(`/api/v1/creativeSpaces/${id}`)
 	},
 	update(data: IPatchCreativeSpaceRequestBody): Promise<void> {
-		return axiosInstance.patch('/api/v1/creativeSpace', data)
+		return axiosInstance.patch('/api/v1/creativeSpaces/${id}', data)
 	},
 	delete(id: number): Promise<void> {
 		return axiosInstance.delete(`/api/v1/creativeSpaces/${id}`)

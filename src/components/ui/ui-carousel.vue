@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { toRefs } from 'vue'
 import type { PropType } from 'vue'
+import { IonImg } from '@ionic/vue'
 
 const props = defineProps({
 	images: {
@@ -27,11 +28,11 @@ const { height } = toRefs(props)
 			v-for="(image, index) in props.images"
 			:key="index"
 		>
-			<img
+			<ion-img
 				class="ui-carousel__image"
 				:src="image"
 				alt=""
-			>
+			/>
 		</swiper-slide>
 	</swiper-container>
 </template>

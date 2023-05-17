@@ -1,5 +1,7 @@
 export interface ICreativeSpaceListItem {
 	id: number
+	title: string
+	address: string
 	landlordId: number
 	description: string
 	photos: string[]
@@ -22,6 +24,8 @@ export interface ICreativeSpaceListItem {
 
 export interface ICreativeSpace {
 	id: number
+	title: string
+	address: string
 	landlordId: number
 	description: string
 	photos: string[]
