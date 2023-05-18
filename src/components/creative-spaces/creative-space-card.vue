@@ -29,7 +29,7 @@ const props = defineProps({
 
 const images = computed((): string[] => props.creativeSpace.photos)
 
-function redirectToCreativeSpacesDetailPage() {
+function redirectToCreativeSpacesDetailsPage() {
 	ionRouter.replace({ name: ViewName.CreativeSpacesDetailsView, params: { id: props.creativeSpace.id } })
 }
 </script>
@@ -87,7 +87,7 @@ function redirectToCreativeSpacesDetailPage() {
 			<ion-button
 				class="creative-space-card__details-button"
 				fill="outline"
-				@click="redirectToCreativeSpacesDetailPage"
+				@click="redirectToCreativeSpacesDetailsPage"
 			>
 				Подробнее
 			</ion-button>

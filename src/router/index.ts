@@ -10,11 +10,11 @@ export enum ViewName {
 	CreativeSpacesDetailsView = 'CREATIVE_SPACES_DETAILS_VIEW',
 	CreativeSpacesCreateView = 'CREATIVE_SPACES_CREATE',
 	CreativeSpacesEditView = 'CREATIVE_SPACES_EDIT',
-	RentalHistory = 'RENTAL_HISTORY',
-	SignIn = 'SIGN_IN',
+	RentalHistoryView = 'RENTAL_HISTORY',
+	SignInView = 'SIGN_IN',
 }
 
-export const UNAUTHORIZED_VIEWS = new Set([ViewName.SignIn])
+export const UNAUTHORIZED_VIEWS = new Set([ViewName.SignInView])
 export const ALL_VIEWS = new Set(Object.values(ViewName))
 
 export function checkIsView(view: unknown): view is ViewName {
@@ -40,7 +40,7 @@ const router = createRouter({
 				{
 					path: 'users',
 					name: ViewName.UsersView,
-					component: () => import('@/views/users-view.vue')
+					component: () => import('@/views/users/users-view.vue')
 				},
 				{
 					path: 'stats',
@@ -75,7 +75,7 @@ const router = createRouter({
 				},
 				{
 					path: 'rental-history',
-					name: ViewName.RentalHistory,
+					name: ViewName.RentalHistoryView,
 					component: () => import('@/views/rental-history-view.vue')
 				},
 			]
@@ -86,11 +86,11 @@ const router = createRouter({
 			children: [
 				{
 					path: '',
-					redirect: () => ({ name: ViewName.SignIn }),
+					redirect: () => ({ name: ViewName.SignInView }),
 				},
 				{
 					path: 'sign-in',
-					name: ViewName.SignIn,
+					name: ViewName.SignInView,
 					component: () => import('@/views/sign-in-view.vue')
 				},
 			]
@@ -100,7 +100,7 @@ const router = createRouter({
 			redirect: () => {
 				const userStore = useUserStore()
 
-				return userStore.isAuthorized ? { name: getMainViewName() } : { name: ViewName.SignIn }
+				return userStore.isAuthorized ? { name: getMainViewName() } : { name: ViewName.SignInView }
 			},
 		},
   ]
@@ -133,7 +133,7 @@ router.beforeEach((to, _, next) => {
 		!UNAUTHORIZED_VIEWS.has(to.name) &&
 		!userStore.isAuthorized
 	) {
-		return next({ name: ViewName.SignIn })
+		return next({ name: ViewName.SignInView })
 	}
 
 	// Если авторизован и пытается перейти на страницы не требующие авторизации, редиректим на главную страницу.

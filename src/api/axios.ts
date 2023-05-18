@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
 		if (responseData.error.code === ApiErrorCode.ErrUserNotAuthorized) {
 			userStore.setUnauthorized()
 
-			await router.push({ name: ViewName.SignIn })
+			await router.push({ name: ViewName.SignInView })
 		}
 
 		return Promise.reject(responseData.error)

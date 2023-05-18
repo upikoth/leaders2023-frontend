@@ -49,10 +49,10 @@ const navigationItems = computed(() => (
 		},
 		{
 			title: screenStore.isXs ? 'История' : 'История аренды',
-			href: router.resolve({ name: ViewName.RentalHistory }).href,
-			name: ViewName.RentalHistory,
+			href: router.resolve({ name: ViewName.RentalHistoryView }).href,
+			name: ViewName.RentalHistoryView,
 			icon: arrowRedo,
-			handler: () => ionRouter.replace({ name: ViewName.RentalHistory }),
+			handler: () => ionRouter.replace({ name: ViewName.RentalHistoryView }),
 			isVisible: true
 		},
 		{
