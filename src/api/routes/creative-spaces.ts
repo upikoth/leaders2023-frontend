@@ -65,8 +65,8 @@ export default {
 	get(id: number): Promise<IGetCreativeSpaceResponseData> {
 		return axiosInstance.get(`/api/v1/creativeSpaces/${id}`)
 	},
-	update(data: IPatchCreativeSpaceRequestBody): Promise<void> {
-		return axiosInstance.patch('/api/v1/creativeSpaces/${id}', data)
+	update(id: number, data: IPatchCreativeSpaceRequestBody): Promise<void> {
+		return axiosInstance.patch(`/api/v1/creativeSpaces/${id}`, data)
 	},
 	delete(id: number): Promise<void> {
 		return axiosInstance.delete(`/api/v1/creativeSpaces/${id}`)

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+import type { PropType } from 'vue'
 import debounce from 'lodash.debounce';
 import { useVuelidate } from '@vuelidate/core';
 import {
@@ -14,6 +15,8 @@ import {
 } from '@ionic/vue'
 import { addOutline } from 'ionicons/icons';
 import { required, minLength, helpers } from '@vuelidate/validators';
+import cloneDeep from 'lodash.clonedeep'
+import isEqual from 'lodash.isequal'
 
 import { getFilesFromComputer, getBase64FromFile, declOfNum, maskPricePerHour } from '@/utils'
 import api from '@/api'
@@ -30,6 +33,17 @@ const notificationsStore = useNotificationsStore()
 const ionRouter = useIonRouter()
 
 const MAX_PHOTOS_COUNT = 10
+
+const props = defineProps({
+	id: {
+		type: Number as PropType<number>,
+		default: NaN,
+	},
+	isEdit: {
+		type: Boolean as PropType<boolean>,
+		default: false,
+	}
+})
 
 const formData = ref({
 	title: '',
@@ -48,6 +62,8 @@ const formData = ref({
 	}
 })
 
+let initialFormData = cloneDeep(formData.value)
+
 const rules = {
 	formData: {
 		title: {
@@ -64,7 +80,7 @@ const rules = {
 		},
 		photos: {
 			required: helpers.withMessage('Добавьте фотографию', required),
-			minLength: helpers.withMessage('Добавьте фотографию', minLength(4))
+			minLength: helpers.withMessage('Добавьте фотографию', minLength(1))
 		},
 	}
 };
@@ -135,8 +151,45 @@ watch(() => addressSearch.value, () => {
 	debouncedUpdateAddresses()
 })
 
-function created() {
+watch(() => props.id, updateFormData)
+
+async function created() {
+	if (props.isEdit) {
+		await updateFormData()
+	}
 	updateAddresses()
+}
+
+async function updateFormData() {
+	if (!props.id) {
+		return
+	}
+
+	try {
+		const { creativeSpace } = await api.creativeSpaces.get(props.id)
+		const { title, description, address, photos, pricePerHour, coordinate, workingHours } = creativeSpace
+
+		addressSearch.value = address
+
+		formData.value = {
+			...formData.value,
+			title,
+			description,
+			address,
+			photos,
+			workingHours,
+			pricePerHour: String(pricePerHour),
+			coordinate: {
+				latitude: String(coordinate.latitude),
+				longitude: String(coordinate.longitude),
+			},
+		}
+
+		initialFormData = cloneDeep(formData.value)
+	} catch {
+		notificationsStore.error('Не удалось получить информацию о креативной площадке')
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+	}
 }
 
 async function updateAddresses() {
@@ -175,10 +228,46 @@ function deletePhoto(index: number) {
 async function handleFormSubmit() {
 	const isFormValid = await v$.value.$validate();
 	if (!isFormValid) {
+		notificationsStore.error('Проверьте корректность введенных данных')
 		return;
 	}
 
-	createCreativeSpace()
+	if (props.isEdit) {
+		patchCreativeSpace()
+	} else {
+		createCreativeSpace()
+	}
+}
+
+async function patchCreativeSpace() {
+	if (isEqual(initialFormData, formData.value)) {
+		notificationsStore.success('Креативная площадка успешно обновлена')
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+		return;
+	}
+
+	try {
+		const { title, address, description, pricePerHour, photos, coordinate, metroStations, workingHours } = formData.value
+
+		await api.creativeSpaces.update(props.id, {
+			title: isEqual(initialFormData.title, title) ? undefined : title,
+			address: isEqual(initialFormData.address, address) ? undefined : address,
+			description: isEqual(initialFormData.description, description) ? undefined : description,
+			photos: isEqual(initialFormData.photos, photos) ? undefined : photos,
+			metroStations: isEqual(initialFormData.metroStations, metroStations) ? undefined : metroStations,
+			workingHours: isEqual(initialFormData.workingHours, workingHours) ? undefined : workingHours,
+			coordinate: isEqual(initialFormData.coordinate, coordinate) ? undefined : {
+				latitude: Number.parseFloat(coordinate.latitude),
+				longitude: Number.parseFloat(coordinate.longitude)
+			},
+			pricePerHour: isEqual(initialFormData.pricePerHour, pricePerHour) ? undefined : Number.parseInt(pricePerHour),
+		})
+
+		notificationsStore.success('Креативная площадка успешно обновлена')
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+	} catch {
+		notificationsStore.error('Не удалось обновить креативную площадку')
+	}
 }
 
 async function createCreativeSpace() {
@@ -337,7 +426,7 @@ created()
 						class="creative-space-form__submit-buttton"
 						type="submit"
 					>
-						Создать площадку
+						{{ props.isEdit ? 'Обновить площадку' : 'Создать площадку' }}
 					</ion-button>
 				</ion-col>
 			</ion-row>

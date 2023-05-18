@@ -75,6 +75,8 @@ async function deleteCreativeSpace() {
 	try {
 		await api.creativeSpaces.delete(creativeSpaceId.value)
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+
+		notificationsStore.success('Креативная площадка успешно удалена')
 	} catch {
 		notificationsStore.error('Не удалось удалить креативную площадку')
 	}

@@ -42,7 +42,7 @@ function redirectToCreativeSpacesPage() {
 				</ion-title>
 			</ion-toolbar>
 		</ion-header>
-		<ion-content class="creative-spaces-create-view__content">
+		<ion-content>
 			<creative-space-form />
 		</ion-content>
 	</ion-page>
