@@ -32,7 +32,7 @@ export interface IGetCreativeSpacesResponseData {
 }
 
 export interface IGetCreativeSpaceResponseData {
-	creativeSpace: ICreativeSpace[]
+	creativeSpace: ICreativeSpace
 }
 
 export interface IPatchCreativeSpaceRequestBody {

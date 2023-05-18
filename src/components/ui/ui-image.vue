@@ -17,6 +17,10 @@ const props = defineProps({
 	src: {
 		type: String as PropType<string>,
 		required: true,
+	},
+	deletable: {
+		type: Boolean as PropType<boolean>,
+		default: false,
 	}
 })
 
@@ -31,6 +35,7 @@ const { size } = toRefs(props)
 	<div class="ui-image">
 		<ion-thumbnail class="ui-image__thumbnail">
 			<div 
+				v-if="props.deletable"
 				class="ui-image__overlay"
 			>
 				<ion-button
@@ -46,6 +51,7 @@ const { size } = toRefs(props)
 			</div>
 			<ion-img
 				:src="props.src" 
+				draggable="false"
 				alt=""
 			/>
 		</ion-thumbnail>

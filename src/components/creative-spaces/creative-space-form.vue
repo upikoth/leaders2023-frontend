@@ -233,7 +233,6 @@ created()
 				<ion-col
 					size="12"
 					size-md="8"
-					class="creative-space-form__col"
 				>
 					<ion-input
 						v-model="formData.title"
@@ -250,7 +249,6 @@ created()
 				<ion-col
 					size="12"
 					size-md="4"
-					class="creative-space-form__col"
 				>
 					<ion-input
 						v-model="formData.pricePerHour"
@@ -327,6 +325,7 @@ created()
 							:key="i"
 							:src="photo"
 							:size="screenStore.isXs ? '100%' : '180px'"
+							deletable
 							@delete="deletePhoto(i)"
 						/>
 					</div>
