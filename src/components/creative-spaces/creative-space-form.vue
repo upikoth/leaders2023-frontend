@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router';
 import debounce from 'lodash.debounce';
 import { useVuelidate } from '@vuelidate/core';
 import {
-	onIonViewWillEnter,
 	IonInput,
 	IonButton,
 	IonTextarea,
@@ -136,9 +135,9 @@ watch(() => addressSearch.value, () => {
 	debouncedUpdateAddresses()
 })
 
-onIonViewWillEnter(() => {
+function created() {
 	updateAddresses()
-})
+}
 
 async function updateAddresses() {
 	if (!addressSearch.value) {
@@ -210,7 +209,6 @@ async function createCreativeSpace() {
 
 function addFiles() {
 	getFilesFromComputer(async (files) => {
-		console.log(files)
 		Array.from(files)
 			.filter(file => file.type.startsWith('image/'))
 			.forEach(async (file) => {
@@ -219,6 +217,8 @@ function addFiles() {
 			})
 	}, { multiple: true, accept: 'image/*' })
 }
+
+created()
 </script>
 
 <template>
