@@ -14,7 +14,7 @@ import {
 	IonSplitPane,
 	IonMenu,
 } from '@ionic/vue';
-import { documentText, people, statsChart, business, arrowRedo } from 'ionicons/icons';
+import { documentText, people, statsChart, business, arrowRedo, person } from 'ionicons/icons';
 import { useRouter, useRoute } from 'vue-router'
 
 import { ViewName } from '@/router'
@@ -69,6 +69,24 @@ const navigationItems = computed(() => (
 			name: ViewName.DocumentationView,
 			icon: documentText,
 			handler: () => ionRouter.replace({ name: ViewName.DocumentationView }),
+			isVisible: true
+		},
+		{
+			title: 'Профиль',
+			href: router.resolve({
+				name: ViewName.UsersDetailsView,
+				params: {
+					id: userStore.user.id
+				}
+			}).href,
+			name: ViewName.UsersDetailsView,
+			icon: person,
+			handler: () => ionRouter.replace({
+				name: ViewName.UsersDetailsView,
+				params: {
+					id: userStore.user.id
+				}
+			}),
 			isVisible: true
 		},
 	].filter(({ isVisible }) => isVisible)

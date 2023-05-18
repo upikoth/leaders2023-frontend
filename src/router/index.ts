@@ -5,6 +5,8 @@ import { useUserStore } from '@/stores'
 export enum ViewName {
 	DocumentationView = 'DOCUMENTAITION_VIEW',
 	UsersView = 'USERS_VIEW',
+	UsersDetailsView = 'USERS_DETAILS_VIEW',
+	UsersEditView = 'USERS_EDIT_VIEW',
 	StatsView = 'STATS_VIEW',
 	CreativeSpacesView = 'CREATIVE_SPACES',
 	CreativeSpacesDetailsView = 'CREATIVE_SPACES_DETAILS_VIEW',
@@ -39,8 +41,24 @@ const router = createRouter({
 				},
 				{
 					path: 'users',
-					name: ViewName.UsersView,
-					component: () => import('@/views/users/users-view.vue')
+					component: () => import('@/layouts/empty-layout.vue'),
+					children: [
+						{
+							path: '',
+							name: ViewName.UsersView,
+							component: () => import('@/views/users/users-view.vue')
+						},
+						{
+							path: ':id',
+							name: ViewName.UsersDetailsView,
+							component: () => import('@/views/users/users-details-view.vue')
+						},
+						{
+							path: ':id/edit',
+							name: ViewName.UsersEditView,
+							component: () => import('@/views/users/users-edit-view.vue')
+						},
+					]
 				},
 				{
 					path: 'stats',

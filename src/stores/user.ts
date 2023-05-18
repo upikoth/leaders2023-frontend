@@ -43,6 +43,7 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 	}
 
   return {
+		user,
 		isAuthorized,
 		isAuthorizationChecked,
 		isAdmin,
