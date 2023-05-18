@@ -45,7 +45,7 @@ async function updateCreativeSpaces() {
 }
 
 function redirectToCreativeSpacesCreatePage() {
-	ionRouter.push({ name: ViewName.CreativeSpacesCreateView })
+	ionRouter.replace({ name: ViewName.CreativeSpacesCreateView })
 }
 
 </script>

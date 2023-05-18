@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { useRouter } from 'vue-router';
 import debounce from 'lodash.debounce';
 import { useVuelidate } from '@vuelidate/core';
 import {
+	useIonRouter,
 	IonInput,
 	IonButton,
 	IonTextarea,
@@ -27,7 +27,7 @@ import UiImage from '@/components/ui/ui-image.vue'
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
 
-const router = useRouter()
+const ionRouter = useIonRouter()
 
 const MAX_PHOTOS_COUNT = 10
 
@@ -201,7 +201,7 @@ async function createCreativeSpace() {
 
 		notificationsStore.success('Креативная площадка успешно создана')
 
-		router.push({ name: ViewName.CreativeSpacesView })
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
 	} catch {
 		notificationsStore.error('Не удалось создать креативную площадку')
 	}

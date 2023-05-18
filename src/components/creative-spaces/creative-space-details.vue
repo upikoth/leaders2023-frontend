@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import type { PropType } from 'vue'
 import {
+	useIonRouter,
 	IonItem,
 	IonLabel,
 	IonGrid,
@@ -12,11 +13,14 @@ import {
 import api from '@/api'
 import type { ICreativeSpace } from '@/api'
 import { useNotificationsStore, useScreenStore } from '@/stores'
+import { ViewName } from '@/router';
 
 import UiImage from '@/components/ui/ui-image.vue'
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
+
+const ionRouter = useIonRouter()
 
 const props = defineProps({
 	id: {
@@ -42,7 +46,8 @@ async function updateCreativeSpaceData() {
 		const { creativeSpace: newCreativeSpace } = await api.creativeSpaces.get(props.id)
 		creativeSpace.value = newCreativeSpace
 	} catch {
-		notificationsStore.error('Не удалось создать креативную площадку')
+		notificationsStore.error('Не удалось получить информацию о креативной площадке')
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
 	}
 }
 
@@ -102,7 +107,7 @@ created()
 				</ion-item>
 			</ion-col>
 		</ion-row>
-		<ion-row>
+		<ion-row v-if="creativeSpace.photos.length">
 			<ion-col>
 				<p
 					class="creative-space-details__photos-title"

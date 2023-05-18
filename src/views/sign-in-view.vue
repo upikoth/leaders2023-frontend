@@ -84,7 +84,7 @@ async function handleFormSubmit() {
 		})
 
 		await userStore.checkAuthorization()
-		ionRouter.push({ name: getMainViewName() })
+		ionRouter.replace({ name: getMainViewName() })
 	} catch (err) {
 		notificationsStore.error('Ошибка при авторизации пользователя')
 	}

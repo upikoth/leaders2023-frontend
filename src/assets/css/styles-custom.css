@@ -1,0 +1,6 @@
+@media (min-width: 576px) {
+  .action-sheet-wrapper {
+		top: 0;
+		bottom: auto !important;
+	}
+}

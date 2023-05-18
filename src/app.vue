@@ -22,7 +22,7 @@ async function checkAuthorization() {
 
 	// Если авторизован и на странице не требующие авторизации, редиректим на главную страницу.
 	if (checkIsView(route.name) && UNAUTHORIZED_VIEWS.has(route.name)) {
-		await ionRouter.push({ name: getMainViewName() })
+		ionRouter.replace({ name: getMainViewName() })
 	}
 	// Если не авторизован, то переход на страницу авторизации будет сделан в axios interceptor.
 }

@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import {
+	useIonRouter,
 	IonPage,
+	IonButton,
+	IonIcon,
 	IonHeader,
 	IonToolbar,
 	IonTitle,
 	IonContent,
 	IonButtons,
-	IonBackButton
 } from '@ionic/vue'
 import { chevronBackOutline } from 'ionicons/icons';
 
+import { ViewName } from '@/router';
+
 import CreativeSpaceForm from '@/components/creative-spaces/creative-space-form.vue'
+
+const ionRouter = useIonRouter()
+
+function redirectToCreativeSpacesPage() {
+	ionRouter.replace({ name: ViewName.CreativeSpacesView })
+}
 </script>
 
 <template>
@@ -18,11 +28,14 @@ import CreativeSpaceForm from '@/components/creative-spaces/creative-space-form.
 		<ion-header>
 			<ion-toolbar>
 				<ion-buttons slot="start">
-					<ion-back-button
-						text=""
+					<ion-button
+						slot="icon-only"
 						color="primary"
-						:icon="chevronBackOutline"
-					/>
+						shape="round"
+						@click="redirectToCreativeSpacesPage"
+					>
+						<ion-icon :icon="chevronBackOutline" />
+					</ion-button>
 				</ion-buttons>
 				<ion-title>
 					Создание площадки

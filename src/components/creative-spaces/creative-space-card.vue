@@ -30,7 +30,7 @@ const props = defineProps({
 const images = computed((): string[] => props.creativeSpace.photos)
 
 function redirectToCreativeSpacesDetailPage() {
-	ionRouter.push({ name: ViewName.CreativeSpacesDetailsView, params: { id: props.creativeSpace.id } })
+	ionRouter.replace({ name: ViewName.CreativeSpacesDetailsView, params: { id: props.creativeSpace.id } })
 }
 </script>
 
