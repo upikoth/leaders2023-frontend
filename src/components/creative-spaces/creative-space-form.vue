@@ -18,7 +18,7 @@ import { required, minLength, helpers } from '@vuelidate/validators';
 import cloneDeep from 'lodash.clonedeep'
 import isEqual from 'lodash.isequal'
 
-import { getFilesFromComputer, getBase64FromFile, declOfNum, maskPricePerHour } from '@/utils'
+import { getFilesFromComputer, declOfNum, maskPricePerHour } from '@/utils'
 import api from '@/api'
 import { useScreenStore, useNotificationsStore } from '@/stores'
 import { ViewName } from '@/router';
@@ -26,6 +26,8 @@ import { vMask } from '@/directives'
 
 import UiSelect from '@/components/ui/ui-select.vue'
 import UiImage from '@/components/ui/ui-image.vue'
+
+const S3_ACCESS_DOMAIN_NAME = import.meta.env.S3_ACCESS_DOMAIN_NAME
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
@@ -300,11 +302,17 @@ function addFiles() {
 	getFilesFromComputer(async (files) => {
 		Array.from(files)
 			.filter(file => file.type.startsWith('image/'))
-			.forEach(async (file) => {
-				const fileInBase64 = await getBase64FromFile(file)
-				formData.value.photos.push(fileInBase64)
-			})
+			.forEach(file => addFile(file))
 	}, { multiple: true, accept: 'image/*' })
+}
+
+async function addFile(file: File) {
+	try {
+		const { file: savedFile } = await api.files.create({ file })
+		formData.value.photos.push(savedFile.name)
+	} catch {
+		notificationsStore.error('Не удалось добавить фотографию, попробуйте еще раз')
+	}
 }
 
 created()
@@ -410,9 +418,9 @@ created()
 						class="creative-space-form__photos"
 					>
 						<ui-image
-							v-for="(photo, i) in formData.photos"
+							v-for="(photoName, i) in formData.photos"
 							:key="i"
-							:src="photo"
+							:src="`${S3_ACCESS_DOMAIN_NAME}/${photoName}`"
 							:size="screenStore.isXs ? '100%' : '180px'"
 							deletable
 							@delete="deletePhoto(i)"

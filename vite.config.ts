@@ -13,6 +13,7 @@ export default defineConfig({
 			}
 		}
 	})],
+	envPrefix: ["VITE", "S3"],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

@@ -17,6 +17,8 @@ import { ViewName } from '@/router';
 
 import UiImage from '@/components/ui/ui-image.vue'
 
+const S3_ACCESS_DOMAIN_NAME = import.meta.env.S3_ACCESS_DOMAIN_NAME
+
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
 
@@ -118,9 +120,9 @@ created()
 					class="creative-space-details__photos"
 				>
 					<ui-image
-						v-for="(photo, i) in creativeSpace.photos"
+						v-for="(photoName, i) in creativeSpace.photos"
 						:key="i"
-						:src="photo"
+						:src="`${S3_ACCESS_DOMAIN_NAME}/${photoName}`"
 						:size="screenStore.isXs ? '100%' : '180px'"
 					/>
 				</div>

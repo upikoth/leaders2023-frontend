@@ -18,6 +18,8 @@ import { ViewName } from '@/router';
 import UiCarousel from '@/components/ui/ui-carousel.vue'
 import UiDot from '@/components/ui/ui-dot.vue'
 
+const S3_ACCESS_DOMAIN_NAME = import.meta.env.S3_ACCESS_DOMAIN_NAME
+
 const ionRouter = useIonRouter()
 
 const props = defineProps({
@@ -27,7 +29,7 @@ const props = defineProps({
 	},
 })
 
-const images = computed((): string[] => props.creativeSpace.photos)
+const images = computed((): string[] => props.creativeSpace.photos.map(photoName => `${S3_ACCESS_DOMAIN_NAME}/${photoName}`))
 
 function redirectToCreativeSpacesDetailsPage() {
 	ionRouter.replace({ name: ViewName.CreativeSpacesDetailsView, params: { id: props.creativeSpace.id } })
