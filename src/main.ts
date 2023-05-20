@@ -5,9 +5,12 @@ import { register } from 'swiper/element/bundle';
 
 import App from './app.vue'
 import router from './router'
+import { loadScript } from './utils'
+import environments from './environments';
 
 import './assets/css/index.css'
 
+loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
 register();
 
 const app = createApp(App)

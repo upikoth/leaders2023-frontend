@@ -3,13 +3,13 @@ import { createRouter, createWebHashHistory } from '@ionic/vue-router'
 import { useUserStore } from '@/stores'
 
 export enum ViewName {
-	DocumentationView = 'DOCUMENTAITION_VIEW',
-	UsersView = 'USERS_VIEW',
-	UsersDetailsView = 'USERS_DETAILS_VIEW',
-	UsersEditView = 'USERS_EDIT_VIEW',
+	DocumentationView = 'DOCUMENTAITION',
+	UsersView = 'USERS',
+	UsersDetailsView = 'USERS_DETAILS',
+	UsersEditView = 'USERS_EDIT',
 	StatsView = 'STATS_VIEW',
 	CreativeSpacesView = 'CREATIVE_SPACES',
-	CreativeSpacesDetailsView = 'CREATIVE_SPACES_DETAILS_VIEW',
+	CreativeSpacesDetailsView = 'CREATIVE_SPACES_DETAILS',
 	CreativeSpacesCreateView = 'CREATIVE_SPACES_CREATE',
 	CreativeSpacesEditView = 'CREATIVE_SPACES_EDIT',
 	RentalHistoryView = 'RENTAL_HISTORY',

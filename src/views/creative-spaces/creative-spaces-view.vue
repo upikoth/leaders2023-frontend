@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import {
 	onIonViewWillEnter,
 	useIonRouter,
@@ -16,6 +16,7 @@ import {
 	IonIcon,
 } from '@ionic/vue'
 import { addOutline } from 'ionicons/icons';
+import type { YMap } from '@yandex/ymaps3-types'
 
 import api from '@/api'
 import type { ICreativeSpaceListItem } from '@/api'
@@ -23,6 +24,14 @@ import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
 
 import CreativeSpaceCard from '@/components/creative-spaces/creative-space-card.vue'
+
+enum CreativeSpaceDisplayType {
+	List = 'list',
+	Map = 'map'
+}
+
+// eslint-disable-next-line no-undef
+const ymaps = ymaps3
 
 const ionRouter = useIonRouter()
 
@@ -32,8 +41,17 @@ const userStore = useUserStore()
 
 const creativeSpaces = ref<ICreativeSpaceListItem[]>([])
 
+const creativeSpaceMapRef = ref<HTMLDivElement>()
+const creativeSpaceMap = ref<YMap | null>(null)
+
+const displayType = ref(CreativeSpaceDisplayType.Map)
+
 onIonViewWillEnter(() => {
 	updateCreativeSpaces()
+})
+
+onMounted(() => {
+	initMap()
 })
 
 async function updateCreativeSpaces() {
@@ -48,6 +66,23 @@ function redirectToCreativeSpacesCreatePage() {
 	ionRouter.replace({ name: ViewName.CreativeSpacesCreateView })
 }
 
+
+async function initMap() {
+	if (!creativeSpaceMapRef.value) {
+		return;
+	}
+
+	await ymaps.ready
+	creativeSpaceMap.value = new ymaps.YMap(creativeSpaceMapRef.value, {
+		location: {
+			center: [37.64, 55.76],
+			zoom: 11
+		}
+	})
+
+	const layer = new ymaps.YMapDefaultSchemeLayer({});
+	creativeSpaceMap.value.addChild(layer);
+}
 </script>
 
 <template>
@@ -76,7 +111,10 @@ function redirectToCreativeSpacesCreatePage() {
 			</ion-toolbar>
 		</ion-header>
 		<ion-content class="creative-spaces-view__content">
-			<ion-grid>
+			<ion-grid
+				v-show="displayType === CreativeSpaceDisplayType.List"
+				class="creative-spaces-view__list"
+			>
 				<ion-row>
 					<ion-col
 						v-for="creativeSpace in creativeSpaces"
@@ -90,6 +128,11 @@ function redirectToCreativeSpacesCreatePage() {
 					</ion-col>
 				</ion-row>
 			</ion-grid>
+			<div
+				v-show="displayType === CreativeSpaceDisplayType.Map"
+				ref="creativeSpaceMapRef"
+				class="creative-spaces-view__map"
+			/>
 		</ion-content>
 	</ion-page>
 </template>
@@ -105,6 +148,10 @@ function redirectToCreativeSpacesCreatePage() {
 			--ion-grid-padding: 8px;
 			--ion-grid-column-padding: 12px;
 		}
+	}
+
+	&__map {
+		height: 100%;
 	}
 }
 </style>

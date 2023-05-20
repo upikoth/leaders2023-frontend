@@ -6,9 +6,11 @@ import router, { ViewName } from '@/router'
 import type { IResponse, IResponseError } from '@/api'
 import { useUserStore } from '@/stores'
 
+import environments from '@/environments'
+
 const axiosInstance = axios.create({
 	timeout: MILLISECONDS_IN_MINUTE,
-	baseURL: import.meta.env.DEV ? '' : import.meta.env.VITE_API_URL
+	baseURL: import.meta.env.DEV ? '' : environments.VITE_API_URL
 })
 
 axiosInstance.interceptors.response.use(
