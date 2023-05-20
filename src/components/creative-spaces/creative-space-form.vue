@@ -23,11 +23,10 @@ import api from '@/api'
 import { useScreenStore, useNotificationsStore } from '@/stores'
 import { ViewName } from '@/router';
 import { vMask } from '@/directives'
+import environments from '@/environments';
 
 import UiSelect from '@/components/ui/ui-select.vue'
 import UiImage from '@/components/ui/ui-image.vue'
-
-const S3_ACCESS_DOMAIN_NAME = import.meta.env.S3_ACCESS_DOMAIN_NAME
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
@@ -428,7 +427,7 @@ created()
 						<ui-image
 							v-for="(photoName, i) in formData.photos"
 							:key="i"
-							:src="`${S3_ACCESS_DOMAIN_NAME}/${photoName}`"
+							:src="`${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`"
 							:size="screenStore.isXs ? '100%' : '180px'"
 							deletable
 							@delete="deletePhoto(i)"
