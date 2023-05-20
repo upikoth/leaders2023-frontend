@@ -20,4 +20,7 @@ export default {
 
 		return axiosInstance.post('/api/v1/file', formData)
 	},
+	delete(fileName: string): Promise<void> {
+		return axiosInstance.delete(`/api/v1/files/${fileName}`, )
+	},
 }

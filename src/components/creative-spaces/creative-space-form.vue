@@ -223,8 +223,16 @@ function updateFormDataCoordinates({ latitude, longitude }: { latitude: string, 
 	}
 }
 
-function deletePhoto(index: number) {
-	formData.value.photos.splice(index, 1)
+async function deletePhoto(index: number) {
+	try {
+		const fileNameToDelete = formData.value.photos[index]
+
+		await api.files.delete(fileNameToDelete)
+
+		formData.value.photos = formData.value.photos.filter(photoName => photoName !== fileNameToDelete)
+	} catch {
+		notificationsStore.error('Не удалось удалить фотографию. Попробуйте еще раз')
+	}
 }
 
 async function handleFormSubmit() {
