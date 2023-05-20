@@ -14,12 +14,15 @@ import {
 import type { ICreativeSpaceListItem } from '@/api';
 import { formatPrice } from '@/utils'
 import { ViewName } from '@/router';
+import { useScreenStore } from '@/stores'
 import environments from '@/environments'
 
 import UiCarousel from '@/components/ui/ui-carousel.vue'
 import UiDot from '@/components/ui/ui-dot.vue'
 
 const ionRouter = useIonRouter()
+
+const screenStore = useScreenStore()
 
 const props = defineProps({
 	creativeSpace: {
@@ -28,9 +31,15 @@ const props = defineProps({
 	},
 })
 
+const emit = defineEmits({
+	'before-redirect-to-details-page': null,
+});
+
+
 const images = computed((): string[] => props.creativeSpace.photos.map(photoName => `${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`))
 
 function redirectToCreativeSpacesDetailsPage() {
+	emit('before-redirect-to-details-page')
 	ionRouter.replace({ name: ViewName.CreativeSpacesDetailsView, params: { id: props.creativeSpace.id } })
 }
 </script>
@@ -88,6 +97,7 @@ function redirectToCreativeSpacesDetailsPage() {
 			<ion-button
 				class="creative-space-card__details-button"
 				fill="outline"
+				:size="screenStore.isXs ? 'small' : 'default'"
 				@click="redirectToCreativeSpacesDetailsPage"
 			>
 				Подробнее

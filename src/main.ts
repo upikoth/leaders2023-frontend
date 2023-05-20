@@ -1,17 +1,20 @@
-import { createApp } from 'vue'
+import { createApp, defineCustomElement } from 'vue'
 import { createPinia } from 'pinia'
 import { IonicVue } from '@ionic/vue';
 import { register } from 'swiper/element/bundle';
 
+import CreativeSpaceMarker from '@/components/map/creative-space-marker.ce.vue'
+
 import App from './app.vue'
 import router from './router'
-import { loadScript } from './utils'
-import environments from './environments';
 
 import './assets/css/index.css'
 
-await loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
 register();
+
+const CreativeSpaceMarkerComponent = defineCustomElement(CreativeSpaceMarker)
+
+customElements.define('map-creative-space-marker', CreativeSpaceMarkerComponent)
 
 const app = createApp(App)
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import {
+	modalController,
 	onIonViewWillEnter,
 	useIonRouter,
 	IonPage,
@@ -15,7 +16,7 @@ import {
 	IonButtons,
 	IonIcon,
 } from '@ionic/vue'
-import { addOutline } from 'ionicons/icons';
+import { addOutline, mapOutline } from 'ionicons/icons';
 import type { YMap } from '@yandex/ymaps3-types'
 
 import api from '@/api'
@@ -24,6 +25,7 @@ import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
 
 import CreativeSpaceCard from '@/components/creative-spaces/creative-space-card.vue'
+import CreativeSpaceModal from '@/components/map/creative-space-modal.vue'
 
 enum CreativeSpaceDisplayType {
 	List = 'list',
@@ -82,7 +84,21 @@ function updateCreativeSpaceMarkers(newCreativeSpaces: ICreativeSpaceListItem[],
 }
 
 function generateCreativeSpaceMarker(space: ICreativeSpaceListItem) {
-	const creativeSpaceMarkerElement = document.createElement('div');
+	const creativeSpaceMarkerElement = document.createElement('map-creative-space-marker') as HTMLElement & { width: string; height: string };
+	creativeSpaceMarkerElement.width = screenStore.isXs ? '25px' : '35px'
+	creativeSpaceMarkerElement.height = screenStore.isXs ? '25px' : '35px'
+
+	creativeSpaceMarkerElement.onclick = async () => {
+		const modal = await modalController.create({
+			component: CreativeSpaceModal,
+			componentProps: {
+				creativeSpace: space,
+			},
+		})
+
+		modal.present()
+	}
+
 	const { latitude, longitude } = space.coordinate
 
 	return new ymaps.YMapMarker(
@@ -123,6 +139,15 @@ async function initMap() {
 
 	const featureLayer = new ymaps.YMapDefaultFeaturesLayer({})
 	creativeSpaceMap.addChild(featureLayer)
+
+	const controls = new ymaps.YMapControls({ position: 'top left' });
+	const button = new ymaps.YMapControlButton({
+		text: 'Показать списком',
+		onClick: changeDisplayType,
+	});
+
+	controls.addChild(button);
+	creativeSpaceMap.addChild(controls);
 
 	if (creativeSpaces.value.length) {
 		updateCreativeSpaceMarkers(creativeSpaces.value, [])
@@ -169,17 +194,25 @@ function changeDisplayType() {
 			</ion-toolbar>
 		</ion-header>
 		<ion-content class="creative-spaces-view__content">
-			<ion-button
-				color="primary"
-				fill="solid"
-				@click="changeDisplayType"
-			>
-				Изменить тип отображения
-			</ion-button>
 			<ion-grid
 				v-show="displayType === CreativeSpaceDisplayType.List"
 				class="creative-spaces-view__list"
 			>
+				<ion-row>
+					<ion-col>
+						<ion-button
+							color="primary"
+							fill="outline"
+							:size="screenStore.isXs ? 'small' : 'default'"
+							@click="changeDisplayType"
+						>
+							<ion-icon
+								:icon="mapOutline"
+							/>
+							Показать на карте
+						</ion-button>
+					</ion-col>
+				</ion-row>
 				<ion-row>
 					<ion-col
 						v-for="creativeSpace in creativeSpaces"

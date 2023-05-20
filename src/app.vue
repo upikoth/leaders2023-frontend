@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import {
 	useIonRouter,
@@ -8,13 +9,19 @@ import {
 
 import { checkIsView, getMainViewName, UNAUTHORIZED_VIEWS } from '@/router'
 import { useUserStore } from '@/stores'
+import { loadScript } from './utils'
+import environments from './environments';
 
 const route = useRoute()
 const ionRouter = useIonRouter()
 const userStore = useUserStore()
 
-function created() {
+const isScriptLoaded = ref(false)
+
+async function created() {
 	checkAuthorization()
+	await loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
+	isScriptLoaded.value = true
 }
 
 async function checkAuthorization() {
@@ -32,7 +39,7 @@ created()
 <template>
 	<ion-app>
 		<ion-router-outlet
-			v-if="userStore.isAuthorizationChecked"
+			v-if="userStore.isAuthorizationChecked && isScriptLoaded"
 			animated="false"
 		/>
 	</ion-app>

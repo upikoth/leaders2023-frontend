@@ -148,6 +148,7 @@ function redirectToCreativeSpacesPage() {
 
 	&__delete-button {
 		margin-top: 32px;
+		margin-bottom: 16px;
 		margin-left: 16px;
 	}
 }
