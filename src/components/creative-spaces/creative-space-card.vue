@@ -99,7 +99,7 @@ function redirectToCreativeSpacesDetailsPage() {
 <style lang="scss" scoped>
 .creative-space-card {
 	display: flex;
-	height: 476px;
+	height: 500px;
 	flex-direction: column;
 	margin: 0;
 

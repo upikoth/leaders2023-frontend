@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import {
 	onIonViewWillEnter,
 	useIonRouter,
@@ -40,11 +40,12 @@ const screenStore = useScreenStore()
 const userStore = useUserStore()
 
 const creativeSpaces = ref<ICreativeSpaceListItem[]>([])
+let creativeSpacesMarkers = new Map()
 
 const creativeSpaceMapRef = ref<HTMLDivElement>()
-const creativeSpaceMap = ref<YMap | null>(null)
+let creativeSpaceMap: YMap | null = null
 
-const displayType = ref(CreativeSpaceDisplayType.Map)
+const displayType = ref(CreativeSpaceDisplayType.List)
 
 onIonViewWillEnter(() => {
 	updateCreativeSpaces()
@@ -53,6 +54,44 @@ onIonViewWillEnter(() => {
 onMounted(() => {
 	initMap()
 })
+
+watch(() => creativeSpaces.value, updateCreativeSpaceMarkers)
+
+function updateCreativeSpaceMarkers(newCreativeSpaces: ICreativeSpaceListItem[], oldCreativeSpaces: ICreativeSpaceListItem[]) {
+	if (!creativeSpaceMap) {
+		return
+	}
+
+	const newCreativeSpacesIds = new Set(newCreativeSpaces.map(space => space.id))
+	const oldCreativeSpacesIds = new Set(oldCreativeSpaces.map(space => space.id))
+
+	const creativeSpacesToAdd = newCreativeSpaces.filter(el => !oldCreativeSpacesIds.has(el.id))
+	const creativeSpacesToDelete = oldCreativeSpaces.filter(el => !newCreativeSpacesIds.has(el.id))
+
+	creativeSpacesToDelete.forEach(space => {
+		const markerToDelete = creativeSpacesMarkers.get(space.id)
+
+		creativeSpaceMap?.removeChild(markerToDelete)
+	})
+
+	creativeSpacesToAdd.forEach(space => {
+		const markerToAdd = generateCreativeSpaceMarker(space)
+
+		creativeSpaceMap?.addChild(markerToAdd)
+	})
+}
+
+function generateCreativeSpaceMarker(space: ICreativeSpaceListItem) {
+	const creativeSpaceMarkerElement = document.createElement('div');
+	const { latitude, longitude } = space.coordinate
+
+	return new ymaps.YMapMarker(
+		{
+			coordinates: [longitude, latitude]
+		},
+		creativeSpaceMarkerElement
+	)
+}
 
 async function updateCreativeSpaces() {
 	try {
@@ -66,14 +105,13 @@ function redirectToCreativeSpacesCreatePage() {
 	ionRouter.replace({ name: ViewName.CreativeSpacesCreateView })
 }
 
-
 async function initMap() {
 	if (!creativeSpaceMapRef.value) {
 		return;
 	}
 
 	await ymaps.ready
-	creativeSpaceMap.value = new ymaps.YMap(creativeSpaceMapRef.value, {
+	creativeSpaceMap = new ymaps.YMap(creativeSpaceMapRef.value, {
 		location: {
 			center: [37.64, 55.76],
 			zoom: 11
@@ -81,7 +119,27 @@ async function initMap() {
 	})
 
 	const layer = new ymaps.YMapDefaultSchemeLayer({});
-	creativeSpaceMap.value.addChild(layer);
+	creativeSpaceMap.addChild(layer);
+
+	const featureLayer = new ymaps.YMapDefaultFeaturesLayer({})
+	creativeSpaceMap.addChild(featureLayer)
+
+	if (creativeSpaces.value.length) {
+		updateCreativeSpaceMarkers(creativeSpaces.value, [])
+	}
+}
+
+function changeDisplayType() {
+	switch (displayType.value) {
+		case CreativeSpaceDisplayType.List:
+			displayType.value = CreativeSpaceDisplayType.Map
+			break;
+		case CreativeSpaceDisplayType.Map:
+			displayType.value = CreativeSpaceDisplayType.List
+			break;
+		default:
+			displayType.value = CreativeSpaceDisplayType.List
+	}
 }
 </script>
 
@@ -111,6 +169,13 @@ async function initMap() {
 			</ion-toolbar>
 		</ion-header>
 		<ion-content class="creative-spaces-view__content">
+			<ion-button
+				color="primary"
+				fill="solid"
+				@click="changeDisplayType"
+			>
+				Изменить тип отображения
+			</ion-button>
 			<ion-grid
 				v-show="displayType === CreativeSpaceDisplayType.List"
 				class="creative-spaces-view__list"
