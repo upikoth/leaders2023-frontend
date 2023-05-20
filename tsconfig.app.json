@@ -14,6 +14,9 @@
 		"paths": {
 			"@/*": [
 				"./src/*"
+			],
+			"react": [
+				"./stub/empty.d.ts"
 			]
 		}
 	}
