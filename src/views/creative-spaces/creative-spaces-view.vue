@@ -181,7 +181,7 @@ function changeDisplayType() {
 					Креативные площадки
 				</ion-title>
 				<ion-buttons
-					v-if="userStore.isLandlord || userStore.isAdmin"
+					v-if="userStore.isLandlord"
 					slot="end"
 					class="creative-spaces-view__header-buttons"
 				>

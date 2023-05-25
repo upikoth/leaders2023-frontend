@@ -6,7 +6,7 @@ export interface ICreateCreativeSpaceRequestData {
 	address: string
 	description: string
 	photos: string[]
-	pricePerHour: number
+	pricePerDay: number
 	metroStations: {
 		id: number
 		distanceInMinutes: number
@@ -41,7 +41,7 @@ export interface IPatchCreativeSpaceRequestBody {
 	address?: string
 	description?: string
 	photos?: string[]
-	pricePerHour?: number
+	pricePerDay?: number
 	metroStations?: {
 		id: number
 		distanceInMinutes: number

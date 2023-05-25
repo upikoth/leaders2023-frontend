@@ -13,7 +13,7 @@ import {
 	IonContent,
 } from '@ionic/vue'
 import { useRoute } from 'vue-router'
-import { createOutline, trashOutline, chevronBackOutline } from 'ionicons/icons';
+import { createOutline, trashOutline, logOutOutline, chevronBackOutline } from 'ionicons/icons';
 
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
@@ -156,7 +156,7 @@ async function handleLogoutButtonClick() {
 				@click="handleLogoutButtonClick"
 			>
 				<ion-icon
-					:icon="trashOutline"
+					:icon="logOutOutline"
 				/>
 				Выйти из приложения
 			</ion-button>

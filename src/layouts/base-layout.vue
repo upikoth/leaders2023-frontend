@@ -14,7 +14,7 @@ import {
 	IonSplitPane,
 	IonMenu,
 } from '@ionic/vue';
-import { documentText, people, statsChart, business, arrowRedo, person } from 'ionicons/icons';
+import { help, people, statsChart, business, arrowRedo, person } from 'ionicons/icons';
 import { useRouter, useRoute } from 'vue-router'
 
 import { ViewName } from '@/router'
@@ -64,10 +64,10 @@ const navigationItems = computed(() => (
 			isVisible: userStore.isAdmin
 		},
 		{
-			title: 'Документация',
+			title: 'Справка',
 			href: router.resolve({ name: ViewName.DocumentationView }).href,
 			name: ViewName.DocumentationView,
-			icon: documentText,
+			icon: help,
 			handler: () => ionRouter.replace({ name: ViewName.DocumentationView }),
 			isVisible: true
 		},

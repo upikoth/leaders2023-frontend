@@ -30,7 +30,16 @@ const props = defineProps({
 		type: Number as PropType<number>,
 		required: true
 	},
+	landlordId: {
+		type: Number as PropType<number>,
+		default: NaN
+	}
 })
+
+const emit = defineEmits({
+	'update:landlord-id': (value: number) => typeof value === 'number',
+});
+
 
 const creativeSpace = ref<ICreativeSpace | null>(null)
 
@@ -48,6 +57,7 @@ async function updateCreativeSpaceData() {
 	try {
 		const { creativeSpace: newCreativeSpace } = await api.creativeSpaces.get(props.id)
 		creativeSpace.value = newCreativeSpace
+		emit('update:landlord-id', creativeSpace.value.landlordId)
 	} catch {
 		notificationsStore.error('Не удалось получить информацию о креативной площадке')
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })
@@ -136,8 +146,8 @@ onCreated()
 			>
 				<ion-item>
 					<ion-label>
-						Стоимость аренды (₽/час):
-						<p>{{ creativeSpace.pricePerHour }}</p>
+						Стоимость аренды (₽/день):
+						<p>{{ creativeSpace.pricePerDay }}</p>
 					</ion-label>
 				</ion-item>
 			</ion-col>

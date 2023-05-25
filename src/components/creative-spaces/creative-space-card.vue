@@ -68,7 +68,7 @@ function redirectToCreativeSpacesDetailsPage() {
 		<ion-card-content class="creative-space-card__conent">
 			<p>
 				<b>Стоимость:</b>
-				{{ formatPrice(props.creativeSpace.pricePerHour) }}/час
+				{{ formatPrice(props.creativeSpace.pricePerDay) }}/день
 			</p>
 			<p
 				class="creative-space-card__info-metro"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import {
 	useIonRouter,
 	IonPage,
@@ -15,7 +15,7 @@ import {
 import { useRoute } from 'vue-router'
 import { createOutline, trashOutline, chevronBackOutline } from 'ionicons/icons';
 
-import { useScreenStore, useNotificationsStore } from '@/stores'
+import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
 import api from '@/api'
 
@@ -26,9 +26,16 @@ const ionRouter = useIonRouter()
 const route = useRoute()
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
+const userStore = useUserStore()
+
+const creativeSpaceLandlordId = ref(NaN)
 
 const creativeSpaceId = computed(() => {
 	return Number(route.params.id)
+})
+
+const canUserEditOrRemove = computed(() => {
+	return userStore.isLandlord && creativeSpaceLandlordId.value === userStore.user.id || userStore.isAdmin
 })
 
 function redirectToCreativeSpacesEditPage() {
@@ -105,6 +112,7 @@ function redirectToCreativeSpacesPage() {
 					Креативная площадка
 				</ion-title>
 				<ion-buttons
+					v-if="canUserEditOrRemove"
 					slot="end"
 					class="creative-spaces-details-view__header-buttons"
 				>
@@ -124,8 +132,12 @@ function redirectToCreativeSpacesPage() {
 			</ion-toolbar>
 		</ion-header>
 		<ion-content class="creative-spaces-details-view__content">
-			<creative-space-details :id="creativeSpaceId" />
+			<creative-space-details
+				:id="creativeSpaceId"
+				v-model:landlord-id="creativeSpaceLandlordId"
+			/>
 			<ion-button
+				v-if="canUserEditOrRemove"
 				class="creative-spaces-details-view__delete-button"
 				color="danger"
 				fill="outline"

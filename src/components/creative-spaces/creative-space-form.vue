@@ -20,10 +20,10 @@ import { required, minLength, helpers } from '@vuelidate/validators';
 import cloneDeep from 'lodash.clonedeep'
 import isEqual from 'lodash.isequal'
 
-import { getFilesFromComputer, declOfNum, maskPricePerHour } from '@/utils'
+import { getFilesFromComputer, declOfNum, maskpricePerDay } from '@/utils'
 import api from '@/api'
 import type { ICalendarEvent } from '@/api'
-import { useScreenStore, useNotificationsStore } from '@/stores'
+import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
 import { vMask } from '@/directives'
 import environments from '@/environments';
@@ -37,6 +37,7 @@ import CreativeSpaceAddLinkModal from './creative-space-add-link-modal.vue'
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
+const userStore = useUserStore()
 
 const ionRouter = useIonRouter()
 
@@ -58,7 +59,7 @@ const formData = ref({
 	address: '',
 	description: '',
 	photos: [] as string[],
-	pricePerHour: '',
+	pricePerDay: '',
 	metroStations: [],
 	coordinate: {
 		latitude: '',
@@ -78,7 +79,7 @@ const rules = {
 		title: {
 			required: helpers.withMessage('Введите название', required),
 		},
-		pricePerHour: {
+		pricePerDay: {
 			required: helpers.withMessage('Введите стоимость аренды', required),
 		},
 		address: {
@@ -116,12 +117,12 @@ const titleError = computed((): string => {
 	return typeof message === 'string' ? message : '';
 });
 
-const pricePerHourError = computed((): string => {
-	if (!v$.value.formData.pricePerHour.$error) {
+const pricePerDayError = computed((): string => {
+	if (!v$.value.formData.pricePerDay.$error) {
 		return '';
 	}
 
-	const message = v$.value.formData.pricePerHour.$errors[0].$message;
+	const message = v$.value.formData.pricePerDay.$errors[0].$message;
 
 	return typeof message === 'string' ? message : '';
 });
@@ -165,6 +166,11 @@ watch(() => props.id, updateFormData)
 watch(() => formData.value.calendar, forceUpdateCalendar, { deep: true })
 
 async function onCreated() {
+	if (!userStore.isLandlord && !userStore.isAdmin) {
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+		return;
+	}
+
 	if (props.isEdit) {
 		await updateFormData()
 	}
@@ -178,7 +184,7 @@ async function updateFormData() {
 
 	try {
 		const { creativeSpace } = await api.creativeSpaces.get(props.id)
-		const { title, description, address, photos, pricePerHour, coordinate, calendar } = creativeSpace
+		const { title, description, address, photos, pricePerDay, coordinate, calendar, landlordId } = creativeSpace
 
 		addressSearch.value = address
 
@@ -188,7 +194,7 @@ async function updateFormData() {
 			description,
 			address,
 			photos,
-			pricePerHour: String(pricePerHour),
+			pricePerDay: String(pricePerDay),
 			coordinate: {
 				latitude: String(coordinate.latitude),
 				longitude: String(coordinate.longitude),
@@ -201,6 +207,10 @@ async function updateFormData() {
 		}
 
 		initialFormData = cloneDeep(formData.value)
+
+		if (landlordId !== userStore.user.id && !userStore.isAdmin) {
+			ionRouter.replace({ name: ViewName.CreativeSpacesView })
+		}
 	} catch {
 		notificationsStore.error('Не удалось получить информацию о креативной площадке')
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })
@@ -270,7 +280,7 @@ async function patchCreativeSpace() {
 	}
 
 	try {
-		const { title, address, description, pricePerHour, photos, coordinate, metroStations, calendar } = formData.value
+		const { title, address, description, pricePerDay, photos, coordinate, metroStations, calendar } = formData.value
 
 		await api.creativeSpaces.update(props.id, {
 			title: isEqual(initialFormData.title, title) ? undefined : title,
@@ -287,7 +297,7 @@ async function patchCreativeSpace() {
 				events: isEqual(initialFormData.calendar.events, calendar.events) ? undefined : calendar.events,
 				link: isEqual(initialFormData.calendar.link, calendar.link) ? undefined : calendar.link || undefined,
 			},
-			pricePerHour: isEqual(initialFormData.pricePerHour, pricePerHour) ? undefined : Number.parseInt(pricePerHour),
+			pricePerDay: isEqual(initialFormData.pricePerDay, pricePerDay) ? undefined : Number.parseInt(pricePerDay),
 		})
 
 		notificationsStore.success('Креативная площадка успешно обновлена')
@@ -299,7 +309,7 @@ async function patchCreativeSpace() {
 
 async function createCreativeSpace() {
 	try {
-		const { title, address, description, pricePerHour, photos, coordinate, metroStations, calendar } = formData.value
+		const { title, address, description, pricePerDay, photos, coordinate, metroStations, calendar } = formData.value
 
 		await api.creativeSpaces.create({
 			title,
@@ -311,7 +321,7 @@ async function createCreativeSpace() {
 				latitude: Number.parseFloat(coordinate.latitude),
 				longitude: Number.parseFloat(coordinate.longitude)
 			},
-			pricePerHour: Number.parseInt(pricePerHour),
+			pricePerDay: Number.parseInt(pricePerDay),
 			calendar: {
 				workDayIndexes: calendar.workDayIndexes,
 				events: calendar.events,
@@ -490,14 +500,14 @@ onCreated()
 					size-md="4"
 				>
 					<ion-input
-						v-model="formData.pricePerHour"
-						v-mask="maskPricePerHour"
-						:class="pricePerHourError && ['ion-invalid', 'ion-touched']"
-						label="Стоимость аренды (₽/час) *"
+						v-model="formData.pricePerDay"
+						v-mask="maskpricePerDay"
+						:class="pricePerDayError && ['ion-invalid', 'ion-touched']"
+						label="Стоимость аренды (₽/день) *"
 						type="number"
 						inputmode="numeric"
 						label-placement="floating"
-						:error-text="pricePerHourError"
+						:error-text="pricePerDayError"
 						helper-text="&nbsp;"
 						:min="0"
 						:max="100000"

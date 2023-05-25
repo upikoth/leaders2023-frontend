@@ -7,7 +7,7 @@ export interface ICreativeSpaceListItem {
 	landlordId: number
 	description: string
 	photos: string[]
-	pricePerHour: number
+	pricePerDay: number
 	metroStations: {
 		id: number
 		name: string
@@ -32,7 +32,7 @@ export interface ICreativeSpace {
 	landlordId: number
 	description: string
 	photos: string[]
-	pricePerHour: number
+	pricePerDay: number
 	metroStations: {
 		id: number
 		name: string
