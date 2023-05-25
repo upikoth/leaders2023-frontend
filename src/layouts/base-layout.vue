@@ -14,7 +14,7 @@ import {
 	IonSplitPane,
 	IonMenu,
 } from '@ionic/vue';
-import { help, people, statsChart, business, arrowRedo, person } from 'ionicons/icons';
+import { help, people, statsChart, business, alert, person } from 'ionicons/icons';
 import { useRouter, useRoute } from 'vue-router'
 
 import { ViewName } from '@/router'
@@ -48,10 +48,10 @@ const navigationItems = computed(() => (
 			isVisible: true
 		},
 		{
-			title: screenStore.isXs ? 'История' : 'История аренды',
+			title: 'Бронирования',
 			href: router.resolve({ name: ViewName.RentalHistoryView }).href,
 			name: ViewName.RentalHistoryView,
-			icon: arrowRedo,
+			icon: alert,
 			handler: () => ionRouter.replace({ name: ViewName.RentalHistoryView }),
 			isVisible: true
 		},

@@ -11,6 +11,7 @@ import {
 	IonRow,
 	IonCol,
 } from '@ionic/vue'
+import type { DatetimeCustomEvent } from '@ionic/vue'
 
 import api from '@/api'
 import type { ICreativeSpace } from '@/api'
@@ -35,13 +36,17 @@ const props = defineProps({
 	landlordId: {
 		type: Number as PropType<number>,
 		default: NaN
+	},
+	selectedCalendarDays: {
+		type: Array as PropType<string[]>,
+		default: () => []
 	}
 })
 
 const emit = defineEmits({
 	'update:landlord-id': (value: number) => typeof value === 'number',
+	'update:selected-calendar-days': (value: string[]) => Array.isArray(value)
 });
-
 
 const creativeSpace = ref<ICreativeSpace | null>(null)
 
@@ -65,7 +70,6 @@ async function updateCreativeSpaceData() {
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })
 	}
 }
-
 
 function checkHighlightedDates(date: string) {
 	if (!creativeSpace.value) {
@@ -141,6 +145,16 @@ async function onImageClick() {
 	modal.present()
 }
 
+function onCalendarChange(event: DatetimeCustomEvent) {
+	const value = event.detail.value
+
+	if (typeof value === 'string') {
+		return;
+	}
+
+	emit('update:selected-calendar-days', value || [])
+}
+
 onCreated()
 </script>
 
@@ -197,25 +211,13 @@ onCreated()
 				</ion-item>
 			</ion-col>
 		</ion-row>
-		<ion-row>
-			<ion-col>
-				<h3>Календарь аренды площадки</h3>
-				<p>
-					В календаре ниже будут отображены доступные дни для аренды
-				</p>
-				<ui-calendar
-					:is-date-enabled="checkIsCalendarDateEnabled"
-					:highlighted-dates="checkHighlightedDates"
-				/>
-			</ion-col>
-		</ion-row>
 		<ion-row v-if="creativeSpace.photos.length">
 			<ion-col>
-				<p
+				<h3
 					class="creative-space-details__photos-title"
 				>
 					Фотографии:
-				</p>
+				</h3>
 				<div
 					class="creative-space-details__photos"
 				>
@@ -230,6 +232,20 @@ onCreated()
 				</div>
 			</ion-col>
 		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3>Календарь аренды площадки</h3>
+				<p>
+					В календаре ниже будут отображены доступные дни для аренды
+				</p>
+				<ui-calendar
+					:is-date-enabled="checkIsCalendarDateEnabled"
+					:highlighted-dates="checkHighlightedDates"
+					multiple
+					@ion-change="onCalendarChange"
+				/>
+			</ion-col>
+		</ion-row>
 	</ion-grid>
 </template>
 
@@ -239,10 +255,6 @@ onCreated()
 
 	&__description {
 		white-space: pre-line;
-	}
-
-	&__photos-title {
-		margin-left: 16px;
 	}
 
 	&__photos {

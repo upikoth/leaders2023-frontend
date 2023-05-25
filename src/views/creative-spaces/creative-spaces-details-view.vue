@@ -29,6 +29,7 @@ const notificationsStore = useNotificationsStore()
 const userStore = useUserStore()
 
 const creativeSpaceLandlordId = ref(NaN)
+const selectedCalendarDays = ref([])
 
 const creativeSpaceId = computed(() => {
 	return Number(route.params.id)
@@ -36,6 +37,10 @@ const creativeSpaceId = computed(() => {
 
 const canUserEditOrRemove = computed(() => {
 	return userStore.isLandlord && creativeSpaceLandlordId.value === userStore.user.id || userStore.isAdmin
+})
+
+const canBookSpace = computed(() => {
+	return userStore.isLandlord && creativeSpaceLandlordId.value !== userStore.user.id || userStore.isTenant
 })
 
 function redirectToCreativeSpacesEditPage() {
@@ -92,6 +97,45 @@ async function deleteCreativeSpace() {
 function redirectToCreativeSpacesPage() {
 	ionRouter.replace({ name: ViewName.CreativeSpacesView })
 }
+
+async function handleBookingButtonClick() {
+	enum ControllerAction {
+		Confirm = 'confirm',
+		Cancel = 'cancel'
+	}
+
+	const actionSheet = await actionSheetController.create({
+		header: 'Вы уверены, что хотите арендовать площадку?',
+		buttons: [
+			{
+				text: 'Да, арендовать площадку',
+				data: {
+					action: ControllerAction.Confirm,
+				},
+			},
+			{
+				text: 'Отменить',
+				role: 'cancel',
+				data: {
+					action: ControllerAction.Cancel,
+				},
+			},
+		],
+		animated: screenStore.isXs,
+	});
+
+	await actionSheet.present();
+
+	const result = await actionSheet.onDidDismiss();
+
+	if (result.data.action === ControllerAction.Confirm) {
+		bookCreativeSpace()
+	}
+}
+
+function bookCreativeSpace() {
+	notificationsStore.success('Дальнейшие шаги в разработке')
+}
 </script>
 
 <template>
@@ -135,19 +179,30 @@ function redirectToCreativeSpacesPage() {
 			<creative-space-details
 				:id="creativeSpaceId"
 				v-model:landlord-id="creativeSpaceLandlordId"
+				v-model:selected-calendar-days="selectedCalendarDays"
 			/>
-			<ion-button
-				v-if="canUserEditOrRemove"
-				class="creative-spaces-details-view__delete-button"
-				color="danger"
-				fill="outline"
-				@click="handleDeleteCreativeSpaceButtonClick"
-			>
-				<ion-icon
-					:icon="trashOutline"
-				/>
-				Удалить площадку
-			</ion-button>
+			<div class="creative-spaces-details-view__content-after">
+				<ion-button
+					v-if="canBookSpace"
+					class="creative-spaces-details-view__booking-button"
+					:disabled="!selectedCalendarDays.length"
+					@click="handleBookingButtonClick"
+				>
+					Арендовать площадку
+				</ion-button>
+				<ion-button
+					v-if="canUserEditOrRemove"
+					class="creative-spaces-details-view__delete-button"
+					color="danger"
+					fill="outline"
+					@click="handleDeleteCreativeSpaceButtonClick"
+				>
+					<ion-icon
+						:icon="trashOutline"
+					/>
+					Удалить площадку
+				</ion-button>
+			</div>
 		</ion-content>
 	</ion-page>
 </template>
@@ -158,10 +213,13 @@ function redirectToCreativeSpacesPage() {
 		margin-right: 20px;
 	}
 
+	&__content-after {
+		padding-left: 20px;
+	}
+
+	&__booking-button,
 	&__delete-button {
-		margin-top: 32px;
 		margin-bottom: 16px;
-		margin-left: 16px;
 	}
 }
 </style>
