@@ -10,11 +10,19 @@ const props = defineProps({
 	},
 	height: {
 		type: String as PropType<string>,
-		required: true,
+		default: '100%',
+	},
+	width: {
+		type: String as PropType<string>,
+		default: '100%',
+	},
+	objectFit: {
+		type: String as PropType<string>,
+		default: 'cover',
 	}
 })
 
-const { height } = toRefs(props)
+const { height, width, objectFit } = toRefs(props)
 </script>
 
 <template>
@@ -39,6 +47,7 @@ const { height } = toRefs(props)
 
 <style lang="scss" scoped>
 .ui-carousel {
+	width: v-bind(width);
 	height: v-bind(height);
 
 	--swiper-theme-color: var(--ion-color-primary);
@@ -48,7 +57,7 @@ const { height } = toRefs(props)
 		display: block;
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		object-fit: v-bind(objectFit);
 	}
 }
 </style>

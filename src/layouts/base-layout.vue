@@ -76,7 +76,7 @@ const navigationItems = computed(() => (
 			href: router.resolve({
 				name: ViewName.UsersDetailsView,
 				params: {
-					id: userStore.user.id
+					userId: userStore.user.id
 				}
 			}).href,
 			name: ViewName.UsersDetailsView,
@@ -84,7 +84,7 @@ const navigationItems = computed(() => (
 			handler: () => ionRouter.replace({
 				name: ViewName.UsersDetailsView,
 				params: {
-					id: userStore.user.id
+					userId: userStore.user.id
 				}
 			}),
 			isVisible: true

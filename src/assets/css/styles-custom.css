@@ -4,3 +4,8 @@
 		bottom: auto !important;
 	}
 }
+
+.full-size-modal {
+	--width: 100%;
+	--height: 100%;
+}

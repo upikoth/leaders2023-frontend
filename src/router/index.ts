@@ -49,12 +49,12 @@ const router = createRouter({
 							component: () => import('@/views/users/users-view.vue')
 						},
 						{
-							path: ':id',
+							path: ':userId',
 							name: ViewName.UsersDetailsView,
 							component: () => import('@/views/users/users-details-view.vue')
 						},
 						{
-							path: ':id/edit',
+							path: ':userId/edit',
 							name: ViewName.UsersEditView,
 							component: () => import('@/views/users/users-edit-view.vue')
 						},

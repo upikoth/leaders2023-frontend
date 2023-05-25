@@ -29,7 +29,7 @@ const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
 
 const userId = computed(() => {
-	return Number(route.params.id)
+	return Number(route.params.userId)
 })
 
 function redirectToUsersEditPage() {

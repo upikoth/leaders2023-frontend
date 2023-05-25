@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import type { PropType } from 'vue'
 import { isBefore, getDay, isEqual as isDateEqual } from 'date-fns'
 import {
+	modalController,
 	useIonRouter,
 	IonItem,
 	IonLabel,
@@ -19,6 +20,7 @@ import environments from '@/environments'
 
 import UiImage from '@/components/ui/ui-image.vue'
 import UiCalendar from '@/components/ui/ui-calendar.vue'
+import UiCalendarModal from '@/components/ui/ui-carousel-modal.vue'
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
@@ -120,6 +122,25 @@ function checkIsCalendarDateEnabled(date: string) {
 	return true
 }
 
+async function onImageClick() {
+	if (!creativeSpace.value?.photos) {
+		return
+	}
+
+	const images = creativeSpace.value.photos.map(el => `${environments.S3_ACCESS_DOMAIN_NAME}/${el}`)
+
+	const modal = await modalController.create({
+		component: UiCalendarModal,
+		cssClass: 'full-size-modal',
+		componentProps: {
+			images,
+			objectFit: 'contain'
+		}
+	})
+
+	modal.present()
+}
+
 onCreated()
 </script>
 
@@ -201,8 +222,10 @@ onCreated()
 					<ui-image
 						v-for="(photoName, i) in creativeSpace.photos"
 						:key="i"
+						class="creative-space-details__photo"
 						:src="`${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`"
 						:size="screenStore.isXs ? '100%' : '180px'"
+						@click="onImageClick"
 					/>
 				</div>
 			</ion-col>
@@ -227,6 +250,10 @@ onCreated()
 		flex-flow: row;
 		flex-wrap: wrap;
 		gap: 12px;
+	}
+
+	&__photo {
+		cursor: zoom-in;
 	}
 
 	ion-item {

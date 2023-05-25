@@ -25,7 +25,7 @@ const props = defineProps({
 })
 
 function redirectToUserDetailsPage() {
-	ionRouter.replace({ name: ViewName.UsersDetailsView, params: { id: props.user.id } })
+	ionRouter.replace({ name: ViewName.UsersDetailsView, params: { userId: props.user.id } })
 }
 </script>
 
