@@ -16,9 +16,9 @@ import { formatPrice } from '@/utils'
 import { ViewName } from '@/router';
 import { useScreenStore } from '@/stores'
 import environments from '@/environments'
+import { workDayIndexShortNameMapping } from '@/constants'
 
 import UiCarousel from '@/components/ui/ui-carousel.vue'
-import UiDot from '@/components/ui/ui-dot.vue'
 
 const ionRouter = useIonRouter()
 
@@ -35,6 +35,9 @@ const emit = defineEmits({
 	'before-redirect-to-details-page': null,
 });
 
+const workDaysText = computed(() => {
+	return props.creativeSpace.calendar.workDayIndexes.map(index => workDayIndexShortNameMapping[index]).join(', ')
+})
 
 const images = computed((): string[] => props.creativeSpace.photos.map(photoName => `${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`))
 
@@ -70,21 +73,8 @@ function redirectToCreativeSpacesDetailsPage() {
 			<p
 				class="creative-space-card__info-metro"
 			>
-				<b class="creative-space-card__info-metro-title">Ближайшее метро:</b>
-				<template 
-					v-if="props.creativeSpace.metroStations.length"
-				>
-					<ui-dot
-						class="creative-space-card__info-metro-color"
-						:color="props.creativeSpace.metroStations[0].color"
-						size="12px"
-					/>
-					{{ props.creativeSpace.metroStations[0].name }},
-					{{ props.creativeSpace.metroStations[0].distanceInMinutes }} мин. пешком
-				</template>
-				<template v-else>
-					нет информации
-				</template>
+				<b class="creative-space-card__info-metro-title">Рабочие дни:</b>
+				{{ workDaysText }}
 			</p>
 			<p class="creative-space-card__info-description">
 				<b>Описание:</b>

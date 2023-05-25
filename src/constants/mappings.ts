@@ -16,3 +16,13 @@ export const workDayIndexMapping = {
 	[`${WeekDayIndex.Saturday}`]: 'Суббота',
 	[`${WeekDayIndex.Sunday}`]: 'Воскресенье',
 }
+
+export const workDayIndexShortNameMapping = {
+	[`${WeekDayIndex.Monday}`]: 'Пн',
+	[`${WeekDayIndex.Tuesday}`]: 'Вт',
+	[`${WeekDayIndex.Wednesday}`]: 'Ср',
+	[`${WeekDayIndex.Thursday}`]: 'Чт',
+	[`${WeekDayIndex.Friday}`]: 'Пт',
+	[`${WeekDayIndex.Saturday}`]: 'Сб',
+	[`${WeekDayIndex.Sunday}`]: 'Вс',
+}
