@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/api/axios'
-import type { ICreativeSpaceListItem, ICreativeSpace } from '@/api'
+import type { ICreativeSpaceListItem, ICreativeSpace, ICalendarEvent } from '@/api'
 
 export interface ICreateCreativeSpaceRequestData {
 	title: string
@@ -15,9 +15,10 @@ export interface ICreateCreativeSpaceRequestData {
 		latitude: number
 		longitude: number
 	}
-	workingHours: {
-		startAt: string
-		endAt: string
+	calendar: {
+		workDayIndexes: number[]
+		events: ICalendarEvent[]
+		link?: string
 	}
 }
 
@@ -49,9 +50,10 @@ export interface IPatchCreativeSpaceRequestBody {
 		latitude?: number
 		longitude?: number
 	}
-	workingHours?: {
-		startAt?: string
-		endAt?: string
+	calendar?: {
+		workDayIndexes?: number[]
+		events?: ICalendarEvent[]
+		link?: string
 	}
 }
 

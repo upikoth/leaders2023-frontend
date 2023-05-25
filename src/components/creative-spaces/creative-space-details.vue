@@ -34,7 +34,7 @@ const creativeSpace = ref<ICreativeSpace | null>(null)
 
 watch(() => props.id, updateCreativeSpaceData)
 
-function created() {
+function onCreated() {
 	updateCreativeSpaceData()
 }
 
@@ -52,7 +52,7 @@ async function updateCreativeSpaceData() {
 	}
 }
 
-created()
+onCreated()
 </script>
 
 <template>

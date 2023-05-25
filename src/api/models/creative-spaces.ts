@@ -1,3 +1,5 @@
+import type { ICalendarEvent } from '@/api'
+
 export interface ICreativeSpaceListItem {
 	id: number
 	title: string
@@ -16,9 +18,10 @@ export interface ICreativeSpaceListItem {
 		latitude: number
 		longitude: number
 	}
-	workingHours: {
-		startAt: string
-		endAt: string
+	calendar: {
+		workDayIndexes: number[]
+		events: ICalendarEvent[]
+		link: string
 	}
 }
 
@@ -40,8 +43,9 @@ export interface ICreativeSpace {
 		latitude: number
 		longitude: number
 	}
-	workingHours: {
-		startAt: string
-		endAt: string
+	calendar: {
+		workDayIndexes: number[]
+		events: ICalendarEvent[]
+		link: string
 	}
 }

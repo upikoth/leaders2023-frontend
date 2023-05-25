@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import {
 	modalController,
 	onIonViewWillEnter,
@@ -58,6 +58,11 @@ onMounted(() => {
 })
 
 watch(() => creativeSpaces.value, updateCreativeSpaceMarkers)
+
+watch(() => displayType.value, async () => {
+	await nextTick()
+	initMap()
+})
 
 function updateCreativeSpaceMarkers(newCreativeSpaces: ICreativeSpaceListItem[], oldCreativeSpaces: ICreativeSpaceListItem[]) {
 	if (!creativeSpaceMap) {
@@ -195,7 +200,7 @@ function changeDisplayType() {
 		</ion-header>
 		<ion-content class="creative-spaces-view__content">
 			<ion-grid
-				v-show="displayType === CreativeSpaceDisplayType.List"
+				v-if="displayType === CreativeSpaceDisplayType.List"
 				class="creative-spaces-view__list"
 			>
 				<ion-row>
@@ -227,7 +232,7 @@ function changeDisplayType() {
 				</ion-row>
 			</ion-grid>
 			<div
-				v-show="displayType === CreativeSpaceDisplayType.Map"
+				v-if="displayType === CreativeSpaceDisplayType.Map"
 				ref="creativeSpaceMapRef"
 				class="creative-spaces-view__map"
 			/>

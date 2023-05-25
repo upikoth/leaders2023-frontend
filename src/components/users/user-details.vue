@@ -31,7 +31,7 @@ const user = ref<IUser | null>(null)
 
 watch(() => props.id, updateUserData)
 
-function created() {
+function onCreated() {
 	updateUserData()
 }
 
@@ -49,7 +49,7 @@ async function updateUserData() {
 	}
 }
 
-created()
+onCreated()
 </script>
 
 <template>

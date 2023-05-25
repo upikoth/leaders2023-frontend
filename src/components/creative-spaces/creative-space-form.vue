@@ -3,7 +3,9 @@ import { ref, watch, computed } from 'vue'
 import type { PropType } from 'vue'
 import debounce from 'lodash.debounce';
 import { useVuelidate } from '@vuelidate/core';
+import { isBefore, getDay, isEqual as isDateEqual } from 'date-fns'
 import {
+	modalController,
 	useIonRouter,
 	IonInput,
 	IonButton,
@@ -20,6 +22,7 @@ import isEqual from 'lodash.isequal'
 
 import { getFilesFromComputer, declOfNum, maskPricePerHour } from '@/utils'
 import api from '@/api'
+import type { ICalendarEvent } from '@/api'
 import { useScreenStore, useNotificationsStore } from '@/stores'
 import { ViewName } from '@/router';
 import { vMask } from '@/directives'
@@ -27,6 +30,10 @@ import environments from '@/environments';
 
 import UiSelect from '@/components/ui/ui-select.vue'
 import UiImage from '@/components/ui/ui-image.vue'
+import UiCalendarWorkDays from '@/components/ui/ui-calendar-work-days.vue'
+import UiCalendar from '@/components/ui/ui-calendar.vue'
+
+import CreativeSpaceAddLinkModal from './creative-space-add-link-modal.vue'
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
@@ -57,9 +64,10 @@ const formData = ref({
 		latitude: '',
 		longitude: '',
 	},
-	workingHours: {
-		startAt: '10:00',
-		endAt: '21:00'
+	calendar: {
+		workDayIndexes: [] as number[],
+		events: [] as ICalendarEvent[],
+		link: '',
 	}
 })
 
@@ -154,7 +162,9 @@ watch(() => addressSearch.value, () => {
 
 watch(() => props.id, updateFormData)
 
-async function created() {
+watch(() => formData.value.calendar, forceUpdateCalendar, { deep: true })
+
+async function onCreated() {
 	if (props.isEdit) {
 		await updateFormData()
 	}
@@ -168,7 +178,7 @@ async function updateFormData() {
 
 	try {
 		const { creativeSpace } = await api.creativeSpaces.get(props.id)
-		const { title, description, address, photos, pricePerHour, coordinate, workingHours } = creativeSpace
+		const { title, description, address, photos, pricePerHour, coordinate, calendar } = creativeSpace
 
 		addressSearch.value = address
 
@@ -178,12 +188,16 @@ async function updateFormData() {
 			description,
 			address,
 			photos,
-			workingHours,
 			pricePerHour: String(pricePerHour),
 			coordinate: {
 				latitude: String(coordinate.latitude),
 				longitude: String(coordinate.longitude),
 			},
+			calendar: {
+				workDayIndexes: calendar.workDayIndexes,
+				events: calendar.events,
+				link: calendar.link || ''
+			}
 		}
 
 		initialFormData = cloneDeep(formData.value)
@@ -256,7 +270,7 @@ async function patchCreativeSpace() {
 	}
 
 	try {
-		const { title, address, description, pricePerHour, photos, coordinate, metroStations, workingHours } = formData.value
+		const { title, address, description, pricePerHour, photos, coordinate, metroStations, calendar } = formData.value
 
 		await api.creativeSpaces.update(props.id, {
 			title: isEqual(initialFormData.title, title) ? undefined : title,
@@ -264,10 +278,14 @@ async function patchCreativeSpace() {
 			description: isEqual(initialFormData.description, description) ? undefined : description,
 			photos: isEqual(initialFormData.photos, photos) ? undefined : photos,
 			metroStations: isEqual(initialFormData.metroStations, metroStations) ? undefined : metroStations,
-			workingHours: isEqual(initialFormData.workingHours, workingHours) ? undefined : workingHours,
 			coordinate: isEqual(initialFormData.coordinate, coordinate) ? undefined : {
 				latitude: Number.parseFloat(coordinate.latitude),
 				longitude: Number.parseFloat(coordinate.longitude)
+			},
+			calendar: {
+				workDayIndexes: isEqual(initialFormData.calendar.workDayIndexes, calendar.workDayIndexes) ? undefined : calendar.workDayIndexes,
+				events: isEqual(initialFormData.calendar.events, calendar.events) ? undefined : calendar.events,
+				link: isEqual(initialFormData.calendar.link, calendar.link) ? undefined : calendar.link || undefined,
 			},
 			pricePerHour: isEqual(initialFormData.pricePerHour, pricePerHour) ? undefined : Number.parseInt(pricePerHour),
 		})
@@ -281,7 +299,7 @@ async function patchCreativeSpace() {
 
 async function createCreativeSpace() {
 	try {
-		const { title, address, description, pricePerHour, photos, coordinate, metroStations, workingHours } = formData.value
+		const { title, address, description, pricePerHour, photos, coordinate, metroStations, calendar } = formData.value
 
 		await api.creativeSpaces.create({
 			title,
@@ -289,12 +307,16 @@ async function createCreativeSpace() {
 			description,
 			photos,
 			metroStations,
-			workingHours,
 			coordinate: {
 				latitude: Number.parseFloat(coordinate.latitude),
 				longitude: Number.parseFloat(coordinate.longitude)
 			},
 			pricePerHour: Number.parseInt(pricePerHour),
+			calendar: {
+				workDayIndexes: calendar.workDayIndexes,
+				events: calendar.events,
+				link: calendar.link || undefined,
+			}
 		})
 
 		notificationsStore.success('Креативная площадка успешно создана')
@@ -322,7 +344,111 @@ async function addFile(file: File) {
 	}
 }
 
-created()
+async function addCalendarLink() {
+	try {
+		const modal = await modalController.create({
+			component: CreativeSpaceAddLinkModal,
+		})
+
+		modal.present()
+
+		const { data } = await modal.onWillDismiss();
+
+		if (!data.link) {
+			return
+		}
+
+		const { events } = await api.calendars.convertCalendarLinkToEvents(data.link)
+		const uniqEvents = events.filter(event => !formData.value.calendar.events.some(existEvent => {
+			return isDateEqual(new Date(event.date), new Date(existEvent.date))
+		}))
+
+		formData.value.calendar.link = data.link
+		formData.value.calendar.events.push(...uniqEvents)
+		forceUpdateCalendar()
+		notificationsStore.success('События успешно загружены в календарь площадки')
+	} catch {
+		notificationsStore.error('Не удалось прикрепить ссылку, попробуйте еще раз')
+	}
+}
+
+async function addCalendarFile() {
+	getFilesFromComputer(async (files) => {
+		const calendar = files[0]
+
+		if (calendar.type !== 'text/calendar') {
+			notificationsStore.error('Некорректный формат файла')
+			return
+		}
+
+		try {
+			const { events } = await api.calendars.convertCalendarToEvents({ calendar })
+			const uniqEvents = events.filter(event => !formData.value.calendar.events.some(existEvent => {
+				return isDateEqual(new Date(event.date), new Date(existEvent.date))
+			}))
+
+			formData.value.calendar.events.push(...uniqEvents)
+			forceUpdateCalendar()
+			notificationsStore.success('События успешно загружены в календарь площадки')
+		} catch {
+			notificationsStore.error('Не удалось загрузить календарь, попробуйте еще раз')
+		}
+	}, { multiple: false, accept: 'text/calendar' })
+}
+
+function checkHighlightedDates(date: string) {
+	// Все не рабочие дни.
+	if(!formData.value.calendar.workDayIndexes.includes(getDay(new Date(date)))){
+		return {
+			textColor: '#800080',
+			backgroundColor: '#ffe5e9',
+		}
+	}
+
+	// Все предыдущие дни.
+	if (isBefore(new Date(date), new Date())) {
+		return {
+			textColor: '#800080',
+			backgroundColor: '#ffe5e9',
+		}
+	}
+
+	// День уже забронирован.
+	if(formData.value.calendar.events.some(event => isDateEqual(new Date(event.date), new Date(date)))) {
+		return {
+			textColor: '#800080',
+			backgroundColor: '#ffe5e9',
+		}
+	}
+
+	return undefined
+}
+
+function checkIsCalendarDateEnabled(date: string) {
+	// Все предыдущие дни.
+	if (isBefore(new Date(date), new Date())) {
+		return false
+	}
+
+	// Все не рабочие дни.
+	if(!formData.value.calendar.workDayIndexes.includes(getDay(new Date(date)))){
+		return false
+	}
+
+	// День уже забронирован.
+	if(formData.value.calendar.events.some(event => isDateEqual(new Date(event.date), new Date(date)))) {
+		return false
+	}
+
+	return true
+}
+
+const calendarForceUpdateKey = ref(0)
+function forceUpdateCalendar() {
+	calendarForceUpdateKey.value += 1
+}
+
+onCreated()
 </script>
 
 <template>
@@ -333,6 +459,11 @@ created()
 		<ion-grid
 			class="creative-space-form__grid"
 		>
+			<ion-row>
+				<ion-col>
+					<h3>Основная информация</h3>
+				</ion-col>
+			</ion-row>
 			<ion-row>
 				<ion-col
 					size="12"
@@ -402,6 +533,51 @@ created()
 			</ion-row>
 			<ion-row>
 				<ion-col>
+					<h3>График работы</h3>
+					<p>
+						Выберите доступные для аренды дни недели
+					</p>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col
+					size="12"
+					size-sm="6"
+				>
+					<ui-calendar-work-days v-model:work-day-indexes="formData.calendar.workDayIndexes" />
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<h3>Календарь аренды площадки</h3>
+					<p>Импортировать события из другого календаря</p>
+					<p>Загрузите файл в формате .ics или прикрепите ссылку iCal</p>
+					<ion-button
+						class="creative-space-form__add-calendar-file-button"
+						fill="outline"
+						@click="addCalendarFile"
+					>
+						Загрузить файл
+					</ion-button>
+					<ion-button
+						fill="outline"
+						@click="addCalendarLink"
+					>
+						Прикрепить ссылку
+					</ion-button>
+					<p>
+						В календаре ниже будут отображены доступные дни для аренды
+					</p>
+					<ui-calendar
+						:key="calendarForceUpdateKey"
+						:is-date-enabled="checkIsCalendarDateEnabled"
+						:highlighted-dates="checkHighlightedDates"
+					/>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<h3>Фотографии</h3>
 					<ion-button
 						fill="outline"
 						@click="addFiles"
@@ -455,6 +631,10 @@ created()
 
 	&__grid {
 		padding: 0;
+	}
+
+	&__add-calendar-file-button {
+		margin-right: 16px;
 	}
 
 	&__photos {

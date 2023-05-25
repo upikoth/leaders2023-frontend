@@ -18,7 +18,7 @@ const userStore = useUserStore()
 
 const isScriptLoaded = ref(false)
 
-async function created() {
+async function onCreated() {
 	checkAuthorization()
 	await loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
 	isScriptLoaded.value = true
@@ -34,7 +34,7 @@ async function checkAuthorization() {
 	// Если не авторизован, то переход на страницу авторизации будет сделан в axios interceptor.
 }
 
-created()
+onCreated()
 </script>
 <template>
 	<ion-app>

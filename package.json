@@ -29,6 +29,7 @@
     "@upikoth/leaders2023-admin-docs": "^1.0.0",
     "@vuelidate/core": "^2.0.2",
     "@vuelidate/validators": "^2.0.2",
+    "date-fns": "^2.30.0",
     "imask": "^6.6.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",

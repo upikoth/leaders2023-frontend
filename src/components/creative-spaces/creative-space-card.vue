@@ -67,10 +67,6 @@ function redirectToCreativeSpacesDetailsPage() {
 				<b>Стоимость:</b>
 				{{ formatPrice(props.creativeSpace.pricePerHour) }}/час
 			</p>
-			<p>
-				<b>Часы работы:</b>
-				{{ props.creativeSpace.workingHours.startAt }} - {{ props.creativeSpace.workingHours.endAt }}
-			</p>
 			<p
 				class="creative-space-card__info-metro"
 			>
