@@ -348,6 +348,10 @@ async function addCalendarLink() {
 	try {
 		const modal = await modalController.create({
 			component: CreativeSpaceAddLinkModal,
+			componentProps: {
+				isEdit: props.isEdit,
+				link: formData.value.calendar.link
+			}
 		})
 
 		modal.present()
@@ -563,7 +567,7 @@ onCreated()
 						fill="outline"
 						@click="addCalendarLink"
 					>
-						Прикрепить ссылку
+						{{ props.isEdit && formData.calendar.link ? 'Обновить ссылку' : 'Прикрепить ссылку' }}
 					</ion-button>
 					<p>
 						В календаре ниже будут отображены доступные дни для аренды

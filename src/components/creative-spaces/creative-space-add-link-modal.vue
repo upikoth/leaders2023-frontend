@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, toRefs } from 'vue'
+import type { PropType } from 'vue'
 import {
 	modalController,
 	IonHeader,
@@ -16,9 +17,21 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
 import { useNotificationsStore } from '@/stores'
 
+const props = defineProps({
+	isEdit: {
+		type: Boolean as PropType<boolean>,
+		default: false
+	},
+	link: {
+		type: String as PropType<string>,
+		default: ''
+	},
+})
+
 const notificationsStore = useNotificationsStore()
 
-const link = ref('')
+const { link } = toRefs(props)
+
 const linkInputRef = ref<typeof IonInput>()
 
 const rules = {
@@ -65,7 +78,9 @@ async function sumbit() {
 						Закрыть
 					</ion-button>
 				</ion-buttons>
-				<ion-title>Добавление ссылки на календарь</ion-title>
+				<ion-title>
+					{{ props.isEdit ? 'Обновление ссылки на календарь' : 'Добавление ссылки на календарь' }}
+				</ion-title>
 			</ion-toolbar>
 		</ion-header>
 		<ion-content>

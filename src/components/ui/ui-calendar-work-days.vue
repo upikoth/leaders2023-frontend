@@ -12,6 +12,10 @@ const props = defineProps({
 		type: Object as PropType<number[]>,
 		required: true,
 	},
+	disabled: {
+		type: Boolean as PropType<boolean>,
+		default: false,
+	}
 })
 
 const emit = defineEmits({
@@ -40,6 +44,7 @@ function updateWorkDays(event: CheckboxCustomEvent, weekDayIndex: number) {
 			v-for="weekDay in weekDays"
 			:key="weekDay.index"
 			:checked="props.workDayIndexes.includes(weekDay.index)"
+			:disabled="props.disabled"
 			@ion-change="updateWorkDays($event, weekDay.index)"
 		>
 			{{ weekDay.label }}

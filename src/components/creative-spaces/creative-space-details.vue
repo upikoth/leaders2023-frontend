@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { PropType } from 'vue'
+import { isBefore, getDay, isEqual as isDateEqual } from 'date-fns'
 import {
 	useIonRouter,
 	IonItem,
@@ -17,6 +18,7 @@ import { ViewName } from '@/router';
 import environments from '@/environments'
 
 import UiImage from '@/components/ui/ui-image.vue'
+import UiCalendar from '@/components/ui/ui-calendar.vue'
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
@@ -52,13 +54,69 @@ async function updateCreativeSpaceData() {
 	}
 }
 
+
+function checkHighlightedDates(date: string) {
+	if (!creativeSpace.value) {
+		return undefined
+	}
+
+	// Все не рабочие дни.
+	if(!creativeSpace.value.calendar.workDayIndexes.includes(getDay(new Date(date)))){
+		return {
+			textColor: '#800080',
+			backgroundColor: '#ffe5e9',
+		}
+	}
+
+	// Все предыдущие дни.
+	if (isBefore(new Date(date), new Date())) {
+		return {
+			textColor: '#800080',
+			backgroundColor: '#ffe5e9',
+		}
+	}
+
+	// День уже забронирован.
+	if(creativeSpace.value.calendar.events.some(event => isDateEqual(new Date(event.date), new Date(date)))) {
+		return {
+			textColor: '#800080',
+			backgroundColor: '#ffe5e9',
+		}
+	}
+
+	return undefined
+}
+
+function checkIsCalendarDateEnabled(date: string) {
+	if (!creativeSpace.value) {
+		return undefined
+	}
+
+	// Все предыдущие дни.
+	if (isBefore(new Date(date), new Date())) {
+		return false
+	}
+
+	// Все не рабочие дни.
+	if(!creativeSpace.value.calendar.workDayIndexes.includes(getDay(new Date(date)))){
+		return false
+	}
+
+	// День уже забронирован.
+	if(creativeSpace.value.calendar.events.some(event => isDateEqual(new Date(event.date), new Date(date)))) {
+		return false
+	}
+
+	return true
+}
+
 onCreated()
 </script>
 
 <template>
 	<ion-grid
 		v-if="creativeSpace"
-		class="creative-space-details__grid"
+		class="creative-space-details"
 	>
 		<ion-row>
 			<ion-col
@@ -108,6 +166,18 @@ onCreated()
 				</ion-item>
 			</ion-col>
 		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3>Календарь аренды площадки</h3>
+				<p>
+					В календаре ниже будут отображены доступные дни для аренды
+				</p>
+				<ui-calendar
+					:is-date-enabled="checkIsCalendarDateEnabled"
+					:highlighted-dates="checkHighlightedDates"
+				/>
+			</ion-col>
+		</ion-row>
 		<ion-row v-if="creativeSpace.photos.length">
 			<ion-col>
 				<p
@@ -134,10 +204,6 @@ onCreated()
 .creative-space-details {
 	padding: 16px;
 
-	&__grid {
-		padding: 0;
-	}
-
 	&__description {
 		white-space: pre-line;
 	}
@@ -151,6 +217,10 @@ onCreated()
 		flex-flow: row;
 		flex-wrap: wrap;
 		gap: 12px;
+	}
+
+	ion-item {
+		--padding-start: 0;
 	}
 }
 </style>
