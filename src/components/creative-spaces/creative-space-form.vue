@@ -3,9 +3,10 @@ import { ref, watch, computed } from 'vue'
 import type { PropType } from 'vue'
 import debounce from 'lodash.debounce';
 import { useVuelidate } from '@vuelidate/core';
-import { isBefore, getDay, isEqual as isDateEqual } from 'date-fns'
+import { isBefore, getDay, isEqual as isDateEqual, format } from 'date-fns'
 import {
 	modalController,
+	actionSheetController,
 	useIonRouter,
 	IonInput,
 	IonButton,
@@ -15,6 +16,7 @@ import {
 	IonRow,
 	IonCol,
 } from '@ionic/vue'
+import type { DatetimeCustomEvent } from '@ionic/vue'
 import { addOutline } from 'ionicons/icons';
 import { required, minLength, helpers } from '@vuelidate/validators';
 import cloneDeep from 'lodash.clonedeep'
@@ -92,6 +94,12 @@ const rules = {
 			required: helpers.withMessage('Добавьте фотографию', required),
 			minLength: helpers.withMessage('Добавьте фотографию', minLength(1))
 		},
+		calendar: {
+			workDayIndexes: {
+				required: helpers.withMessage('Укажите рабочий день', required),
+				minLength: helpers.withMessage('Укажите рабочий день', minLength(1))
+			}
+		}
 	}
 };
 
@@ -153,6 +161,16 @@ const photosError = computed((): string => {
 	}
 
 	const message = v$.value.formData.photos.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const workDayIndexesError = computed((): string => {
+	if (!v$.value.formData.calendar.workDayIndexes.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.calendar.workDayIndexes.$errors[0].$message;
 
 	return typeof message === 'string' ? message : '';
 });
@@ -449,17 +467,57 @@ function checkIsCalendarDateEnabled(date: string) {
 		return false
 	}
 
-	// День уже забронирован.
-	if(formData.value.calendar.events.some(event => isDateEqual(new Date(event.date), new Date(date)))) {
-		return false
-	}
-
 	return true
 }
 
 const calendarForceUpdateKey = ref(0)
 function forceUpdateCalendar() {
 	calendarForceUpdateKey.value += 1
+}
+
+async function onCalendarChange(event: DatetimeCustomEvent) {
+	const formattedDate = format(new Date(event.detail.value as string), "yyyy-MM-dd")
+	const isDayExist = formData.value.calendar.events.some(event => event.date === formattedDate)
+
+	enum ControllerAction {
+		Confirm = 'confirm',
+		Cancel = 'cancel'
+	}
+
+	const actionSheet = await actionSheetController.create({
+		header: isDayExist ? 'Удалить событие из календаря?' : 'Забронировать выбранный день?',
+		buttons: [
+			{
+				text: isDayExist ? 'Да, удалить' : 'Да, забронировать',
+				role: isDayExist ? 'destructive' : undefined,
+				data: {
+					action: ControllerAction.Confirm,
+				},
+			},
+			{
+				text: 'Отменить',
+				role: 'cancel',
+				data: {
+					action: ControllerAction.Cancel,
+				},
+			},
+		],
+		animated: screenStore.isXs,
+	});
+
+	await actionSheet.present();
+
+	const result = await actionSheet.onDidDismiss();
+
+	if (result.data.action !== ControllerAction.Confirm) {
+		return
+	}
+
+	if (isDayExist) {
+		formData.value.calendar.events = formData.value.calendar.events.filter(event => event.date !== formattedDate)
+	} else {
+		formData.value.calendar.events = [...formData.value.calendar.events, { date: formattedDate }]
+	}
 }
 
 onCreated()
@@ -551,6 +609,11 @@ onCreated()
 					<p>
 						Выберите доступные для аренды дни недели
 					</p>
+					<p
+						:class="workDayIndexesError ? 'creative-space-form__work-day-indexes-required-info_error' : ''"
+					>
+						Для создания площадки должен быть выбран минимум 1 день
+					</p>
 				</ion-col>
 			</ion-row>
 			<ion-row>
@@ -586,6 +649,7 @@ onCreated()
 						:key="calendarForceUpdateKey"
 						:is-date-enabled="checkIsCalendarDateEnabled"
 						:highlighted-dates="checkHighlightedDates"
+						@ion-change="onCalendarChange"
 					/>
 				</ion-col>
 			</ion-row>
@@ -662,6 +726,7 @@ onCreated()
 		margin-top: 32px;
 	}
 
+	&__work-day-indexes-required-info,
 	&__photo-required-info {
 		&_error {
 			color: red;
