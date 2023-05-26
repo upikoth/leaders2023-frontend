@@ -48,7 +48,7 @@ const navigationItems = computed(() => (
 			isVisible: true
 		},
 		{
-			title: 'Бронирования',
+			title: 'Мои заказы',
 			href: router.resolve({ name: ViewName.RentalHistoryView }).href,
 			name: ViewName.RentalHistoryView,
 			icon: alert,
