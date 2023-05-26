@@ -7,7 +7,6 @@ export enum ViewName {
 	UsersView = 'USERS',
 	UsersDetailsView = 'USERS_DETAILS',
 	UsersEditView = 'USERS_EDIT',
-	StatsView = 'STATS_VIEW',
 	CreativeSpacesView = 'CREATIVE_SPACES',
 	CreativeSpacesDetailsView = 'CREATIVE_SPACES_DETAILS',
 	CreativeSpacesCreateView = 'CREATIVE_SPACES_CREATE',
@@ -59,11 +58,6 @@ const router = createRouter({
 							component: () => import('@/views/users/users-edit-view.vue')
 						},
 					]
-				},
-				{
-					path: 'stats',
-					name: ViewName.StatsView,
-					component: () => import('@/views/stats-view.vue')
 				},
 				{
 					path: 'creative-spaces',
@@ -125,17 +119,7 @@ const router = createRouter({
 })
 
 export function getMainViewName() {
-	const userStore = useUserStore()
-
-	if (userStore.isTenant) {
-		return ViewName.CreativeSpacesView
-	}
-
-	if (userStore.isAdmin || userStore.isLandlord) {
-		return ViewName.StatsView
-	}
-
-	return ViewName.StatsView
+	return ViewName.CreativeSpacesView
 }
 
 router.beforeEach((to, _, next) => {

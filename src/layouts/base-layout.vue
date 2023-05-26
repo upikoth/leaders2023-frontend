@@ -32,14 +32,6 @@ const userStore = useUserStore()
 const navigationItems = computed(() => (
 	[
 		{
-			title: 'Статистика',
-			href: router.resolve({ name: ViewName.StatsView }).href,
-			name: ViewName.StatsView,
-			icon: statsChart,
-			handler: () => ionRouter.replace({ name: ViewName.StatsView }),
-			isVisible: userStore.isAdmin || userStore.isLandlord
-		},
-		{
 			title: screenStore.isXs ? 'Площадки' : 'Креативные площадки',
 			href: router.resolve({ name: ViewName.CreativeSpacesView }).href,
 			name: ViewName.CreativeSpacesView,
