@@ -14,7 +14,7 @@ import {
 	IonSplitPane,
 	IonMenu,
 } from '@ionic/vue';
-import { help, people, statsChart, business, alert, person } from 'ionicons/icons';
+import { help, people, business, alert, person } from 'ionicons/icons';
 import { useRouter, useRoute } from 'vue-router'
 
 import { ViewName } from '@/router'
