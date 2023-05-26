@@ -40,7 +40,7 @@ const canUserEditOrRemove = computed(() => {
 })
 
 const canBookSpace = computed(() => {
-	return userStore.isLandlord && creativeSpaceLandlordId.value !== userStore.user.id || userStore.isTenant
+	return userStore.isTenant
 })
 
 function redirectToCreativeSpacesEditPage() {
