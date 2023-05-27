@@ -4,9 +4,13 @@ import { defineStore } from 'pinia'
 import api, { UserRole } from '@/api'
 import type { IUser } from '@/api'
 
+import { useFiltersStore } from '@/stores'
+
 import { IStoreNameEnum } from './index.types'
 
 export const useUserStore = defineStore(IStoreNameEnum.User, () => {
+	const filtersStore = useFiltersStore()
+
   const isAuthorized = ref(false)
 	const isAuthorizationChecked = ref(false)
 
@@ -36,10 +40,12 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 
 	function setUnauthorized() {
 		isAuthorized.value = false
+		filtersStore.clearCreativeSpacesFilters()
 	}
 
 	function setAuthorized() {
 		isAuthorized.value = true
+		filtersStore.clearCreativeSpacesFilters()
 	}
 
   return {
