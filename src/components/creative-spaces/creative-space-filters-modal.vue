@@ -11,17 +11,19 @@ import {
 	IonCard,
 	IonCardContent,
 	IonInput,
+	IonCheckbox,
 } from '@ionic/vue'
-import type { DatetimeCustomEvent } from '@ionic/vue'
+import type { DatetimeCustomEvent, CheckboxCustomEvent } from '@ionic/vue'
 import { isBefore } from 'date-fns'
 
-import { useFiltersStore } from '@/stores'
+import { useFiltersStore, useUserStore } from '@/stores'
 import { vMask } from '@/directives'
 import { maskpricePerDay } from '@/utils'
 
 import UiCalendar from '@/components/ui/ui-calendar.vue'
 
 const filtersStore = useFiltersStore()
+const userStore = useUserStore()
 
 const filters = ref({
 	...filtersStore.creativeSpacesFilters
@@ -57,6 +59,10 @@ function sumbit() {
 	filtersStore.patchCreativeSpacesFilters(filters.value)
 	closeModal()
 }
+
+function handleOnlyMySpacesCheckboxChange(event: CheckboxCustomEvent) {
+	filters.value.landlordId = event.detail.checked ? userStore.user.id : 0;
+}
 </script>
 
 <template>
@@ -76,6 +82,14 @@ function sumbit() {
 		<ion-content>
 			<ion-card class="creative-space-filters-modal__card">
 				<ion-card-content class="creative-space-filters-modal__card-content">
+					<ion-checkbox
+						v-if="userStore.isLandlord"
+						class="creative-space-filters-modal__only-my-spaces-filter"
+						:checked="!!filters.landlordId"
+						@ion-change="handleOnlyMySpacesCheckboxChange"
+					>
+						Показывать только мои площадки
+					</ion-checkbox>
 					<ion-input
 						v-model="filters.pricePerDayFrom"
 						v-mask="maskpricePerDay"
@@ -143,6 +157,11 @@ function sumbit() {
 			margin-bottom: 12px;
 			font-size: 15px;
 		}
+	}
+
+	&__only-my-spaces-filter {
+		padding-top: 12px;
+		padding-bottom: 12px;
 	}
 
 	&__buttons {

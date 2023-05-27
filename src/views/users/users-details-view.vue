@@ -15,7 +15,7 @@ import {
 import { useRoute } from 'vue-router'
 import { createOutline, trashOutline, logOutOutline, chevronBackOutline } from 'ionicons/icons';
 
-import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
+import { useScreenStore, useNotificationsStore, useUserStore, useFiltersStore } from '@/stores'
 import { ViewName } from '@/router';
 import api from '@/api'
 
@@ -27,6 +27,7 @@ const route = useRoute()
 const userStore = useUserStore()
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
+const filtersStore = useFiltersStore()
 
 const userId = computed(() => {
 	return Number(route.params.userId)
@@ -92,6 +93,7 @@ async function handleLogoutButtonClick() {
 		await api.session.delete()
 
 		userStore.setUnauthorized()
+		filtersStore.clearCreativeSpacesFilters()
 		ionRouter.replace({ name: ViewName.SignInView })
 	} catch {
 		notificationsStore.error('Не удалось выйти из приложения')

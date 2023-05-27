@@ -80,6 +80,13 @@ const creativeSpacesFiltered = computed(() => {
 			return false
 		}
 
+		if (
+			filtersStore.creativeSpacesFilters.landlordId &&
+			space.landlordId !== filtersStore.creativeSpacesFilters.landlordId
+		) {
+			return false
+		}
+
 		return true
 	})
 })
@@ -120,6 +127,7 @@ function updateCreativeSpaceMarkers(newCreativeSpaces: ICreativeSpaceListItem[],
 		const markerToAdd = generateCreativeSpaceMarker(space)
 
 		creativeSpaceMap?.addChild(markerToAdd)
+		creativeSpacesMarkers.set(space.id, markerToAdd)
 	})
 }
 
