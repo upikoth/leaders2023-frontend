@@ -87,10 +87,6 @@ function redirectToBookingDetailsPage() {
 				<b class="booking-card__info-metro-title">Даты аренды:</b>
 				{{ bookingDaysText }}
 			</p>
-			<p class="booking-card__info-description">
-				<b>Описание:</b>
-				{{ props.booking.creativeSpace.description }}
-			</p>
 			<ion-button
 				class="booking-card__details-button"
 				fill="outline"

@@ -22,6 +22,10 @@ export interface IGetBookingsResponseData{
 	bookings: IBookingListItem[]
 }
 
+export interface IGetBookingResponseData {
+	booking: IBooking
+}
+
 export default {
 	create(data: ICreateBookingRequestData): Promise<ICreateBookingResponseData> {
 		return axiosInstance.post('/api/v1/booking', data)
@@ -29,7 +33,7 @@ export default {
 	getAll(): Promise<IGetBookingsResponseData> {
 		return axiosInstance.get('/api/v1/bookings')
 	},
-	get(id: number): Promise<IBooking> {
+	get(id: number): Promise<IGetBookingResponseData> {
 		return axiosInstance.get(`/api/v1/bookings/${id}`)
 	},
 	update(id: number, data: IPatchBookingRequestBody): Promise<void> {

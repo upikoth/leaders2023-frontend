@@ -16,7 +16,8 @@ import type { DatetimeCustomEvent } from '@ionic/vue'
 import api from '@/api'
 import type { ICreativeSpace } from '@/api'
 import { useNotificationsStore, useScreenStore } from '@/stores'
-import { ViewName } from '@/router';
+import { ViewName } from '@/router'
+import { formatPrice } from '@/utils'
 import environments from '@/environments'
 
 import UiImage from '@/components/ui/ui-image.vue'
@@ -182,7 +183,7 @@ onCreated()
 				<ion-item>
 					<ion-label>
 						Стоимость аренды (₽/день):
-						<p>{{ creativeSpace.pricePerDay }}</p>
+						<p>{{ formatPrice(creativeSpace.pricePerDay) }}</p>
 					</ion-label>
 				</ion-item>
 			</ion-col>
