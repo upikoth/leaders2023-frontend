@@ -29,7 +29,7 @@ const notificationsStore = useNotificationsStore()
 const userStore = useUserStore()
 
 const creativeSpaceLandlordId = ref(NaN)
-const selectedCalendarDays = ref([])
+const selectedCalendarDays = ref<string[]>([])
 
 const creativeSpaceId = computed(() => {
 	return Number(route.params.id)
@@ -133,8 +133,19 @@ async function handleBookingButtonClick() {
 	}
 }
 
-function bookCreativeSpace() {
-	notificationsStore.success('Дальнейшие шаги в разработке')
+async function bookCreativeSpace() {
+	try {
+		await api.bookings.create({
+			creativeSpaceId: creativeSpaceId.value,
+			calendarEvents: selectedCalendarDays.value.map(date => ({ date }))
+		})
+
+		ionRouter.replace({ name: ViewName.BookingsView })
+
+		notificationsStore.success('Креативная площадка успешно забронирована')
+	} catch {
+		notificationsStore.error('Не удалось забронировать креативную площадку')
+	}
 }
 </script>
 

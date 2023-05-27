@@ -6,6 +6,7 @@ import addresses from './routes/addresses'
 import users from './routes/users'
 import files from './routes/files'
 import calendars from './routes/calendars'
+import bookings from './routes/bookings'
 
 export * from './routes/health'
 export * from './routes/session'
@@ -15,6 +16,7 @@ export * from './routes/addresses'
 export * from './routes/users'
 export * from './routes/files'
 export * from './routes/calendars'
+export * from './routes/bookings'
 
 export * from './models'
 
@@ -27,4 +29,5 @@ export default {
 	users,
 	files,
 	calendars,
+	bookings,
 }

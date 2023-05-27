@@ -1,4 +1,4 @@
-import { UserRole } from '@/api'
+import { UserRole, BookingStatusEnum } from '@/api'
 import { WeekDayIndex } from '@/constants'
 
 export const userRoleMapping = {
@@ -25,4 +25,16 @@ export const workDayIndexShortNameMapping = {
 	[`${WeekDayIndex.Friday}`]: 'Пт',
 	[`${WeekDayIndex.Saturday}`]: 'Сб',
 	[`${WeekDayIndex.Sunday}`]: 'Вс',
+}
+
+export const bookingStatusNameMapping = {
+	[`${BookingStatusEnum.ConfirmationByLandlord}`]: 'Ожидает подтверждения',
+	[`${BookingStatusEnum.ConfirmedByLandlord}`]: 'Подтверждено',
+	[`${BookingStatusEnum.FinishedByTenant}`]: 'Аренда завершена',
+}
+
+export const bookingStatusBadgeColorMapping = {
+	[`${BookingStatusEnum.ConfirmationByLandlord}`]: 'warning',
+	[`${BookingStatusEnum.ConfirmedByLandlord}`]: 'primary',
+	[`${BookingStatusEnum.FinishedByTenant}`]: 'success',
 }
