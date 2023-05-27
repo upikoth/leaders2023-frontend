@@ -1,4 +1,4 @@
-import type { ICalendarEvent } from '@/api'
+import type { ICalendarEvent, ICalendarEventFull } from '@/api'
 
 export interface ICreativeSpaceListItem {
 	id: number
@@ -45,7 +45,7 @@ export interface ICreativeSpace {
 	}
 	calendar: {
 		workDayIndexes: number[]
-		events: ICalendarEvent[]
+		events: ICalendarEventFull[]
 		link: string
 	}
 }

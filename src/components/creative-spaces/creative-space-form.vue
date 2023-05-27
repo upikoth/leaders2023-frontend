@@ -24,7 +24,7 @@ import isEqual from 'lodash.isequal'
 
 import { getFilesFromComputer, declOfNum, maskpricePerDay } from '@/utils'
 import api from '@/api'
-import type { ICalendarEvent } from '@/api'
+import type { ICalendarEventFull } from '@/api'
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router'
 import { vMask } from '@/directives'
@@ -69,7 +69,7 @@ const formData = ref({
 	},
 	calendar: {
 		workDayIndexes: [] as number[],
-		events: [] as ICalendarEvent[],
+		events: [] as ICalendarEventFull[],
 		link: '',
 	}
 })
@@ -393,7 +393,7 @@ async function addCalendarLink() {
 		const { events } = await api.calendars.convertCalendarLinkToEvents(data.link)
 		const uniqEvents = events.filter(event => !formData.value.calendar.events.some(existEvent => {
 			return isDateEqual(new Date(event.date), new Date(existEvent.date))
-		}))
+		})).map(el => ({ ...el, bookingId: 0 }))
 
 		formData.value.calendar.link = data.link
 		formData.value.calendar.events.push(...uniqEvents)
@@ -417,7 +417,7 @@ async function addCalendarFile() {
 			const { events } = await api.calendars.convertCalendarToEvents({ calendar })
 			const uniqEvents = events.filter(event => !formData.value.calendar.events.some(existEvent => {
 				return isDateEqual(new Date(event.date), new Date(existEvent.date))
-			}))
+			})).map(el => ({ ...el, bookingId: 0 }))
 
 			formData.value.calendar.events.push(...uniqEvents)
 			forceUpdateCalendar()
@@ -467,6 +467,11 @@ function checkIsCalendarDateEnabled(date: string) {
 		return false
 	}
 
+	// Все дни, на которые есть бронь.
+	if(Number(formData.value.calendar.events.find(event => event.date === date)?.bookingId) > 0){
+		return false
+	}
+
 	return true
 }
 
@@ -485,10 +490,10 @@ async function onCalendarChange(event: DatetimeCustomEvent) {
 	}
 
 	const actionSheet = await actionSheetController.create({
-		header: isDayExist ? 'Удалить событие из календаря?' : 'Забронировать выбранный день?',
+		header: isDayExist ? 'Открыть бронь на выбранный день?' : 'Закрыть бронь на выбранный день?',
 		buttons: [
 			{
-				text: isDayExist ? 'Да, удалить' : 'Да, забронировать',
+				text: isDayExist ? 'Да, открыть' : 'Да, закрыть',
 				role: isDayExist ? 'destructive' : undefined,
 				data: {
 					action: ControllerAction.Confirm,
@@ -516,7 +521,7 @@ async function onCalendarChange(event: DatetimeCustomEvent) {
 	if (isDayExist) {
 		formData.value.calendar.events = formData.value.calendar.events.filter(event => event.date !== formattedDate)
 	} else {
-		formData.value.calendar.events = [...formData.value.calendar.events, { date: formattedDate }]
+		formData.value.calendar.events = [...formData.value.calendar.events, { date: formattedDate, bookingId: 0 }]
 	}
 }
 
