@@ -46,7 +46,7 @@ const isCreativeSpaceHasBookings = computed(() => {
 })
 
 const canUserRemoveSpace = computed(() => {
-	return (userStore.isLandlord && creativeSpaceLandlordId.value === userStore.user.id || userStore.isAdmin) && !isCreativeSpaceHasBookings.value
+	return userStore.isLandlord && creativeSpaceLandlordId.value === userStore.user.id || userStore.isAdmin
 })
 
 const canBookSpace = computed(() => {
@@ -94,6 +94,11 @@ async function handleDeleteCreativeSpaceButtonClick() {
 }
 
 async function deleteCreativeSpace() {
+	if (isCreativeSpaceHasBookings.value) {
+		notificationsStore.error('Нельзя удалить площадку. На нее есть бронь')
+		return
+	}
+
 	try {
 		await api.creativeSpaces.delete(creativeSpaceId.value)
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })
