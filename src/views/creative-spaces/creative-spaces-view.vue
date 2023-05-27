@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import {
 	modalController,
 	onIonViewWillEnter,
@@ -16,16 +16,18 @@ import {
 	IonButtons,
 	IonIcon,
 } from '@ionic/vue'
-import { addOutline, mapOutline } from 'ionicons/icons';
+import { addOutline, mapOutline, settingsOutline } from 'ionicons/icons';
 import type { YMap } from '@yandex/ymaps3-types'
+import { getDay } from 'date-fns'
 
 import api from '@/api'
 import type { ICreativeSpaceListItem } from '@/api'
-import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
+import { useNotificationsStore, useScreenStore, useUserStore, useFiltersStore } from '@/stores'
 import { ViewName } from '@/router';
 
 import CreativeSpaceCard from '@/components/creative-spaces/creative-space-card.vue'
 import CreativeSpaceModal from '@/components/map/creative-space-modal.vue'
+import CreativeSpaceFiltersModal from '@/components/creative-spaces/creative-space-filters-modal.vue'
 
 enum CreativeSpaceDisplayType {
 	List = 'list',
@@ -40,6 +42,7 @@ const ionRouter = useIonRouter()
 const notificationsStore = useNotificationsStore()
 const screenStore = useScreenStore()
 const userStore = useUserStore()
+const filtersStore = useFiltersStore()
 
 const creativeSpaces = ref<ICreativeSpaceListItem[]>([])
 let creativeSpacesMarkers = new Map()
@@ -49,6 +52,38 @@ let creativeSpaceMap: YMap | null = null
 
 const displayType = ref(CreativeSpaceDisplayType.List)
 
+const creativeSpacesFiltered = computed(() => {
+	return creativeSpaces.value.filter(space => {
+		if (
+			filtersStore.creativeSpacesFilters.pricePerDayFrom &&
+			space.pricePerDay < Number(filtersStore.creativeSpacesFilters.pricePerDayFrom)
+		) {
+			return false
+		}
+
+		if (
+			filtersStore.creativeSpacesFilters.pricePerDayTo &&
+			space.pricePerDay > Number(filtersStore.creativeSpacesFilters.pricePerDayTo)
+		) {
+			return false
+		}
+
+		if (
+			filtersStore.creativeSpacesFilters.freeDates.length &&
+			(
+				// Даты из фильтра не должно быть в событиях.
+				filtersStore.creativeSpacesFilters.freeDates.some(date => space.calendar.events.some(event => event.date === date)) ||
+				// Даты из фильтра должны быть в рабочих днях.
+				filtersStore.creativeSpacesFilters.freeDates.some(date => !space.calendar.workDayIndexes.some(dayIndex => dayIndex === getDay(new Date(date))))
+			)
+		) {
+			return false
+		}
+
+		return true
+	})
+})
+
 onIonViewWillEnter(() => {
 	updateCreativeSpaces()
 })
@@ -57,7 +92,7 @@ onMounted(() => {
 	initMap()
 })
 
-watch(() => creativeSpaces.value, updateCreativeSpaceMarkers)
+watch(() => creativeSpacesFiltered.value, updateCreativeSpaceMarkers)
 
 watch(() => displayType.value, async () => {
 	await nextTick()
@@ -151,11 +186,18 @@ async function initMap() {
 		onClick: changeDisplayType,
 	});
 
+	const filterButton = new ymaps.YMapControlButton({
+		text: 'Настроить фильтры',
+		onClick: handleFilterButtonClick,
+	});
+
 	controls.addChild(button);
+	controls.addChild(filterButton);
+
 	creativeSpaceMap.addChild(controls);
 
-	if (creativeSpaces.value.length) {
-		updateCreativeSpaceMarkers(creativeSpaces.value, [])
+	if (creativeSpacesFiltered.value.length) {
+		updateCreativeSpaceMarkers(creativeSpacesFiltered.value, [])
 	}
 }
 
@@ -170,6 +212,15 @@ function changeDisplayType() {
 		default:
 			displayType.value = CreativeSpaceDisplayType.List
 	}
+}
+
+async function handleFilterButtonClick() {
+	const modal = await modalController.create({
+		component: CreativeSpaceFiltersModal,
+		cssClass: 'full-size-modal',
+	})
+
+	modal.present()
 }
 </script>
 
@@ -204,7 +255,7 @@ function changeDisplayType() {
 				class="creative-spaces-view__list"
 			>
 				<ion-row>
-					<ion-col>
+					<ion-col class="creative-spaces-view__top-controls">
 						<ion-button
 							color="primary"
 							fill="outline"
@@ -216,11 +267,22 @@ function changeDisplayType() {
 							/>
 							Показать на карте
 						</ion-button>
+						<ion-button
+							color="primary"
+							fill="outline"
+							:size="screenStore.isXs ? 'small' : 'default'"
+							@click="handleFilterButtonClick"
+						>
+							<ion-icon
+								:icon="settingsOutline"
+							/>
+							Настроить фильтры
+						</ion-button>
 					</ion-col>
 				</ion-row>
 				<ion-row>
 					<ion-col
-						v-for="creativeSpace in creativeSpaces"
+						v-for="creativeSpace in creativeSpacesFiltered"
 						:key="creativeSpace.id"
 						size="12"
 						size-md="6"
@@ -244,6 +306,12 @@ function changeDisplayType() {
 .creative-spaces-view {
 	&__header-buttons {
 		margin-right: 20px;
+	}
+
+	&__top-controls {
+		> ion-button {
+			margin-right: 20px;
+		}
 	}
 
 	&__content {

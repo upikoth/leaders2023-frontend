@@ -26,9 +26,9 @@ import { getFilesFromComputer, declOfNum, maskpricePerDay } from '@/utils'
 import api from '@/api'
 import type { ICalendarEvent } from '@/api'
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
-import { ViewName } from '@/router';
+import { ViewName } from '@/router'
 import { vMask } from '@/directives'
-import environments from '@/environments';
+import environments from '@/environments'
 
 import UiSelect from '@/components/ui/ui-select.vue'
 import UiImage from '@/components/ui/ui-image.vue'
@@ -643,7 +643,7 @@ onCreated()
 						{{ props.isEdit && formData.calendar.link ? 'Обновить ссылку' : 'Прикрепить ссылку' }}
 					</ion-button>
 					<p>
-						В календаре ниже будут отображены доступные дни для аренды
+						В календаре ниже отображены доступные дни для аренды
 					</p>
 					<ui-calendar
 						:key="calendarForceUpdateKey"

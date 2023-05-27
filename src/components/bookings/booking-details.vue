@@ -178,9 +178,6 @@ onCreated()
 				<p>
 					{{ bookingDaysText }}
 				</p>
-				<p>
-					В календаре ниже будут отображены эти даты
-				</p>
 				<ui-calendar
 					:highlighted-dates="checkHighlightedDates"
 					:is-date-enabled="() => false"
