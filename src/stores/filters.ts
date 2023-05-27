@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { IStoreNameEnum } from './index.types'
-
 import { useUserStore } from '@/stores'
+
+import { IStoreNameEnum } from './index.types'
 
 export interface ICreativeSpacesFilters {
 	pricePerDayFrom: string
