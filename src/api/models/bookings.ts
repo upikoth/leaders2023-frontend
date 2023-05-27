@@ -40,5 +40,4 @@ export interface IBookingListItem {
 export enum BookingStatusEnum {
 	ConfirmationByLandlord = 'confirmation',
 	ConfirmedByLandlord = 'confirmed',
-	FinishedByTenant = 'finished',
 }

@@ -2,7 +2,8 @@ import { axiosInstance } from '@/api/axios'
 import type {
 	IBookingListItem,
 	IBooking,
-	ICalendarEvent
+	ICalendarEvent,
+	BookingStatusEnum
 } from '@/api'
 
 export interface ICreateBookingRequestData {
@@ -15,7 +16,8 @@ export interface ICreateBookingResponseData {
 }
 
 export interface IPatchBookingRequestBody {
-	calendarEvents: ICalendarEvent[]
+	calendarEvents?: ICalendarEvent[]
+	status?: BookingStatusEnum
 }
 
 export interface IGetBookingsResponseData{

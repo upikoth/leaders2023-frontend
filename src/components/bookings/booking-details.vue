@@ -10,11 +10,14 @@ import {
 	IonGrid,
 	IonRow,
 	IonCol,
+	IonBadge,
+	IonButton,
 } from '@ionic/vue'
 
-import api from '@/api'
+import api, { BookingStatusEnum } from '@/api'
 import type { IBooking } from '@/api'
-import { useNotificationsStore, useScreenStore } from '@/stores'
+import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
+import { bookingStatusNameMapping, bookingStatusBadgeColorMapping } from '@/constants'
 import { ViewName } from '@/router'
 import { formatPrice } from '@/utils'
 import environments from '@/environments'
@@ -25,6 +28,7 @@ import UiCalendarModal from '@/components/ui/ui-carousel-modal.vue'
 
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
+const userStore = useUserStore()
 
 const ionRouter = useIonRouter()
 
@@ -95,6 +99,24 @@ async function onImageClick() {
 	modal.present()
 }
 
+async function confirmBooking() {
+	if (!booking.value) {
+		return
+	}
+
+	try {
+		await api.bookings.update(booking.value.id, {
+			status: BookingStatusEnum.ConfirmedByLandlord
+		})
+
+		ionRouter.replace({ name: ViewName.BookingsView })
+
+		notificationsStore.success('Бронирование подтверждено')
+	} catch {
+		notificationsStore.error('Не удалось подтвердить бронирование')
+	}
+}
+
 onCreated()
 </script>
 
@@ -103,6 +125,19 @@ onCreated()
 		v-if="booking"
 		class="booking-details"
 	>
+		<ion-row>
+			<ion-col>
+				<p class="booking-details__status">
+					Статус:
+					<ion-badge
+						class="booking-details__status-badge"
+						:color="bookingStatusBadgeColorMapping[booking.status]"
+					>
+						{{ bookingStatusNameMapping[booking.status] }}
+					</ion-badge>
+				</p>
+			</ion-col>
+		</ion-row>
 		<ion-row>
 			<ion-col
 				size="12"
@@ -184,6 +219,18 @@ onCreated()
 				/>
 			</ion-col>
 		</ion-row>
+		<ion-row
+			v-if="userStore.isLandlord && booking.status === BookingStatusEnum.ConfirmationByLandlord"
+		>
+			<ion-col>
+				<ion-button
+					class="booking-details__details-button"
+					@click="confirmBooking"
+				>
+					Подтвердить заказ
+				</ion-button>
+			</ion-col>
+		</ion-row>
 	</ion-grid>
 </template>
 
@@ -208,6 +255,15 @@ onCreated()
 
 	ion-item {
 		--padding-start: 0;
+	}
+
+	&__status {
+		display: flex;
+		align-items: center;
+	}
+
+	&__status-badge {
+		margin-left: 8px;
 	}
 }
 </style>

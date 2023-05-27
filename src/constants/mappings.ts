@@ -29,12 +29,10 @@ export const workDayIndexShortNameMapping = {
 
 export const bookingStatusNameMapping = {
 	[`${BookingStatusEnum.ConfirmationByLandlord}`]: 'Ожидает подтверждения',
-	[`${BookingStatusEnum.ConfirmedByLandlord}`]: 'Подтверждено',
-	[`${BookingStatusEnum.FinishedByTenant}`]: 'Аренда завершена',
+	[`${BookingStatusEnum.ConfirmedByLandlord}`]: 'Подтвержден',
 }
 
 export const bookingStatusBadgeColorMapping = {
 	[`${BookingStatusEnum.ConfirmationByLandlord}`]: 'warning',
 	[`${BookingStatusEnum.ConfirmedByLandlord}`]: 'primary',
-	[`${BookingStatusEnum.FinishedByTenant}`]: 'success',
 }
