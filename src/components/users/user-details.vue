@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { PropType } from 'vue'
 import {
 	useIonRouter,
@@ -29,6 +29,14 @@ const props = defineProps({
 })
 
 const user = ref<IUser | null>(null)
+
+const fio = computed(() => {
+	if (!user.value) {
+		return ''
+	}
+
+	return `${user.value.surname} ${user.value.name} ${user.value.patronymic}`
+})
 
 watch(() => props.id, updateUserData)
 
@@ -63,7 +71,7 @@ onCreated()
 				<ion-item>
 					<ion-label>
 						ФИО:
-						<p>Дёмин Иван Николаевич</p>
+						<p>{{ fio }}</p>
 					</ion-label>
 				</ion-item>
 			</ion-col>

@@ -45,7 +45,7 @@ export const bookingStatusBadgeColorMapping = {
 
 export const creativeSpaceStatusNameMapping = {
 	[`${CreativeSpaceStatusEnum.ConfirmationByAdmin}`]: 'Ожидает подтверждения',
-	[`${CreativeSpaceStatusEnum.ConfirmedByAdmin}`]: 'Подтвержден',
+	[`${CreativeSpaceStatusEnum.ConfirmedByAdmin}`]: 'Подтверждена',
 }
 
 export const creativeSpaceStatusBadgeColorMapping = {
