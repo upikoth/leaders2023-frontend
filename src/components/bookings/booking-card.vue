@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { PropType } from 'vue'
-import { format } from 'date-fns'
+import { format, isBefore, startOfDay } from 'date-fns'
 import {
 	useIonRouter,
 	IonCard,
@@ -13,9 +13,10 @@ import {
 	IonButton,
 } from '@ionic/vue'
 
-import type { IBookingListItem } from '@/api';
+import type { IBookingListItem } from '@/api'
+import { BookingStatusEnum } from '@/api'
 import { formatPrice } from '@/utils'
-import { ViewName } from '@/router';
+import { ViewName } from '@/router'
 import { bookingStatusNameMapping, bookingStatusBadgeColorMapping } from '@/constants'
 import { useScreenStore } from '@/stores'
 import environments from '@/environments'
@@ -31,6 +32,27 @@ const props = defineProps({
 		type: Object as PropType<IBookingListItem>,
 		required: true
 	},
+})
+
+const isFinishedByDate = computed(() => 
+	props.booking.status === BookingStatusEnum.ConfirmedByLandlord &&
+	props.booking.calendarEvents.every(event => isBefore(new Date(event.date), startOfDay(new Date())))
+)
+
+const statusTextResult = computed(() => {
+	if (isFinishedByDate.value) {
+		return 'Завершен'
+	}
+
+	return bookingStatusNameMapping[props.booking.status]
+})
+
+const statusColorResult = computed(() => {
+	if (isFinishedByDate.value) {
+		return 'success'
+	}
+
+	return bookingStatusBadgeColorMapping[props.booking.status]
 })
 
 const emit = defineEmits({
@@ -72,9 +94,9 @@ function redirectToBookingDetailsPage() {
 				<b>Статус:</b>
 				<ion-badge
 					class="booking-card__status-badge"
-					:color="bookingStatusBadgeColorMapping[props.booking.status]"
+					:color="statusColorResult"
 				>
-					{{ bookingStatusNameMapping[props.booking.status] }}
+					{{ statusTextResult }}
 				</ion-badge>
 			</p>
 			<p>

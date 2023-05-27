@@ -212,9 +212,6 @@ async function bookCreativeSpace() {
 				>
 					Арендовать площадку
 				</ion-button>
-				<p v-if="isCreativeSpaceHasBookings">
-					Нельзя удалить площадку, потому что на нее есть бронирования
-				</p>
 				<ion-button
 					v-if="canUserRemoveSpace"
 					class="creative-spaces-details-view__delete-button"

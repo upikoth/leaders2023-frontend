@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { PropType } from 'vue'
-import { isEqual as isDateEqual, format } from 'date-fns'
+import { isEqual as isDateEqual, format, isBefore, startOfDay } from 'date-fns'
 import {
 	modalController,
 	useIonRouter,
@@ -43,6 +43,35 @@ const booking = ref<IBooking | null>(null)
 
 const bookingDaysText = computed(() => {
 	return booking.value?.calendarEvents.map(event => format(new Date(event.date), "yyyy.MM.dd")).join('; ') || ''
+})
+
+const isFinishedByDate = computed(() => 
+	booking.value?.status === BookingStatusEnum.ConfirmedByLandlord &&
+	booking.value?.calendarEvents.every(event => isBefore(new Date(event.date), startOfDay(new Date())))
+)
+
+const statusTextResult = computed(() => {
+	if (!booking.value) {
+		return ''
+	}
+
+	if (isFinishedByDate.value) {
+		return 'Завершен'
+	}
+
+	return bookingStatusNameMapping[booking.value.status]
+})
+
+const statusColorResult = computed(() => {
+	if (!booking.value) {
+		return ''
+	}
+
+	if (isFinishedByDate.value) {
+		return 'success'
+	}
+
+	return bookingStatusBadgeColorMapping[booking.value.status]
 })
 
 watch(() => props.id, updateBookingData)
@@ -131,9 +160,9 @@ onCreated()
 					Статус:
 					<ion-badge
 						class="booking-details__status-badge"
-						:color="bookingStatusBadgeColorMapping[booking.status]"
+						:color="statusColorResult"
 					>
-						{{ bookingStatusNameMapping[booking.status] }}
+						{{ statusTextResult }}
 					</ion-badge>
 				</p>
 			</ion-col>
