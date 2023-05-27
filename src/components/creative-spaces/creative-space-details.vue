@@ -14,7 +14,7 @@ import {
 import type { DatetimeCustomEvent } from '@ionic/vue'
 
 import api from '@/api'
-import type { ICreativeSpace } from '@/api'
+import type { ICreativeSpace, ICalendarEventFull } from '@/api'
 import { useNotificationsStore, useScreenStore } from '@/stores'
 import { ViewName } from '@/router'
 import { formatPrice } from '@/utils'
@@ -41,12 +41,17 @@ const props = defineProps({
 	selectedCalendarDays: {
 		type: Array as PropType<string[]>,
 		default: () => []
-	}
+	},
+	creativeSpaceEvents: {
+		type: Array as PropType<ICalendarEventFull[]>,
+		default: () => []
+	},
 })
 
 const emit = defineEmits({
 	'update:landlord-id': (value: number) => typeof value === 'number',
-	'update:selected-calendar-days': (value: string[]) => Array.isArray(value)
+	'update:selected-calendar-days': (value: string[]) => Array.isArray(value),
+	'update:creative-space-events': (value: ICalendarEventFull[]) => Array.isArray(value)
 });
 
 const creativeSpace = ref<ICreativeSpace | null>(null)
@@ -66,6 +71,7 @@ async function updateCreativeSpaceData() {
 		const { creativeSpace: newCreativeSpace } = await api.creativeSpaces.get(props.id)
 		creativeSpace.value = newCreativeSpace
 		emit('update:landlord-id', creativeSpace.value.landlordId)
+		emit('update:creative-space-events', creativeSpace.value.calendar.events)
 	} catch {
 		notificationsStore.error('Не удалось получить информацию о креативной площадке')
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })

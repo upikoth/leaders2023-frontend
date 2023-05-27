@@ -281,16 +281,36 @@ async function handleFilterButtonClick() {
 					</ion-col>
 				</ion-row>
 				<ion-row>
-					<ion-col
-						v-for="creativeSpace in creativeSpacesFiltered"
-						:key="creativeSpace.id"
-						size="12"
-						size-md="6"
+					<template
+						v-if="creativeSpaces.length"
 					>
-						<creative-space-card
-							:creative-space="creativeSpace"
-						/>
-					</ion-col>
+						<template
+							v-if="creativeSpacesFiltered.length"
+						>
+							<ion-col
+								v-for="creativeSpace in creativeSpacesFiltered"
+								:key="creativeSpace.id"
+								size="12"
+								size-md="6"
+							>
+								<creative-space-card
+									:creative-space="creativeSpace"
+								/>
+							</ion-col>
+						</template>
+						<p 
+							v-else
+							class="creative-spaces-view__dummy"
+						>
+							Под выбранные фильтры не подходит ни одна площадка
+						</p>
+					</template>
+					<p
+						v-else
+						class="creative-spaces-view__dummy"
+					>
+						Пока нет ни одной креативной площадки для сдачи в аренду
+					</p>
 				</ion-row>
 			</ion-grid>
 			<div
@@ -323,6 +343,10 @@ async function handleFilterButtonClick() {
 
 	&__map {
 		height: 100%;
+	}
+
+	&__dummy {
+		padding-left: 16px;
 	}
 }
 </style>

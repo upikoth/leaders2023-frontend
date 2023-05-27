@@ -18,6 +18,7 @@ import { createOutline, trashOutline, chevronBackOutline } from 'ionicons/icons'
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
 import api from '@/api'
+import type { ICalendarEventFull } from '@/api'
 
 import CreativeSpaceDetails from '@/components/creative-spaces/creative-space-details.vue'
 
@@ -30,13 +31,22 @@ const userStore = useUserStore()
 
 const creativeSpaceLandlordId = ref(NaN)
 const selectedCalendarDays = ref<string[]>([])
+const creativeSpaceEvents = ref<ICalendarEventFull[]>([])
 
 const creativeSpaceId = computed(() => {
 	return Number(route.params.id)
 })
 
-const canUserEditOrRemove = computed(() => {
+const canUserEditSpace = computed(() => {
 	return userStore.isLandlord && creativeSpaceLandlordId.value === userStore.user.id || userStore.isAdmin
+})
+
+const isCreativeSpaceHasBookings = computed(() => {
+	return creativeSpaceEvents.value.some(el => el.bookingId > 0)
+})
+
+const canUserRemoveSpace = computed(() => {
+	return (userStore.isLandlord && creativeSpaceLandlordId.value === userStore.user.id || userStore.isAdmin) && !isCreativeSpaceHasBookings.value
 })
 
 const canBookSpace = computed(() => {
@@ -167,7 +177,7 @@ async function bookCreativeSpace() {
 					Креативная площадка
 				</ion-title>
 				<ion-buttons
-					v-if="canUserEditOrRemove"
+					v-if="canUserEditSpace"
 					slot="end"
 					class="creative-spaces-details-view__header-buttons"
 				>
@@ -191,6 +201,7 @@ async function bookCreativeSpace() {
 				:id="creativeSpaceId"
 				v-model:landlord-id="creativeSpaceLandlordId"
 				v-model:selected-calendar-days="selectedCalendarDays"
+				v-model:creative-space-events="creativeSpaceEvents"
 			/>
 			<div class="creative-spaces-details-view__content-after">
 				<ion-button
@@ -201,8 +212,11 @@ async function bookCreativeSpace() {
 				>
 					Арендовать площадку
 				</ion-button>
+				<p v-if="isCreativeSpaceHasBookings">
+					Нельзя удалить площадку, потому что на нее есть бронирования
+				</p>
 				<ion-button
-					v-if="canUserEditOrRemove"
+					v-if="canUserRemoveSpace"
 					class="creative-spaces-details-view__delete-button"
 					color="danger"
 					fill="outline"

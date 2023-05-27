@@ -46,6 +46,7 @@ async function updateBookings() {
 		</ion-header>
 		<ion-content class="bookings-view__content">
 			<ion-grid
+				v-if="bookings.length"
 				class="bookings-view__list"
 			>
 				<ion-row>
@@ -61,6 +62,12 @@ async function updateBookings() {
 					</ion-col>
 				</ion-row>
 			</ion-grid>
+			<p
+				v-else
+				class="bookings-view__dummy"
+			>
+				Пока нет ни одного заказа
+			</p>
 		</ion-content>
 	</ion-page>
 </template>
@@ -72,6 +79,10 @@ async function updateBookings() {
 			--ion-grid-padding: 8px;
 			--ion-grid-column-padding: 12px;
 		}
+	}
+
+	&__dummy {
+		padding-left: 20px;
 	}
 }
 </style>
