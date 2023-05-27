@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/api/axios'
-import type { ICreativeSpaceListItem, ICreativeSpace, ICalendarEvent } from '@/api'
+import type { ICreativeSpaceListItem, ICreativeSpace, ICalendarEvent, CreativeSpaceStatusEnum } from '@/api'
 
 export interface ICreateCreativeSpaceRequestData {
 	title: string
@@ -39,6 +39,7 @@ export interface IGetCreativeSpaceResponseData {
 export interface IPatchCreativeSpaceRequestBody {
 	title?: string
 	address?: string
+	status?: CreativeSpaceStatusEnum
 	description?: string
 	photos?: string[]
 	pricePerDay?: number

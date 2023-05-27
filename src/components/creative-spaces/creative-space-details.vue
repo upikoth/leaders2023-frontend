@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { PropType } from 'vue'
 import { isBefore, getDay, isEqual as isDateEqual } from 'date-fns'
 import {
@@ -15,16 +15,21 @@ import type { DatetimeCustomEvent } from '@ionic/vue'
 
 import api from '@/api'
 import type { ICreativeSpace, ICalendarEventFull } from '@/api'
-import { useNotificationsStore, useScreenStore } from '@/stores'
+import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router'
 import { formatPrice } from '@/utils'
 import environments from '@/environments'
+import {
+	creativeSpaceStatusNameMapping,
+	creativeSpaceStatusBadgeColorMapping
+} from '@/constants'
 
 import UiImage from '@/components/ui/ui-image.vue'
 import UiCalendar from '@/components/ui/ui-calendar.vue'
 import UiCalendarModal from '@/components/ui/ui-carousel-modal.vue'
 
 const screenStore = useScreenStore()
+const userStore = useUserStore()
 const notificationsStore = useNotificationsStore()
 
 const ionRouter = useIonRouter()
@@ -51,10 +56,15 @@ const props = defineProps({
 const emit = defineEmits({
 	'update:landlord-id': (value: number) => typeof value === 'number',
 	'update:selected-calendar-days': (value: string[]) => Array.isArray(value),
-	'update:creative-space-events': (value: ICalendarEventFull[]) => Array.isArray(value)
+	'update:creative-space-events': (value: ICalendarEventFull[]) => Array.isArray(value),
+	'update:creative-space-status': (value: string) => typeof value === 'string'
 });
 
 const creativeSpace = ref<ICreativeSpace | null>(null)
+
+const isStatusVisible = computed(() => {
+	return userStore.user.id === creativeSpace.value?.landlordId || userStore.isAdmin
+})
 
 watch(() => props.id, updateCreativeSpaceData)
 
@@ -72,6 +82,7 @@ async function updateCreativeSpaceData() {
 		creativeSpace.value = newCreativeSpace
 		emit('update:landlord-id', creativeSpace.value.landlordId)
 		emit('update:creative-space-events', creativeSpace.value.calendar.events)
+		emit('update:creative-space-status', creativeSpace.value.status)
 	} catch {
 		notificationsStore.error('Не удалось получить информацию о креативной площадке')
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })
@@ -170,6 +181,19 @@ onCreated()
 		v-if="creativeSpace"
 		class="creative-space-details"
 	>
+		<ion-row v-if="isStatusVisible">
+			<ion-col>
+				<p class="creative-space-details__status">
+					Статус:
+					<ion-badge
+						class="creative-space-details__status-badge"
+						:color="creativeSpaceStatusBadgeColorMapping[creativeSpace.status]"
+					>
+						{{ creativeSpaceStatusNameMapping[creativeSpace.status] }}
+					</ion-badge>
+				</p>
+			</ion-col>
+		</ion-row>
 		<ion-row>
 			<ion-col
 				size="12"
@@ -259,6 +283,15 @@ onCreated()
 <style lang="scss" scoped>
 .creative-space-details {
 	padding: 16px;
+
+	&__status {
+		display: flex;
+		align-items: center;
+	}
+
+	&__status-badge {
+		margin-left: 8px;
+	}
 
 	&__description {
 		white-space: pre-line;

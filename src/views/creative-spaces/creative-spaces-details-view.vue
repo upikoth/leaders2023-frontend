@@ -17,7 +17,7 @@ import { createOutline, trashOutline, chevronBackOutline } from 'ionicons/icons'
 
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
-import api from '@/api'
+import api, { CreativeSpaceStatusEnum } from '@/api'
 import type { ICalendarEventFull } from '@/api'
 
 import CreativeSpaceDetails from '@/components/creative-spaces/creative-space-details.vue'
@@ -32,6 +32,7 @@ const userStore = useUserStore()
 const creativeSpaceLandlordId = ref(NaN)
 const selectedCalendarDays = ref<string[]>([])
 const creativeSpaceEvents = ref<ICalendarEventFull[]>([])
+const creativeSpaceStatus = ref(CreativeSpaceStatusEnum.ConfirmationByAdmin)
 
 const creativeSpaceId = computed(() => {
 	return Number(route.params.id)
@@ -162,6 +163,20 @@ async function bookCreativeSpace() {
 		notificationsStore.error('Не удалось забронировать креативную площадку')
 	}
 }
+
+async function handleConfirmButtonClick() {
+	try {
+		await api.creativeSpaces.update(creativeSpaceId.value, {
+			status: CreativeSpaceStatusEnum.ConfirmedByAdmin
+		})
+
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+
+		notificationsStore.success('Креативная площадка успешно опубликована')
+	} catch {
+		notificationsStore.error('Не удалось опубликовать креативную площадку')
+	}
+}
 </script>
 
 <template>
@@ -207,6 +222,7 @@ async function bookCreativeSpace() {
 				v-model:landlord-id="creativeSpaceLandlordId"
 				v-model:selected-calendar-days="selectedCalendarDays"
 				v-model:creative-space-events="creativeSpaceEvents"
+				v-model:creative-space-status="creativeSpaceStatus"
 			/>
 			<div class="creative-spaces-details-view__content-after">
 				<ion-button
@@ -216,6 +232,13 @@ async function bookCreativeSpace() {
 					@click="handleBookingButtonClick"
 				>
 					Арендовать площадку
+				</ion-button>
+				<ion-button
+					v-if="userStore.isAdmin && creativeSpaceStatus === CreativeSpaceStatusEnum.ConfirmationByAdmin"
+					class="creative-spaces-details-view__confirm-button"
+					@click="handleConfirmButtonClick"
+				>
+					Опубликовать площадку
 				</ion-button>
 				<ion-button
 					v-if="canUserRemoveSpace"
@@ -242,8 +265,13 @@ async function bookCreativeSpace() {
 
 	&__content-after {
 		padding-left: 20px;
+
+		> ion-button {
+			margin-right: 20px;
+		}
 	}
 
+	&__confirm-button,
 	&__booking-button,
 	&__delete-button {
 		margin-bottom: 16px;

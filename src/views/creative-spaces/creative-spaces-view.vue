@@ -20,7 +20,7 @@ import { addOutline, mapOutline, settingsOutline } from 'ionicons/icons';
 import type { YMap } from '@yandex/ymaps3-types'
 import { getDay } from 'date-fns'
 
-import api from '@/api'
+import api, { CreativeSpaceStatusEnum } from '@/api'
 import type { ICreativeSpaceListItem } from '@/api'
 import { useNotificationsStore, useScreenStore, useUserStore, useFiltersStore } from '@/stores'
 import { ViewName } from '@/router';
@@ -83,6 +83,21 @@ const creativeSpacesFiltered = computed(() => {
 		if (
 			filtersStore.creativeSpacesFilters.landlordId &&
 			space.landlordId !== filtersStore.creativeSpacesFilters.landlordId
+		) {
+			return false
+		}
+
+		if (
+			userStore.isTenant &&
+			space.status === CreativeSpaceStatusEnum.ConfirmationByAdmin
+		) {
+			return false
+		}
+
+		if (
+			userStore.isLandlord &&
+			space.landlordId !== userStore.user.id &&
+			space.status === CreativeSpaceStatusEnum.ConfirmationByAdmin
 		) {
 			return false
 		}

@@ -4,6 +4,7 @@ export interface ICreativeSpaceListItem {
 	id: number
 	title: string
 	address: string
+	status: CreativeSpaceStatusEnum
 	landlordId: number
 	description: string
 	photos: string[]
@@ -29,6 +30,7 @@ export interface ICreativeSpace {
 	id: number
 	title: string
 	address: string
+	status: CreativeSpaceStatusEnum
 	landlordId: number
 	description: string
 	photos: string[]
@@ -48,4 +50,9 @@ export interface ICreativeSpace {
 		events: ICalendarEventFull[]
 		link: string
 	}
+}
+
+export enum CreativeSpaceStatusEnum {
+	ConfirmationByAdmin = 'confirmation',
+	ConfirmedByAdmin = 'confirmed',
 }

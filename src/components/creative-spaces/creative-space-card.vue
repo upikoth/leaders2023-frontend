@@ -9,26 +9,36 @@ import {
 	IonCardHeader,
 	IonCardContent,
 	IonButton,
+	IonBadge,
 } from '@ionic/vue'
 
 import type { ICreativeSpaceListItem } from '@/api';
 import { formatPrice } from '@/utils'
 import { ViewName } from '@/router';
-import { useScreenStore } from '@/stores'
+import { useScreenStore, useUserStore } from '@/stores'
 import environments from '@/environments'
-import { workDayIndexShortNameMapping } from '@/constants'
+import {
+	workDayIndexShortNameMapping,
+	creativeSpaceStatusNameMapping,
+	creativeSpaceStatusBadgeColorMapping
+} from '@/constants'
 
 import UiCarousel from '@/components/ui/ui-carousel.vue'
 
 const ionRouter = useIonRouter()
 
 const screenStore = useScreenStore()
+const userStore = useUserStore()
 
 const props = defineProps({
 	creativeSpace: {
 		type: Object as PropType<ICreativeSpaceListItem>,
 		required: true
 	},
+})
+
+const isStatusVisible = computed(() => {
+	return userStore.user.id === props.creativeSpace.landlordId || userStore.isAdmin
 })
 
 const emit = defineEmits({
@@ -66,6 +76,18 @@ function redirectToCreativeSpacesDetailsPage() {
 		</ion-card-header>
 
 		<ion-card-content class="creative-space-card__conent">
+			<p
+				v-if="isStatusVisible"
+				class="creative-space-card__status"
+			>
+				<b>Статус:</b>
+				<ion-badge
+					class="creative-space-card__status-badge"
+					:color="creativeSpaceStatusBadgeColorMapping[props.creativeSpace.status]"
+				>
+					{{ creativeSpaceStatusNameMapping[props.creativeSpace.status] }}
+				</ion-badge>
+			</p>
 			<p>
 				<b>Стоимость:</b>
 				{{ formatPrice(props.creativeSpace.pricePerDay) }}/день
@@ -103,6 +125,15 @@ function redirectToCreativeSpacesDetailsPage() {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+	}
+
+	&__status {
+		display: flex;
+		align-items: center;
+	}
+
+	&__status-badge {
+		margin-left: 8px;
 	}
 
 	&__info-metro,
