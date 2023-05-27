@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { PropType } from 'vue'
 import {
 	useIonRouter,
@@ -8,12 +9,13 @@ import {
 	IonCardHeader,
 	IonCardContent,
 	IonButton,
+	IonBadge,
 } from '@ionic/vue'
 
-import type { IUser } from '@/api';
+import { UserRole, type IUser } from '@/api';
 import { ViewName } from '@/router';
 import { maskPhone } from '@/utils'
-import { userRoleMapping } from '@/constants'
+import { userRoleMapping, userRoleColorMapping } from '@/constants'
 
 const ionRouter = useIonRouter()
 
@@ -22,6 +24,10 @@ const props = defineProps({
 		type: Object as PropType<IUser>,
 		required: true
 	},
+})
+
+const fio = computed(() => {
+	return `${props.user.surname} ${props.user.name} ${props.user.patronymic}`
 })
 
 function redirectToUserDetailsPage() {
@@ -33,10 +39,12 @@ function redirectToUserDetailsPage() {
 	<ion-card class="user-card">
 		<ion-card-header>
 			<ion-card-title class="user-card__title">
-				Дёмин Иван Николаевич
+				{{ fio }}
 			</ion-card-title>
 			<ion-card-subtitle class="user-card__subtitle">
-				{{ userRoleMapping[props.user.role] }}
+				<ion-badge :color="userRoleColorMapping[props.user.role]">
+					{{ userRoleMapping[props.user.role] }}
+				</ion-badge>
 			</ion-card-subtitle>
 		</ion-card-header>
 
@@ -45,6 +53,22 @@ function redirectToUserDetailsPage() {
 				<b>Телефон:</b>
 				{{ maskPhone(props.user.phone) }}
 			</p>
+			<p>
+				<b>Email:</b>
+				{{ props.user.email }}
+			</p>
+			<template
+				v-if="props.user.role === UserRole.Landlord"
+			>
+				<p>
+					<b>Юр. лицо:</b>
+					{{ props.user.legalEntityName }}
+				</p>
+				<p>
+					<b>Инн:</b>
+					{{ props.user.inn }}
+				</p>
+			</template>
 			<ion-button
 				class="user-card__details-button"
 				fill="outline"

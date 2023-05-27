@@ -8,13 +8,14 @@ import {
 	IonGrid,
 	IonRow,
 	IonCol,
+	IonBadge,
 } from '@ionic/vue'
 
-import api from '@/api'
+import api, { UserRole } from '@/api'
 import type { IUser } from '@/api'
 import { useNotificationsStore } from '@/stores'
 import { ViewName } from '@/router';
-import { userRoleMapping } from '@/constants'
+import { userRoleMapping, userRoleColorMapping } from '@/constants'
 
 const notificationsStore = useNotificationsStore()
 
@@ -70,9 +71,16 @@ onCreated()
 		<ion-row>
 			<ion-col>
 				<ion-item>
-					<ion-label>
+					<ion-label
+						class="user-details__role"
+					>
 						Роль:
-						<p>{{ userRoleMapping[user.role] }}</p>
+						<ion-badge 
+							class="user-details__role-badge"
+							:color="userRoleColorMapping[user.role]"
+						>
+							{{ userRoleMapping[user.role] }}
+						</ion-badge>
 					</ion-label>
 				</ion-item>
 			</ion-col>
@@ -89,6 +97,46 @@ onCreated()
 				</ion-item>
 			</ion-col>
 		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-item>
+					<ion-label>
+						Email:
+						<p>
+							{{ user.email }}
+						</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<template
+			v-if="user.role === UserRole.Landlord"
+		>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							Юр. лицо:
+							<p>
+								{{ user.legalEntityName }}
+							</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							Инн:
+							<p>
+								{{ user.inn }}
+							</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+		</template>
 	</ion-grid>
 </template>
 
@@ -98,6 +146,15 @@ onCreated()
 
 	&__grid {
 		padding: 0;
+	}
+
+	&__role {
+		display: flex;
+		align-items: center;
+	}
+
+	&__role-badge {
+		margin-left: 16px;
 	}
 }
 </style>

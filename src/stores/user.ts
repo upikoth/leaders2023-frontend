@@ -17,7 +17,13 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 	const user = ref<IUser>({
 		id: NaN,
 		phone: '',
-		role: UserRole.Tenant
+		role: UserRole.Tenant,
+		name: '',
+		surname: '',
+		patronymic: '',
+		email: '',
+		inn: '',
+		legalEntityName: '',
 	})
 
 	const isAdmin = computed(() => user.value.role === UserRole.Admin)

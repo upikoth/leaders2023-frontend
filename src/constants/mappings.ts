@@ -7,6 +7,12 @@ export const userRoleMapping = {
 	[UserRole.Tenant]: 'Арендатор',
 }
 
+export const userRoleColorMapping = {
+	[UserRole.Admin]: 'success',
+	[UserRole.Landlord]: 'primary',
+	[UserRole.Tenant]: 'warning',
+}
+
 export const workDayIndexMapping = {
 	[`${WeekDayIndex.Monday}`]: 'Понедельник',
 	[`${WeekDayIndex.Tuesday}`]: 'Вторник',
