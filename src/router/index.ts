@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from '@ionic/vue-router'
 import { useUserStore } from '@/stores'
 
 export enum ViewName {
-	DocumentationView = 'DOCUMENTAITION',
 	UsersView = 'USERS',
 	UsersDetailsView = 'USERS_DETAILS',
 	UsersEditView = 'USERS_EDIT',
@@ -33,11 +32,6 @@ const router = createRouter({
 				{
 					path: '',
 					redirect: () => ({ name: getMainViewName() }),
-				},
-				{
-					path: 'docs',
-					name: ViewName.DocumentationView,
-					component: () => import('@/views/documentation-view.vue')
 				},
 				{
 					path: 'users',

@@ -14,7 +14,7 @@ import {
 	IonSplitPane,
 	IonMenu,
 } from '@ionic/vue';
-import { help, people, business, bagCheck, person } from 'ionicons/icons';
+import { people, business, bagCheck, person } from 'ionicons/icons';
 import { useRouter, useRoute } from 'vue-router'
 
 import { ViewName } from '@/router'
@@ -54,14 +54,6 @@ const navigationItems = computed(() => (
 			icon: people,
 			handler: () => ionRouter.replace({ name: ViewName.UsersView }),
 			isVisible: userStore.isAdmin
-		},
-		{
-			title: 'Справка',
-			href: router.resolve({ name: ViewName.DocumentationView }).href,
-			name: ViewName.DocumentationView,
-			icon: help,
-			handler: () => ionRouter.replace({ name: ViewName.DocumentationView }),
-			isVisible: true
 		},
 		{
 			title: 'Профиль',
