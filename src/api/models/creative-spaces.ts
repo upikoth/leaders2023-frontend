@@ -2,6 +2,9 @@ import type { ICalendarEvent, ICalendarEventFull, UserRole } from '@/api'
 
 export interface ICreativeSpaceListItem {
 	id: number
+	spaceType: CreativeSpaceType
+	area: number
+	capacity: number
 	title: string
 	address: string
 	status: CreativeSpaceStatusEnum
@@ -28,6 +31,9 @@ export interface ICreativeSpaceListItem {
 
 export interface ICreativeSpace {
 	id: number
+	spaceType: CreativeSpaceType
+	area: number
+	capacity: number
 	title: string
 	address: string
 	status: CreativeSpaceStatusEnum
@@ -65,4 +71,23 @@ export interface ICreativeSpace {
 export enum CreativeSpaceStatusEnum {
 	ConfirmationByAdmin = 'confirmation',
 	ConfirmedByAdmin = 'confirmed',
+}
+
+export enum CreativeSpaceType {
+	Showroom = 'showroom',
+	ArtWorkshop = 'art-workshop',
+	PrototypingCenter = 'prototyping-center',
+	LayoutWorkshop = 'layout-workshop',
+	RenderingStudio = 'rendering-studio',
+	PhotoVideoStudio = 'photo-video-studio',
+	RehearsalRoom = 'rehearsal-room',
+	DanceHall = 'dance-hall',
+	StageSpace = 'stage-space',
+	VideoEditingStudio = 'video-editing-studio',
+	MockupStudio = 'mockup-studio',
+	SewingShop = 'sewing-shop',
+	ShowSpace = 'show-space',
+	RecordingStudio = 'recording-studio',
+	MusicRehearsalStudio = 'music-rehearsal-studio',
+	ConcertHall = 'Concert hall',
 }

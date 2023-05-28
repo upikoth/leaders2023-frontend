@@ -136,7 +136,7 @@ onCreated()
 				<ion-col>
 					<ion-item>
 						<ion-label>
-							Инн:
+							ИНН:
 							<p>
 								{{ user.inn }}
 							</p>

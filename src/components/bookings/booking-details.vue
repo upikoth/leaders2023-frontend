@@ -262,7 +262,7 @@ onCreated()
 				<ion-col>
 					<ion-item>
 						<ion-label>
-							Инн:
+							ИНН:
 							<p>{{ booking.landlordInfo.inn }}</p>
 						</ion-label>
 					</ion-item>

@@ -65,7 +65,7 @@ function redirectToUserDetailsPage() {
 					{{ props.user.legalEntityName }}
 				</p>
 				<p>
-					<b>Инн:</b>
+					<b>ИНН:</b>
 					{{ props.user.inn }}
 				</p>
 			</template>

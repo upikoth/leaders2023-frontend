@@ -19,6 +19,7 @@ import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router'
 import { formatPrice } from '@/utils'
 import environments from '@/environments'
+import { creativeSpaceTypeNameMapping } from '@/constants'
 import {
 	creativeSpaceStatusNameMapping,
 	creativeSpaceStatusBadgeColorMapping
@@ -201,6 +202,16 @@ onCreated()
 			</ion-col>
 		</ion-row>
 		<ion-row>
+			<ion-col>
+				<ion-item>
+					<ion-label>
+						Тип площадки:
+						<p>{{ creativeSpaceTypeNameMapping[creativeSpace.spaceType] }}</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<ion-row>
 			<ion-col
 				size="12"
 				size-md="8"
@@ -220,6 +231,30 @@ onCreated()
 					<ion-label>
 						Стоимость аренды (₽/день):
 						<p>{{ formatPrice(creativeSpace.pricePerDay) }}</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col
+				size="12"
+				size-md="6"
+			>
+				<ion-item>
+					<ion-label>
+						Площадь (м^2):
+						<p>{{ creativeSpace.area }}</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+			<ion-col
+				size="12"
+				size-md="6"
+			>
+				<ion-item>
+					<ion-label>
+						Вместимость (человек):
+						<p>{{ creativeSpace.capacity }}</p>
 					</ion-label>
 				</ion-item>
 			</ion-col>
@@ -287,7 +322,7 @@ onCreated()
 			<ion-col>
 				<ion-item>
 					<ion-label>
-						Инн:
+						ИНН:
 						<p>{{ creativeSpace.landlordInfo.inn }}</p>
 					</ion-label>
 				</ion-item>

@@ -1,7 +1,10 @@
 import { axiosInstance } from '@/api/axios'
-import type { ICreativeSpaceListItem, ICreativeSpace, ICalendarEvent, CreativeSpaceStatusEnum } from '@/api'
+import type { ICreativeSpaceListItem, ICreativeSpace, ICalendarEvent, CreativeSpaceStatusEnum, CreativeSpaceType } from '@/api'
 
 export interface ICreateCreativeSpaceRequestData {
+	spaceType: CreativeSpaceType
+	area: number
+	capacity: number
 	title: string
 	address: string
 	description: string
@@ -37,6 +40,9 @@ export interface IGetCreativeSpaceResponseData {
 }
 
 export interface IPatchCreativeSpaceRequestBody {
+	spaceType?: CreativeSpaceType
+	area?: number
+	capacity?: number
 	title?: string
 	address?: string
 	status?: CreativeSpaceStatusEnum

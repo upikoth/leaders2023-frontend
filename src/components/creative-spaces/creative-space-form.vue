@@ -23,12 +23,13 @@ import cloneDeep from 'lodash.clonedeep'
 import isEqual from 'lodash.isequal'
 
 import { getFilesFromComputer, declOfNum, maskpricePerDay } from '@/utils'
-import api from '@/api'
+import api, { CreativeSpaceType } from '@/api'
 import type { ICalendarEventFull } from '@/api'
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router'
 import { vMask } from '@/directives'
 import environments from '@/environments'
+import { creativeSpaceTypeNameMapping } from '@/constants'
 
 import UiSelect from '@/components/ui/ui-select.vue'
 import UiImage from '@/components/ui/ui-image.vue'
@@ -57,6 +58,9 @@ const props = defineProps({
 })
 
 const formData = ref({
+	spaceType: '',
+	area: '',
+	capacity: '',
 	title: '',
 	address: '',
 	description: '',
@@ -78,6 +82,15 @@ let initialFormData = cloneDeep(formData.value)
 
 const rules = {
 	formData: {
+		spaceType: {
+			required: helpers.withMessage('Введите тип площадки', required),
+		},
+		area: {
+			required: helpers.withMessage('Укажите площадь', required),
+		},
+		capacity: {
+			required: helpers.withMessage('Укажите вместительность', required),
+		},
 		title: {
 			required: helpers.withMessage('Введите название', required),
 		},
@@ -113,6 +126,13 @@ const debouncedUpdateAddresses = debounce(updateAddresses, 300);
 const photosInfoText = computed(() => {
 	const photosLeftCount = MAX_PHOTOS_COUNT - formData.value.photos.length
 	return `Можно добавить еще ${photosLeftCount} ${declOfNum(photosLeftCount, ['фотографию', 'фотографии', 'фотографий'])}`
+})
+
+const spaceTypes = computed(() => {
+	return Object.keys(creativeSpaceTypeNameMapping).map(key => ({
+		value: key,
+		label: creativeSpaceTypeNameMapping[key]
+	}))
 })
 
 const titleError = computed((): string => {
@@ -175,6 +195,36 @@ const workDayIndexesError = computed((): string => {
 	return typeof message === 'string' ? message : '';
 });
 
+const spaceTypeError = computed((): string => {
+	if (!v$.value.formData.spaceType.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.spaceType.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const areaError = computed((): string => {
+	if (!v$.value.formData.area.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.area.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
+const capacityError = computed((): string => {
+	if (!v$.value.formData.capacity.$error) {
+		return '';
+	}
+
+	const message = v$.value.formData.capacity.$errors[0].$message;
+
+	return typeof message === 'string' ? message : '';
+});
+
 watch(() => addressSearch.value, () => {
 	debouncedUpdateAddresses()
 })
@@ -202,12 +252,15 @@ async function updateFormData() {
 
 	try {
 		const { creativeSpace } = await api.creativeSpaces.get(props.id)
-		const { title, description, address, photos, pricePerDay, coordinate, calendar, landlordInfo } = creativeSpace
+		const { title, description, address, photos, pricePerDay, coordinate, calendar, landlordInfo, spaceType, area, capacity } = creativeSpace
 
 		addressSearch.value = address
 
 		formData.value = {
 			...formData.value,
+			spaceType,
+			area: String(area),
+			capacity: String(capacity),
 			title,
 			description,
 			address,
@@ -298,9 +351,12 @@ async function patchCreativeSpace() {
 	}
 
 	try {
-		const { title, address, description, pricePerDay, photos, coordinate, metroStations, calendar } = formData.value
+		const { title, address, description, pricePerDay, photos, coordinate, metroStations, calendar, spaceType, area, capacity } = formData.value
 
 		await api.creativeSpaces.update(props.id, {
+			spaceType: isEqual(initialFormData.spaceType, spaceType) ? undefined : spaceType as CreativeSpaceType,
+			area: isEqual(initialFormData.area, area) ? undefined : Number.parseInt(area),
+			capacity: isEqual(initialFormData.capacity, capacity) ? undefined : Number.parseInt(capacity),
 			title: isEqual(initialFormData.title, title) ? undefined : title,
 			address: isEqual(initialFormData.address, address) ? undefined : address,
 			description: isEqual(initialFormData.description, description) ? undefined : description,
@@ -327,9 +383,12 @@ async function patchCreativeSpace() {
 
 async function createCreativeSpace() {
 	try {
-		const { title, address, description, pricePerDay, photos, coordinate, metroStations, calendar } = formData.value
+		const { title, address, description, pricePerDay, photos, coordinate, metroStations, calendar, spaceType, area, capacity } = formData.value
 
 		await api.creativeSpaces.create({
+			spaceType: spaceType as CreativeSpaceType,
+			area: Number.parseInt(area),
+			capacity: Number.parseInt(capacity),
 			title,
 			address,
 			description,
@@ -542,6 +601,18 @@ onCreated()
 				</ion-col>
 			</ion-row>
 			<ion-row>
+				<ion-col>
+					<ui-select
+						v-model="formData.spaceType"
+						:class="spaceTypeError && ['ion-invalid', 'ion-touched']"
+						:items="spaceTypes"
+						label="Тип площадки *"
+						label-placement="floating"
+						:error-text="spaceTypeError"
+					/>
+				</ion-col>
+			</ion-row>
+			<ion-row>
 				<ion-col
 					size="12"
 					size-md="8"
@@ -571,6 +642,42 @@ onCreated()
 						inputmode="numeric"
 						label-placement="floating"
 						:error-text="pricePerDayError"
+						helper-text="&nbsp;"
+						:min="0"
+						:max="100000"
+					/>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col
+					size="12"
+					size-md="6"
+				>
+					<ion-input
+						v-model="formData.area"
+						:class="areaError && ['ion-invalid', 'ion-touched']"
+						label="Площадь (м^2) *"
+						type="number"
+						inputmode="numeric"
+						label-placement="floating"
+						:error-text="areaError"
+						helper-text="&nbsp;"
+						:min="0"
+						:max="100000000"
+					/>
+				</ion-col>
+				<ion-col
+					size="12"
+					size-md="6"
+				>
+					<ion-input
+						v-model="formData.capacity"
+						:class="capacityError && ['ion-invalid', 'ion-touched']"
+						label="Вместимость (человек) *"
+						type="number"
+						inputmode="numeric"
+						label-placement="floating"
+						:error-text="capacityError"
 						helper-text="&nbsp;"
 						:min="0"
 						:max="100000"

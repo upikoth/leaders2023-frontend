@@ -1,4 +1,4 @@
-import { UserRole, BookingStatusEnum, CreativeSpaceStatusEnum } from '@/api'
+import { UserRole, BookingStatusEnum, CreativeSpaceStatusEnum, CreativeSpaceType } from '@/api'
 import { WeekDayIndex } from '@/constants'
 
 export const userRoleMapping = {
@@ -51,4 +51,23 @@ export const creativeSpaceStatusNameMapping = {
 export const creativeSpaceStatusBadgeColorMapping = {
 	[`${CreativeSpaceStatusEnum.ConfirmationByAdmin}`]: 'warning',
 	[`${CreativeSpaceStatusEnum.ConfirmedByAdmin}`]: 'primary',
+}
+
+export const creativeSpaceTypeNameMapping = {
+	[`${CreativeSpaceType.Showroom}`]: 'Выставочный зал',
+	[`${CreativeSpaceType.ArtWorkshop}`]: 'Художественная мастерская',
+	[`${CreativeSpaceType.PrototypingCenter}`]: 'Центр прототипирования',
+	[`${CreativeSpaceType.LayoutWorkshop}`]: 'Мастерская макетирования',
+	[`${CreativeSpaceType.RenderingStudio}`]: 'Рендеринг студия',
+	[`${CreativeSpaceType.PhotoVideoStudio}`]: 'Фото-видеостудия',
+	[`${CreativeSpaceType.RehearsalRoom}`]: 'Репетиционный зал',
+	[`${CreativeSpaceType.DanceHall}`]: 'Танцевальный зал',
+	[`${CreativeSpaceType.StageSpace}`]: 'Сценическое пространство',
+	[`${CreativeSpaceType.VideoEditingStudio}`]: 'Студия видеомонтажа',
+	[`${CreativeSpaceType.MockupStudio}`]: 'МОКАП студия',
+	[`${CreativeSpaceType.SewingShop}`]: 'Пошивочный цех',
+	[`${CreativeSpaceType.ShowSpace}`]: 'Пространство для показа',
+	[`${CreativeSpaceType.RecordingStudio}`]: 'Студия звукозаписи',
+	[`${CreativeSpaceType.MusicRehearsalStudio}`]: 'Музыкальная репетиционная студия',
+	[`${CreativeSpaceType.ConcertHall}`]: 'Концертная площадка',
 }
