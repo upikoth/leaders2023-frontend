@@ -42,6 +42,6 @@ export const maskNumber = IMask.createPipe({
 
 export const maskRating = IMask.createPipe({
 	mask: Number,
-	min: 0,
+	min: 1,
 	max: 10,
 }, IMask.PIPE_TYPE.MASKED) as (value: string) => string

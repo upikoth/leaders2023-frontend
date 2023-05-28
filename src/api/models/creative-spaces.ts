@@ -27,6 +27,18 @@ export interface ICreativeSpaceListItem {
 		events: ICalendarEvent[]
 		link: string
 	}
+	scores: {
+		id: number
+		comment: string
+		rating: number
+		user: {
+			id: number
+			name: string
+			surname: string
+			patronymic: string
+		}
+	}[]
+	averageRating: number
 }
 
 export interface ICreativeSpace {
@@ -66,6 +78,18 @@ export interface ICreativeSpace {
 		inn: string
 		legalEntityName: string
 	}
+	scores: {
+		id: number
+		comment: string
+		rating: number
+		user: {
+			id: number
+			name: string
+			surname: string
+			patronymic: string
+		}
+	}[]
+	averageRating: number
 }
 
 export enum CreativeSpaceStatusEnum {

@@ -88,6 +88,13 @@ function redirectToCreativeSpacesDetailsPage() {
 					{{ creativeSpaceStatusNameMapping[props.creativeSpace.status] }}
 				</ion-badge>
 			</p>
+			<p
+				v-if="props.creativeSpace.averageRating"
+				class="creative-space-card__rating"
+			>
+				<b>Рейтинг:</b>
+				{{ props.creativeSpace.averageRating / 2 }} из 5
+			</p>
 			<p>
 				<b>Стоимость:</b>
 				{{ formatPrice(props.creativeSpace.pricePerDay) }}/день
@@ -117,7 +124,7 @@ function redirectToCreativeSpacesDetailsPage() {
 <style lang="scss" scoped>
 .creative-space-card {
 	display: flex;
-	height: 500px;
+	height: 510px;
 	flex-direction: column;
 	margin: 0;
 
@@ -134,6 +141,10 @@ function redirectToCreativeSpacesDetailsPage() {
 
 	&__status-badge {
 		margin-left: 8px;
+	}
+
+	&__rating {
+		color: var(--ion-color-primary)
 	}
 
 	&__info-metro,

@@ -91,7 +91,7 @@ async function sumbit() {
 						label-placement="floating"
 						helper-text="&nbsp;"
 						:error-text="ratingError"
-						:min="0"
+						:min="1"
 						:max="10"
 					/>
 					<ion-textarea 

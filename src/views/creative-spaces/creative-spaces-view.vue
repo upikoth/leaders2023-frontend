@@ -131,7 +131,7 @@ const creativeSpacesFiltered = computed(() => {
 		}
 
 		return true
-	})
+	}).sort((a, b) => b.averageRating - a.averageRating)
 })
 
 onIonViewWillEnter(() => {

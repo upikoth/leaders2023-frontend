@@ -196,6 +196,17 @@ onCreated()
 				</p>
 			</ion-col>
 		</ion-row>
+		<ion-row v-if="creativeSpace.averageRating">
+			<ion-col>
+				<p
+					v-if="creativeSpace.averageRating"
+					class="creative-space-details__rating"
+				>
+					<b>Рейтинг:</b>&nbsp;
+					{{ creativeSpace.averageRating / 2 }}&nbsp;из 5
+				</p>
+			</ion-col>
+		</ion-row>
 		<ion-row>
 			<ion-col>
 				<h3>Основная информация</h3>
@@ -363,6 +374,29 @@ onCreated()
 				/>
 			</ion-col>
 		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3>Отзывы</h3>
+			</ion-col>
+		</ion-row>
+		<ion-row
+			v-for="score in creativeSpace.scores.filter(score => score.comment)"
+			:key="score.id"
+		>
+			<ion-col>
+				<ion-item>
+					<ion-label>
+						{{ `${score.user.surname} ${score.user.name} ${score.user.patronymic}` }}:
+						<p
+							class="creative-space-details__rating"
+						>
+							Оценка: {{ creativeSpace.averageRating / 2 }}&nbsp;из 5
+						</p>
+						<p>{{ score.comment }}</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
 	</ion-grid>
 </template>
 
@@ -370,6 +404,7 @@ onCreated()
 .creative-space-details {
 	padding: 16px;
 
+	&__rating,
 	&__status {
 		display: flex;
 		align-items: center;
@@ -379,6 +414,12 @@ onCreated()
 
 	&__status-badge {
 		margin-left: 8px;
+	}
+
+	&__rating {
+		margin-top: 0;
+		margin-bottom: 0;
+		color: var(--ion-color-primary)
 	}
 
 	&__description {
