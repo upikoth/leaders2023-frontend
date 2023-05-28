@@ -129,7 +129,7 @@ watch(() => props.id, updateFormData)
 
 async function onCreated() {
 	if (!userStore.isAdmin && props.id !== userStore.user.id) {
-		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+		ionRouter.replace({ name: ViewName.UsersDetailsView })
 		return;
 	}
 
@@ -163,7 +163,7 @@ async function updateFormData() {
 
 	} catch {
 		notificationsStore.error('Не удалось получить информацию о пользователе')
-		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+		ionRouter.replace({ name: ViewName.UsersDetailsView })
 	}
 }
 
@@ -182,6 +182,7 @@ async function handleFormSubmit() {
 async function patchCreativeSpace() {
 	if (isEqual(initialFormData, formData.value)) {
 		notificationsStore.success('Информация о пользователе успешно обновлена')
+		ionRouter.replace({ name: ViewName.UsersDetailsView })
 		return;
 	}
 
@@ -198,7 +199,7 @@ async function patchCreativeSpace() {
 		})
 
 		notificationsStore.success('Информация о пользователе успешно обновлена')
-		updateFormData()
+		ionRouter.replace({ name: ViewName.UsersDetailsView })
 	} catch {
 		notificationsStore.error('Не удалось обновить информацию о пользователе')
 	}
