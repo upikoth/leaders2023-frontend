@@ -83,7 +83,7 @@ function redirectToUserDetailsPage() {
 <style lang="scss" scoped>
 .user-card {
 	display: flex;
-	height: 220px;
+	height: 240px;
 	flex-direction: column;
 	margin: 0;
 

@@ -182,7 +182,6 @@ async function handleFormSubmit() {
 async function patchCreativeSpace() {
 	if (isEqual(initialFormData, formData.value)) {
 		notificationsStore.success('Информация о пользователе успешно обновлена')
-		ionRouter.replace({ name: ViewName.CreativeSpacesView })
 		return;
 	}
 
@@ -199,7 +198,7 @@ async function patchCreativeSpace() {
 		})
 
 		notificationsStore.success('Информация о пользователе успешно обновлена')
-		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+		updateFormData()
 	} catch {
 		notificationsStore.error('Не удалось обновить информацию о пользователе')
 	}
