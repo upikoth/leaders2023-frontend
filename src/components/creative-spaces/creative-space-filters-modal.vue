@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
 	modalController,
 	IonHeader,
@@ -18,16 +18,24 @@ import { isBefore } from 'date-fns'
 
 import { useFiltersStore, useUserStore } from '@/stores'
 import { vMask } from '@/directives'
-import { maskpricePerDay } from '@/utils'
+import { maskpricePerDay, maskNumber } from '@/utils'
 import { CreativeSpaceStatusEnum } from '@/api'
+import { creativeSpaceTypeNameMapping } from '@/constants'
 
 import UiCalendar from '@/components/ui/ui-calendar.vue'
+import UiSelect from '@/components/ui/ui-select.vue'
 
 const filtersStore = useFiltersStore()
 const userStore = useUserStore()
 
 const filters = ref({
 	...filtersStore.creativeSpacesFilters
+})
+const spaceTypes = computed(() => {
+	return Object.keys(creativeSpaceTypeNameMapping).map(key => ({
+		value: key,
+		label: creativeSpaceTypeNameMapping[key]
+	}))
 })
 
 function closeModal() {
@@ -103,6 +111,12 @@ function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) 
 					>
 						Показывать только мои площадки
 					</ion-checkbox>
+					<ui-select
+						v-model="filters.spaceType"
+						:items="spaceTypes"
+						label="Тип площадки"
+						label-placement="floating"
+					/>
 					<ion-input
 						v-model="filters.pricePerDayFrom"
 						v-mask="maskpricePerDay"
@@ -115,6 +129,22 @@ function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) 
 						v-model="filters.pricePerDayTo"
 						v-mask="maskpricePerDay"
 						label="Цена ДО (₽/день)"
+						inputmode="numeric"
+						label-placement="floating"
+						helper-text="&nbsp;"
+					/>
+					<ion-input
+						v-model="filters.area"
+						v-mask="maskNumber"
+						label="Площадь ОТ (м^2)"
+						inputmode="numeric"
+						label-placement="floating"
+						helper-text="&nbsp;"
+					/>
+					<ion-input
+						v-model="filters.capacity"
+						v-mask="maskNumber"
+						label="Вместимость ОТ (человек)"
 						inputmode="numeric"
 						label-placement="floating"
 						helper-text="&nbsp;"

@@ -22,7 +22,7 @@ import { required, minLength, helpers } from '@vuelidate/validators';
 import cloneDeep from 'lodash.clonedeep'
 import isEqual from 'lodash.isequal'
 
-import { getFilesFromComputer, declOfNum, maskpricePerDay } from '@/utils'
+import { getFilesFromComputer, declOfNum, maskpricePerDay, maskNumber } from '@/utils'
 import api, { CreativeSpaceType } from '@/api'
 import type { ICalendarEventFull } from '@/api'
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
@@ -655,6 +655,7 @@ onCreated()
 				>
 					<ion-input
 						v-model="formData.area"
+						v-mask="maskNumber"
 						:class="areaError && ['ion-invalid', 'ion-touched']"
 						label="Площадь (м^2) *"
 						type="number"
@@ -672,6 +673,7 @@ onCreated()
 				>
 					<ion-input
 						v-model="formData.capacity"
+						v-mask="maskNumber"
 						:class="capacityError && ['ion-invalid', 'ion-touched']"
 						label="Вместимость (человек) *"
 						type="number"

@@ -109,6 +109,27 @@ const creativeSpacesFiltered = computed(() => {
 			return false
 		}
 
+		if (
+			filtersStore.creativeSpacesFilters.area &&
+			space.area < filtersStore.creativeSpacesFilters.area
+		) {
+			return false
+		}
+
+		if (
+			filtersStore.creativeSpacesFilters.capacity &&
+			space.capacity < filtersStore.creativeSpacesFilters.capacity
+		) {
+			return false
+		}
+
+		if (
+			filtersStore.creativeSpacesFilters.spaceType &&
+			space.spaceType !== filtersStore.creativeSpacesFilters.spaceType
+		) {
+			return false
+		}
+
 		return true
 	})
 })

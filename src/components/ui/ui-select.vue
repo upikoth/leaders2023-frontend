@@ -158,6 +158,7 @@ function closeDropdown() {
 <style lang="scss" scoped>
 .ui-select {
 	position: relative;
+	width: 100%;
 
 	&__overlay {
 		position: absolute;

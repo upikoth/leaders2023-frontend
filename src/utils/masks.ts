@@ -35,3 +35,7 @@ export const maskWorkDay = IMask.createPipe({
 		},
 	},
 }, IMask.PIPE_TYPE.MASKED) as (value: string) => string
+
+export const maskNumber = IMask.createPipe({
+	mask: Number,
+}, IMask.PIPE_TYPE.MASKED) as (value: string) => string
