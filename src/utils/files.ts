@@ -51,3 +51,21 @@ export const getBase64FromFile = (file: File): Promise<string> => {
 		};
 	})
 }
+
+export const saveFile = (value: Blob | string, filename?: string): void => {
+	const url = typeof value === 'string' ? value : window.URL.createObjectURL(value);
+
+	const a = document.createElement('a');
+	document.body.appendChild(a);
+	a.href = url;
+	a.target = '_blank'
+	if (filename) {
+		a.download = filename;
+	}
+	a.click();
+
+	setTimeout(() => {
+		window.URL.revokeObjectURL(url);
+		document.body.removeChild(a);
+	}, 0);
+};

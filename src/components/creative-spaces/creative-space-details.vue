@@ -10,6 +10,7 @@ import {
 	IonGrid,
 	IonRow,
 	IonCol,
+	IonButton,
 } from '@ionic/vue'
 import type { DatetimeCustomEvent } from '@ionic/vue'
 
@@ -17,7 +18,7 @@ import api from '@/api'
 import type { ICreativeSpace, ICalendarEventFull } from '@/api'
 import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router'
-import { formatPrice } from '@/utils'
+import { formatPrice, saveFile } from '@/utils'
 import environments from '@/environments'
 import { creativeSpaceTypeNameMapping } from '@/constants'
 import {
@@ -173,6 +174,10 @@ function onCalendarChange(event: DatetimeCustomEvent) {
 	}
 
 	emit('update:selected-calendar-days', value || [])
+}
+
+async function downloadContract() {
+	saveFile(`${environments.S3_ACCESS_DOMAIN_NAME}/e2f81ac3-4967-41b2-a9b3-e232d4f58819.pdf`, 'Договор оферты.pdf')
 }
 
 onCreated()
@@ -372,6 +377,17 @@ onCreated()
 					multiple
 					@ion-change="onCalendarChange"
 				/>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3>Договор аренды</h3>
+				<ion-button
+					fill="outline"
+					@click="downloadContract"
+				>
+					Скачать
+				</ion-button>
 			</ion-col>
 		</ion-row>
 		<template
