@@ -170,7 +170,7 @@ async function handleCreateScoreButtonClick() {
 				class="booking-card__details-buttons"
 			>
 				<ion-button
-					v-if="isFinishedByDate && !booking.scoreId"
+					v-if="isFinishedByDate && !booking.scoreId && userStore.isTenant"
 					:size="screenStore.isXs ? 'small' : 'default'"
 					@click="handleCreateScoreButtonClick"
 				>
