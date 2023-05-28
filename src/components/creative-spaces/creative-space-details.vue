@@ -409,7 +409,7 @@ onCreated()
 							<p
 								class="creative-space-details__rating"
 							>
-								Оценка: {{ creativeSpace.averageRating }}&nbsp;из 5
+								Оценка: {{ score.rating }}&nbsp;из 5
 							</p>
 							<p>{{ score.comment }}</p>
 						</ion-label>
