@@ -374,29 +374,33 @@ onCreated()
 				/>
 			</ion-col>
 		</ion-row>
-		<ion-row>
-			<ion-col>
-				<h3>Отзывы</h3>
-			</ion-col>
-		</ion-row>
-		<ion-row
-			v-for="score in creativeSpace.scores.filter(score => score.comment)"
-			:key="score.id"
+		<template
+			v-if="creativeSpace.scores.length"
 		>
-			<ion-col>
-				<ion-item>
-					<ion-label>
-						{{ `${score.user.surname} ${score.user.name} ${score.user.patronymic}` }}:
-						<p
-							class="creative-space-details__rating"
-						>
-							Оценка: {{ creativeSpace.averageRating / 2 }}&nbsp;из 5
-						</p>
-						<p>{{ score.comment }}</p>
-					</ion-label>
-				</ion-item>
-			</ion-col>
-		</ion-row>
+			<ion-row>
+				<ion-col>
+					<h3>Отзывы</h3>
+				</ion-col>
+			</ion-row>
+			<ion-row
+				v-for="score in creativeSpace.scores.filter(score => score.comment)"
+				:key="score.id"
+			>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							{{ `${score.user.surname} ${score.user.name} ${score.user.patronymic}` }}:
+							<p
+								class="creative-space-details__rating"
+							>
+								Оценка: {{ creativeSpace.averageRating / 2 }}&nbsp;из 5
+							</p>
+							<p>{{ score.comment }}</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+		</template>
 	</ion-grid>
 </template>
 
