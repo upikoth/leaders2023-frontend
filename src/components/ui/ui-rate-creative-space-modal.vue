@@ -96,7 +96,7 @@ async function sumbit() {
 					/>
 					<ion-textarea 
 						v-model="formData.comment"
-						label="Напишите развернутый комментарий *"
+						label="Напишите развернутый комментарий"
 						label-placement="floating"
 						:counter="true"
 						:maxlength="1000"
