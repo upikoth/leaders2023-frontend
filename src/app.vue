@@ -8,19 +8,25 @@ import {
 } from '@ionic/vue'
 
 import { checkIsView, getMainViewName, UNAUTHORIZED_VIEWS } from '@/router'
-import { useUserStore } from '@/stores'
+import { useUserStore, useNotificationsStore } from '@/stores'
 import { loadScript } from './utils'
 import environments from './environments';
 
 const route = useRoute()
 const ionRouter = useIonRouter()
 const userStore = useUserStore()
+const notificationsStore = useNotificationsStore()
 
 const isScriptLoaded = ref(false)
 
 async function onCreated() {
 	checkAuthorization()
-	await loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
+	try {
+		await loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
+	} catch {
+		notificationsStore.error('Не удалось загрузить яндекс карты')
+	}
+
 	isScriptLoaded.value = true
 }
 

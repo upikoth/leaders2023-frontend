@@ -34,8 +34,9 @@ enum CreativeSpaceDisplayType {
 	Map = 'map'
 }
 
+//@ts-ignore
 // eslint-disable-next-line no-undef
-const ymaps = ymaps3
+const ymaps: typeof ymaps3 | undefined = window.ymaps3
 
 const ionRouter = useIonRouter()
 
@@ -150,7 +151,7 @@ watch(() => displayType.value, async () => {
 })
 
 function updateCreativeSpaceMarkers(newCreativeSpaces: ICreativeSpaceListItem[], oldCreativeSpaces: ICreativeSpaceListItem[]) {
-	if (!creativeSpaceMap) {
+	if (!creativeSpaceMap || !ymaps) {
 		return
 	}
 
@@ -169,12 +170,18 @@ function updateCreativeSpaceMarkers(newCreativeSpaces: ICreativeSpaceListItem[],
 	creativeSpacesToAdd.forEach(space => {
 		const markerToAdd = generateCreativeSpaceMarker(space)
 
-		creativeSpaceMap?.addChild(markerToAdd)
-		creativeSpacesMarkers.set(space.id, markerToAdd)
+		if (markerToAdd) {
+			creativeSpaceMap?.addChild(markerToAdd)
+			creativeSpacesMarkers.set(space.id, markerToAdd)
+		}
 	})
 }
 
 function generateCreativeSpaceMarker(space: ICreativeSpaceListItem) {
+	if (!ymaps) {
+		return
+	}
+
 	const creativeSpaceMarkerElement = document.createElement('map-creative-space-marker') as HTMLElement & { width: string; height: string };
 	creativeSpaceMarkerElement.width = screenStore.isXs ? '25px' : '35px'
 	creativeSpaceMarkerElement.height = screenStore.isXs ? '25px' : '35px'
@@ -213,7 +220,7 @@ function redirectToCreativeSpacesCreatePage() {
 }
 
 async function initMap() {
-	if (!creativeSpaceMapRef.value) {
+	if (!creativeSpaceMapRef.value || !ymaps) {
 		return;
 	}
 
