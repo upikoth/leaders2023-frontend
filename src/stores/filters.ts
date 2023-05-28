@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { useUserStore } from '@/stores'
+import type { CreativeSpaceStatusEnum } from '@/api'
 
 import { IStoreNameEnum } from './index.types'
 
@@ -10,6 +11,7 @@ export interface ICreativeSpacesFilters {
 	pricePerDayTo: string
 	freeDates: string[]
 	landlordId: number
+	status: CreativeSpaceStatusEnum | null
 }
 
 export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
@@ -21,6 +23,7 @@ export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
 			pricePerDayTo: '',
 			freeDates: [],
 			landlordId: userStore.isLandlord ? userStore.user.id : 0,
+			status: null
 		}
 	}
 

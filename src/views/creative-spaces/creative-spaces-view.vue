@@ -102,6 +102,13 @@ const creativeSpacesFiltered = computed(() => {
 			return false
 		}
 
+		if (
+			filtersStore.creativeSpacesFilters.status &&
+			filtersStore.creativeSpacesFilters.status !== space.status
+		) {
+			return false
+		}
+
 		return true
 	})
 })

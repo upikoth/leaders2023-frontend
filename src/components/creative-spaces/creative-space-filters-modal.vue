@@ -19,6 +19,7 @@ import { isBefore } from 'date-fns'
 import { useFiltersStore, useUserStore } from '@/stores'
 import { vMask } from '@/directives'
 import { maskpricePerDay } from '@/utils'
+import { CreativeSpaceStatusEnum } from '@/api'
 
 import UiCalendar from '@/components/ui/ui-calendar.vue'
 
@@ -63,6 +64,10 @@ function sumbit() {
 function handleOnlyMySpacesCheckboxChange(event: CheckboxCustomEvent) {
 	filters.value.landlordId = event.detail.checked ? userStore.user.id : 0;
 }
+
+function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) {
+	filters.value.status = event.detail.checked ? CreativeSpaceStatusEnum.ConfirmationByAdmin : null;
+}
 </script>
 
 <template>
@@ -82,6 +87,14 @@ function handleOnlyMySpacesCheckboxChange(event: CheckboxCustomEvent) {
 		<ion-content>
 			<ion-card class="creative-space-filters-modal__card">
 				<ion-card-content class="creative-space-filters-modal__card-content">
+					<ion-checkbox
+						v-if="userStore.isAdmin"
+						class="creative-space-filters-modal__not-confirmed-filter"
+						:checked="filters.status === CreativeSpaceStatusEnum.ConfirmationByAdmin"
+						@ion-change="handleOnlyNotConfirmedSpacesCheckboxChange"
+					>
+						Показывать только не подтвержденные площадки
+					</ion-checkbox>
 					<ion-checkbox
 						v-if="userStore.isLandlord"
 						class="creative-space-filters-modal__only-my-spaces-filter"
@@ -159,6 +172,7 @@ function handleOnlyMySpacesCheckboxChange(event: CheckboxCustomEvent) {
 		}
 	}
 
+	&__not-confirmed-filter,
 	&__only-my-spaces-filter {
 		padding-top: 12px;
 		padding-bottom: 12px;
