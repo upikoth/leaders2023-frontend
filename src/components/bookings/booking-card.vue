@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { format, isBefore, startOfDay } from 'date-fns'
 import {
+	modalController,
 	useIonRouter,
 	IonCard,
 	IonCardTitle,
@@ -18,15 +19,18 @@ import { BookingStatusEnum } from '@/api'
 import { formatPrice, maskPhone } from '@/utils'
 import { ViewName } from '@/router'
 import { bookingStatusNameMapping, bookingStatusBadgeColorMapping } from '@/constants'
-import { useScreenStore, useUserStore } from '@/stores'
+import { useScreenStore, useUserStore, useNotificationsStore } from '@/stores'
 import environments from '@/environments'
+import api from '@/api'
 
 import UiCarousel from '@/components/ui/ui-carousel.vue'
+import UiRateCreativeSpaceModal from '@/components/ui/ui-rate-creative-space-modal.vue'
 
 const ionRouter = useIonRouter()
 
 const screenStore = useScreenStore()
 const userStore = useUserStore()
+const notificationsStore = useNotificationsStore()
 
 const props = defineProps({
 	booking: {
@@ -58,6 +62,7 @@ const statusColorResult = computed(() => {
 
 const emit = defineEmits({
 	'before-redirect-to-details-page': null,
+	'scores-added': null,
 });
 
 const bookingDaysText = computed(() => {
@@ -69,6 +74,31 @@ const images = computed((): string[] => props.booking.creativeSpace.photos.map(p
 function redirectToBookingDetailsPage() {
 	emit('before-redirect-to-details-page')
 	ionRouter.replace({ name: ViewName.BookingsDetailsView, params: { id: props.booking.id } })
+}
+
+async function handleCreateScoreButtonClick() {
+	const modal = await modalController.create({
+		component: UiRateCreativeSpaceModal,
+	})
+
+	modal.present()
+
+	const { data } = await modal.onWillDismiss();
+
+	try {
+		await api.scores.create({
+			comment: data.comment,
+			rating: Number(data.rating),
+			creativeSpaceId: props.booking.creativeSpace.id,
+			bookingId: props.booking.id,
+		})
+
+		emit('scores-added')
+
+		notificationsStore.success('Спасибо, что оставили отзыв!')
+	} catch {
+		notificationsStore.error('Не удалось оставить отзыв')
+	}
 }
 </script>
 
@@ -136,14 +166,24 @@ function redirectToBookingDetailsPage() {
 				<b>Телефон арендатора:</b>
 				{{ maskPhone(booking.tenantInfo.phone) }}
 			</p>
-			<ion-button
-				class="booking-card__details-button"
-				fill="outline"
-				:size="screenStore.isXs ? 'small' : 'default'"
-				@click="redirectToBookingDetailsPage"
+			<div
+				class="booking-card__details-buttons"
 			>
-				Подробнее
-			</ion-button>
+				<ion-button
+					v-if="isFinishedByDate && !booking.scoreId"
+					:size="screenStore.isXs ? 'small' : 'default'"
+					@click="handleCreateScoreButtonClick"
+				>
+					Оставить отзыв
+				</ion-button>
+				<ion-button
+					fill="outline"
+					:size="screenStore.isXs ? 'small' : 'default'"
+					@click="redirectToBookingDetailsPage"
+				>
+					Подробнее
+				</ion-button>
+			</div>
 		</ion-card-content>
 	</ion-card>
 </template>
@@ -178,9 +218,13 @@ function redirectToBookingDetailsPage() {
 		margin-left: 8px;
 	}
 
-	&__details-button {
+	&__details-buttons {
 		margin-top: auto;
 		margin-left: auto;
+
+		> ion-button:not(:last-child) {
+			margin-right: 12px;
+		}
 	}
 }
 </style>

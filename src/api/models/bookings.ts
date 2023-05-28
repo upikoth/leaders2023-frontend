@@ -15,6 +15,7 @@ export interface IBooking {
 	fullPrice: number
 	calendarEvents: ICalendarEvent[]
 	creativeSpace: IBookingCreativeSpace
+	scoreId: number
 	landlordInfo: {
 		id: number
 		phone: string
@@ -51,6 +52,7 @@ export interface IBookingListItem {
 	fullPrice: number
 	calendarEvents: ICalendarEvent[]
 	creativeSpace: IBookingListItemCreativeSpace
+	scoreId: number
 	landlordInfo: {
 		id: number
 		phone: string

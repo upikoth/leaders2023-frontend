@@ -58,6 +58,7 @@ async function updateBookings() {
 					>
 						<booking-card
 							:booking="booking"
+							@scores-added="updateBookings"
 						/>
 					</ion-col>
 				</ion-row>

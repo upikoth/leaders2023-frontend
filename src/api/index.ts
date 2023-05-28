@@ -7,6 +7,7 @@ import users from './routes/users'
 import files from './routes/files'
 import calendars from './routes/calendars'
 import bookings from './routes/bookings'
+import scores from './routes/scores'
 
 export * from './routes/health'
 export * from './routes/session'
@@ -17,6 +18,7 @@ export * from './routes/users'
 export * from './routes/files'
 export * from './routes/calendars'
 export * from './routes/bookings'
+export * from './routes/scores'
 
 export * from './models'
 
@@ -30,4 +32,5 @@ export default {
 	files,
 	calendars,
 	bookings,
+	scores,
 }
