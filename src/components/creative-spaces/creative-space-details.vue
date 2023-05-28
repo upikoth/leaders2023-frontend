@@ -203,7 +203,7 @@ onCreated()
 					class="creative-space-details__rating"
 				>
 					<b>Рейтинг:</b>&nbsp;
-					{{ creativeSpace.averageRating / 2 }}&nbsp;из 5
+					{{ creativeSpace.averageRating }}&nbsp;из 5
 				</p>
 			</ion-col>
 		</ion-row>
@@ -393,7 +393,7 @@ onCreated()
 							<p
 								class="creative-space-details__rating"
 							>
-								Оценка: {{ creativeSpace.averageRating / 2 }}&nbsp;из 5
+								Оценка: {{ creativeSpace.averageRating }}&nbsp;из 5
 							</p>
 							<p>{{ score.comment }}</p>
 						</ion-label>

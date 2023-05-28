@@ -85,7 +85,7 @@ async function sumbit() {
 						v-model="formData.rating"
 						v-mask="maskRating"
 						:class="ratingError && ['ion-invalid', 'ion-touched']"
-						label="Оцените площадку от 1 до 10 *"
+						label="Оцените площадку от 1 до 5 *"
 						type="number"
 						inputmode="numeric"
 						label-placement="floating"
@@ -96,7 +96,7 @@ async function sumbit() {
 					/>
 					<ion-textarea 
 						v-model="formData.comment"
-						label="Напишите развернуты комментарий *"
+						label="Напишите развернутый комментарий *"
 						label-placement="floating"
 						:counter="true"
 						:maxlength="1000"

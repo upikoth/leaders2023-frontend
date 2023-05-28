@@ -93,7 +93,7 @@ function redirectToCreativeSpacesDetailsPage() {
 				class="creative-space-card__rating"
 			>
 				<b>Рейтинг:</b>
-				{{ props.creativeSpace.averageRating / 2 }} из 5
+				{{ props.creativeSpace.averageRating }} из 5
 			</p>
 			<p>
 				<b>Стоимость:</b>
