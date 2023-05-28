@@ -1,4 +1,4 @@
-import type { ICalendarEvent } from '@/api'
+import type { ICalendarEvent, UserRole } from '@/api'
 
 export interface IBookingCreativeSpace {
 	id: number
@@ -10,13 +10,31 @@ export interface IBookingCreativeSpace {
 
 export interface IBooking {
 	id: number
-	tenantId: number
-	landlordId: number
 	creativeSpaceId: number
 	status: BookingStatusEnum
 	fullPrice: number
 	calendarEvents: ICalendarEvent[]
 	creativeSpace: IBookingCreativeSpace
+	landlordInfo: {
+		id: number
+		phone: string
+		role: UserRole
+		name: string
+		surname: string
+		patronymic: string
+		email: string
+		inn: string
+		legalEntityName: string
+	}
+	tenantInfo: {
+		id: number
+		phone: string
+		role: UserRole
+		name: string
+		surname: string
+		patronymic: string
+		email: string
+	}
 }
 
 export interface IBookingListItemCreativeSpace {
@@ -29,12 +47,30 @@ export interface IBookingListItemCreativeSpace {
 
 export interface IBookingListItem {
 	id: number
-	tenantId: number
-	landlordId: number
 	status: BookingStatusEnum
 	fullPrice: number
 	calendarEvents: ICalendarEvent[]
 	creativeSpace: IBookingListItemCreativeSpace
+	landlordInfo: {
+		id: number
+		phone: string
+		role: UserRole
+		name: string
+		surname: string
+		patronymic: string
+		email: string
+		inn: string
+		legalEntityName: string
+	}
+	tenantInfo: {
+		id: number
+		phone: string
+		role: UserRole
+		name: string
+		surname: string
+		patronymic: string
+		email: string
+	}
 }
 
 export enum BookingStatusEnum {

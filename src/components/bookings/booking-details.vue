@@ -168,6 +168,11 @@ onCreated()
 			</ion-col>
 		</ion-row>
 		<ion-row>
+			<ion-col>
+				<h3>Основная информация</h3>
+			</ion-col>
+		</ion-row>
+		<ion-row>
 			<ion-col
 				size="12"
 				size-md="8"
@@ -215,6 +220,84 @@ onCreated()
 				</ion-item>
 			</ion-col>
 		</ion-row>
+		<template
+			v-if="userStore.isAdmin || userStore.isTenant"
+		>
+			<ion-row>
+				<ion-col>
+					<h3>Информация об арендодателе</h3>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							ФИО:
+							<p>{{ `${booking.landlordInfo.surname} ${booking.landlordInfo.name} ${booking.landlordInfo.patronymic}` }}</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							Телефон:
+							<p>{{ booking.landlordInfo.phone }}</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							Название Юр. лица:
+							<p>{{ booking.landlordInfo.legalEntityName }}</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							Инн:
+							<p>{{ booking.landlordInfo.inn }}</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+		</template>
+		<template
+			v-if="userStore.isAdmin || userStore.isLandlord"
+		>
+			<ion-row>
+				<ion-col>
+					<h3>Информация об арендаторе</h3>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							ФИО:
+							<p>{{ `${booking.tenantInfo.surname} ${booking.tenantInfo.name} ${booking.tenantInfo.patronymic}` }}</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col>
+					<ion-item>
+						<ion-label>
+							Телефон:
+							<p>{{ booking.tenantInfo.phone }}</p>
+						</ion-label>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+		</template>
 		<ion-row v-if="booking.creativeSpace.photos.length">
 			<ion-col>
 				<h3
@@ -289,6 +372,8 @@ onCreated()
 	&__status {
 		display: flex;
 		align-items: center;
+		margin-top: 12px;
+		margin-bottom: 0;
 	}
 
 	&__status-badge {

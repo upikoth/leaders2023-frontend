@@ -15,10 +15,10 @@ import {
 
 import type { IBookingListItem } from '@/api'
 import { BookingStatusEnum } from '@/api'
-import { formatPrice } from '@/utils'
+import { formatPrice, maskPhone } from '@/utils'
 import { ViewName } from '@/router'
 import { bookingStatusNameMapping, bookingStatusBadgeColorMapping } from '@/constants'
-import { useScreenStore } from '@/stores'
+import { useScreenStore, useUserStore } from '@/stores'
 import environments from '@/environments'
 
 import UiCarousel from '@/components/ui/ui-carousel.vue'
@@ -26,6 +26,7 @@ import UiCarousel from '@/components/ui/ui-carousel.vue'
 const ionRouter = useIonRouter()
 
 const screenStore = useScreenStore()
+const userStore = useUserStore()
 
 const props = defineProps({
 	booking: {
@@ -103,11 +104,37 @@ function redirectToBookingDetailsPage() {
 				<b>Стоимость:</b>
 				{{ formatPrice(props.booking.fullPrice) }}
 			</p>
-			<p
-				class="booking-card__info-metro"
-			>
-				<b class="booking-card__info-metro-title">Даты аренды:</b>
+			<p>
+				<b>Даты аренды:</b>
 				{{ bookingDaysText }}
+			</p>
+			<p
+				v-if="userStore.isAdmin || userStore.isTenant"
+				class="booking-card__one-line-content"
+			>
+				<b>ФИО арендодателя:</b>
+				{{ `${booking.landlordInfo.surname} ${booking.landlordInfo.name} ${booking.landlordInfo.patronymic}` }}
+			</p>
+			<p
+				v-if="userStore.isAdmin || userStore.isTenant"
+				class="booking-card__one-line-content"
+			>
+				<b>Телефон арендодателя:</b>
+				{{ maskPhone(booking.landlordInfo.phone) }}
+			</p>
+			<p
+				v-if="userStore.isAdmin || userStore.isLandlord"
+				class="booking-card__one-line-content"
+			>
+				<b>ФИО арендатора:</b>
+				{{ `${booking.tenantInfo.surname} ${booking.tenantInfo.name} ${booking.tenantInfo.patronymic}` }}
+			</p>
+			<p
+				v-if="userStore.isAdmin || userStore.isLandlord"
+				class="booking-card__one-line-content"
+			>
+				<b>Телефон арендатора:</b>
+				{{ maskPhone(booking.tenantInfo.phone) }}
 			</p>
 			<ion-button
 				class="booking-card__details-button"
@@ -134,6 +161,7 @@ function redirectToBookingDetailsPage() {
 		flex-grow: 1;
 	}
 
+	&__one-line-content,
 	&__subtitle,
 	&__title {
 		overflow: hidden;
@@ -148,13 +176,6 @@ function redirectToBookingDetailsPage() {
 
 	&__status-badge {
 		margin-left: 8px;
-	}
-
-	&__info-description {
-		display: -webkit-box;
-		overflow: hidden;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 4;
 	}
 
 	&__details-button {
