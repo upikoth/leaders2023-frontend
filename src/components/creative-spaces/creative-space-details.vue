@@ -63,7 +63,7 @@ const emit = defineEmits({
 const creativeSpace = ref<ICreativeSpace | null>(null)
 
 const isStatusVisible = computed(() => {
-	return userStore.user.id === creativeSpace.value?.landlordId || userStore.isAdmin
+	return userStore.user.id === creativeSpace.value?.landlordInfo.id || userStore.isAdmin
 })
 
 watch(() => props.id, updateCreativeSpaceData)
@@ -80,7 +80,8 @@ async function updateCreativeSpaceData() {
 	try {
 		const { creativeSpace: newCreativeSpace } = await api.creativeSpaces.get(props.id)
 		creativeSpace.value = newCreativeSpace
-		emit('update:landlord-id', creativeSpace.value.landlordId)
+
+		emit('update:landlord-id', creativeSpace.value.landlordInfo.id)
 		emit('update:creative-space-events', creativeSpace.value.calendar.events)
 		emit('update:creative-space-status', creativeSpace.value.status)
 	} catch {
@@ -195,6 +196,11 @@ onCreated()
 			</ion-col>
 		</ion-row>
 		<ion-row>
+			<ion-col>
+				<h3>Основная информация</h3>
+			</ion-col>
+		</ion-row>
+		<ion-row>
 			<ion-col
 				size="12"
 				size-md="8"
@@ -238,6 +244,51 @@ onCreated()
 						>
 							{{ creativeSpace.description }}
 						</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3>Информация об арендодателе</h3>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-item>
+					<ion-label>
+						ФИО:
+						<p>{{ `${creativeSpace.landlordInfo.surname} ${creativeSpace.landlordInfo.name} ${creativeSpace.landlordInfo.patronymic}` }}</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-item>
+					<ion-label>
+						Телефон:
+						<p>{{ creativeSpace.landlordInfo.phone }}</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-item>
+					<ion-label>
+						Название Юр. лица:
+						<p>{{ creativeSpace.landlordInfo.legalEntityName }}</p>
+					</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-item>
+					<ion-label>
+						Инн:
+						<p>{{ creativeSpace.landlordInfo.inn }}</p>
 					</ion-label>
 				</ion-item>
 			</ion-col>
@@ -287,6 +338,8 @@ onCreated()
 	&__status {
 		display: flex;
 		align-items: center;
+		margin-top: 12px;
+		margin-bottom: 0;
 	}
 
 	&__status-badge {

@@ -202,7 +202,7 @@ async function updateFormData() {
 
 	try {
 		const { creativeSpace } = await api.creativeSpaces.get(props.id)
-		const { title, description, address, photos, pricePerDay, coordinate, calendar, landlordId } = creativeSpace
+		const { title, description, address, photos, pricePerDay, coordinate, calendar, landlordInfo } = creativeSpace
 
 		addressSearch.value = address
 
@@ -226,7 +226,7 @@ async function updateFormData() {
 
 		initialFormData = cloneDeep(formData.value)
 
-		if (landlordId !== userStore.user.id && !userStore.isAdmin) {
+		if (landlordInfo.id !== userStore.user.id && !userStore.isAdmin) {
 			ionRouter.replace({ name: ViewName.CreativeSpacesView })
 		}
 	} catch {

@@ -1,4 +1,4 @@
-import type { ICalendarEvent, ICalendarEventFull } from '@/api'
+import type { ICalendarEvent, ICalendarEventFull, UserRole } from '@/api'
 
 export interface ICreativeSpaceListItem {
 	id: number
@@ -31,7 +31,6 @@ export interface ICreativeSpace {
 	title: string
 	address: string
 	status: CreativeSpaceStatusEnum
-	landlordId: number
 	description: string
 	photos: string[]
 	pricePerDay: number
@@ -49,6 +48,17 @@ export interface ICreativeSpace {
 		workDayIndexes: number[]
 		events: ICalendarEventFull[]
 		link: string
+	},
+	landlordInfo: {
+		id: number
+		phone: string
+		role: UserRole
+		name: string
+		surname: string
+		patronymic: string
+		email: string
+		inn: string
+		legalEntityName: string
 	}
 }
 
