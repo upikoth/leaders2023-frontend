@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 import api, { UserRole } from '@/api'
 import type { IUser } from '@/api'
+import router, { ViewName } from '@/router'
 
 import { useFiltersStore } from '@/stores'
 
@@ -47,6 +48,7 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 	function setUnauthorized() {
 		isAuthorized.value = false
 		filtersStore.clearCreativeSpacesFilters()
+		router.push({ name: ViewName.SignInView })
 	}
 
 	function setAuthorized() {

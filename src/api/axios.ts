@@ -2,7 +2,6 @@ import axios from 'axios'
 
 import { MILLISECONDS_IN_MINUTE, ApiErrorCode } from '@/constants'
 
-import router, { ViewName } from '@/router'
 import type { IResponse, IResponseError } from '@/api'
 import { useUserStore } from '@/stores'
 
@@ -29,8 +28,6 @@ axiosInstance.interceptors.response.use(
 
 		if (responseData.error.code === ApiErrorCode.ErrUserNotAuthorized) {
 			userStore.setUnauthorized()
-
-			await router.push({ name: ViewName.SignInView })
 		}
 
 		return Promise.reject(responseData.error)

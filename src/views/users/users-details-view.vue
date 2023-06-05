@@ -92,7 +92,6 @@ async function handleLogoutButtonClick() {
 		await api.session.delete()
 
 		userStore.setUnauthorized()
-		ionRouter.replace({ name: ViewName.SignInView })
 	} catch {
 		notificationsStore.error('Не удалось выйти из приложения')
 	}

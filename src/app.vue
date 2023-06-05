@@ -21,6 +21,7 @@ const isScriptLoaded = ref(false)
 
 async function onCreated() {
 	checkAuthorization()
+
 	try {
 		await loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
 	} catch {
