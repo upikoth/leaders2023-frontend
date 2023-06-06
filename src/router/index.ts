@@ -31,7 +31,7 @@ const router = createRouter({
 			children: [
 				{
 					path: '',
-					redirect: () => ({ name: getMainViewName() }),
+					redirect: () => ({ name: ViewName.CreativeSpacesView }),
 				},
 				{
 					path: 'users',
@@ -118,15 +118,11 @@ const router = createRouter({
 			redirect: () => {
 				const userStore = useUserStore()
 
-				return userStore.userToken ? { name: getMainViewName() } : { name: ViewName.SignInView }
+				return userStore.userToken ? { name: ViewName.CreativeSpacesView } : { name: ViewName.SignInView }
 			},
 		},
   ]
 })
-
-export function getMainViewName() {
-	return ViewName.CreativeSpacesView
-}
 
 router.beforeEach((to, _, next) => {
 	if (!checkIsView(to.name)) {
@@ -150,7 +146,7 @@ router.beforeEach((to, _, next) => {
 		UNAUTHORIZED_VIEWS.has(to.name) &&
 		!!userStore.userToken
 	) {
-		return next({ name: getMainViewName() })
+		return next({ name: ViewName.CreativeSpacesView })
 	}
 
 	return next()

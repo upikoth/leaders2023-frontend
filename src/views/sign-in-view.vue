@@ -14,7 +14,7 @@ import {
 } from '@ionic/vue'
 
 import api from '@/api'
-import { getMainViewName } from '@/router'
+import { ViewName } from '@/router'
 import { useUserStore, useNotificationsStore } from '@/stores'
 import { maskPhone, unmaskPhone } from '@/utils'
 import { vMask } from '@/directives'
@@ -85,7 +85,7 @@ async function handleFormSubmit() {
 
 		userStore.setToken(user.token)
 		await userStore.checkAuthorization()
-		ionRouter.replace({ name: getMainViewName() })
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
 	} catch (err) {
 		notificationsStore.error('Ошибка при авторизации пользователя')
 	}

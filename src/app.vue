@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
 	useIonRouter,
@@ -7,7 +7,7 @@ import {
 	IonRouterOutlet
 } from '@ionic/vue'
 
-import { checkIsView, getMainViewName, UNAUTHORIZED_VIEWS } from '@/router'
+import { checkIsView, ViewName, UNAUTHORIZED_VIEWS } from '@/router'
 import { useUserStore, useNotificationsStore } from '@/stores'
 import { loadScript } from './utils'
 import environments from './environments';
@@ -18,6 +18,13 @@ const userStore = useUserStore()
 const notificationsStore = useNotificationsStore()
 
 const isScriptLoaded = ref(false)
+const isAuthorizationChecked = ref(false)
+
+watch(() => userStore.userToken, () => {
+	if (!userStore.userToken) {
+		ionRouter.replace({ name: ViewName.SignInView })
+	}
+})
 
 async function onCreated() {
 	checkAuthorization()
@@ -36,9 +43,18 @@ async function checkAuthorization() {
 
 	// Если авторизован и на странице не требующие авторизации, редиректим на главную страницу.
 	if (checkIsView(route.name) && UNAUTHORIZED_VIEWS.has(route.name)) {
-		ionRouter.replace({ name: getMainViewName() })
+		ionRouter.replace({ name: ViewName.CreativeSpacesView })
 	}
-	// Если не авторизован, то переход на страницу авторизации будет сделан в axios interceptor.
+
+	// Если не авторизован, то переход на страницу авторизации.
+	if (!userStore.userToken  && checkIsView(route.name) && !UNAUTHORIZED_VIEWS.has(route.name)) {
+		ionRouter.replace({ name: ViewName.SignInView })
+	}
+
+	// Костыль, чтобы роутер успел обработать и показать нужную страницу.
+	setTimeout(() => {
+		isAuthorizationChecked.value = true
+	}, 50)
 }
 
 onCreated()
@@ -46,7 +62,7 @@ onCreated()
 <template>
 	<ion-app>
 		<ion-router-outlet
-			v-if="userStore.isAuthorizationChecked && isScriptLoaded"
+			v-if="isAuthorizationChecked && isScriptLoaded"
 			animated="false"
 		/>
 	</ion-app>

@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 
 import api, { UserRole } from '@/api'
 import type { IUser } from '@/api'
-import router, { ViewName } from '@/router'
 
 import { useFiltersStore } from '@/stores'
 
@@ -42,11 +41,10 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 		try {
 			const { user: newUserValue } = await api.session.get()
 			user.value = newUserValue
-
-			filtersStore.clearCreativeSpacesFilters()
 		} catch {
 			setUnauthorized()
 		} finally {
+			filtersStore.clearCreativeSpacesFilters()
 			isAuthorizationChecked.value = true
 		}
 	}
@@ -57,8 +55,6 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 
 	function setUnauthorized() {
 		setToken('')
-		filtersStore.clearCreativeSpacesFilters()
-		router.push({ name: ViewName.SignInView })
 	}
 
   return {
