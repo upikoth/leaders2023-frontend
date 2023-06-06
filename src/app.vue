@@ -9,8 +9,7 @@ import {
 
 import { checkIsView, ViewName, UNAUTHORIZED_VIEWS } from '@/router'
 import { useUserStore, useNotificationsStore } from '@/stores'
-import { loadScript } from './utils'
-import environments from './environments';
+import { loadYandexMapScript } from './utils'
 
 const route = useRoute()
 const ionRouter = useIonRouter()
@@ -30,7 +29,7 @@ async function onCreated() {
 	checkAuthorization()
 
 	try {
-		await loadScript(`https://api-maps.yandex.ru/3.0/?apikey=${environments.YANDEX_API_KEY}&lang=ru_RU`)
+		await loadYandexMapScript()
 	} catch {
 		notificationsStore.error('Не удалось загрузить яндекс карты')
 	}
