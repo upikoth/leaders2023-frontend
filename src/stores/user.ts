@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 
 import api, { UserRole } from '@/api'
@@ -12,8 +12,9 @@ import { IStoreNameEnum } from './index.types'
 export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 	const filtersStore = useFiltersStore()
 
-  const isAuthorized = ref(false)
 	const isAuthorizationChecked = ref(false)
+
+	const userToken = ref(window.localStorage.getItem("userToken") || '')
 
 	const user = ref<IUser>({
 		id: NaN,
@@ -33,11 +34,16 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 
 	const isTenant = computed(() => user.value.role === UserRole.Tenant)
 
+	watch(() => userToken.value, () => {
+		window.localStorage.setItem("userToken", userToken.value)
+	})
+
 	async function checkAuthorization() {
 		try {
 			const { user: newUserValue } = await api.session.get()
 			user.value = newUserValue
-			setAuthorized()
+
+			filtersStore.clearCreativeSpacesFilters()
 		} catch {
 			setUnauthorized()
 		} finally {
@@ -45,26 +51,25 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 		}
 	}
 
+	function setToken(token: string) {
+		userToken.value = token
+	}
+
 	function setUnauthorized() {
-		isAuthorized.value = false
+		setToken('')
 		filtersStore.clearCreativeSpacesFilters()
 		router.push({ name: ViewName.SignInView })
 	}
 
-	function setAuthorized() {
-		isAuthorized.value = true
-		filtersStore.clearCreativeSpacesFilters()
-	}
-
   return {
 		user,
-		isAuthorized,
+		userToken,
 		isAuthorizationChecked,
 		isAdmin,
 		isLandlord,
 		isTenant,
+		setToken,
 		checkAuthorization,
-		setAuthorized,
 		setUnauthorized,
 	}
 })

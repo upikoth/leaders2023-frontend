@@ -118,7 +118,7 @@ const router = createRouter({
 			redirect: () => {
 				const userStore = useUserStore()
 
-				return userStore.isAuthorized ? { name: getMainViewName() } : { name: ViewName.SignInView }
+				return userStore.userToken ? { name: getMainViewName() } : { name: ViewName.SignInView }
 			},
 		},
   ]
@@ -139,7 +139,7 @@ router.beforeEach((to, _, next) => {
 	if (
 		userStore.isAuthorizationChecked &&
 		!UNAUTHORIZED_VIEWS.has(to.name) &&
-		!userStore.isAuthorized
+		!userStore.userToken
 	) {
 		return next({ name: ViewName.SignInView })
 	}
@@ -148,7 +148,7 @@ router.beforeEach((to, _, next) => {
 	if (
 		userStore.isAuthorizationChecked &&
 		UNAUTHORIZED_VIEWS.has(to.name) &&
-		userStore.isAuthorized
+		!!userStore.userToken
 	) {
 		return next({ name: getMainViewName() })
 	}

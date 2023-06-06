@@ -88,13 +88,7 @@ function redirectToUsersPage() {
 }
 
 async function handleLogoutButtonClick() {
-	try {
-		await api.session.delete()
-
-		userStore.setUnauthorized()
-	} catch {
-		notificationsStore.error('Не удалось выйти из приложения')
-	}
+	userStore.setUnauthorized()
 }
 </script>
 

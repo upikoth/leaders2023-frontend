@@ -9,8 +9,20 @@ import environments from '@/environments'
 
 const axiosInstance = axios.create({
 	timeout: MILLISECONDS_IN_MINUTE,
-	baseURL: import.meta.env.DEV ? '' : environments.VITE_API_URL
+	baseURL: environments.VITE_API_URL
 })
+
+axiosInstance.interceptors.request.use(
+	(req) => {
+		const userStore = useUserStore()
+
+		if (req.headers) {
+			req.headers["Authorization"] = userStore.userToken
+		}
+
+		return req
+	}
+)
 
 axiosInstance.interceptors.response.use(
 	(res) => {

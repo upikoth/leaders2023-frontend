@@ -7,7 +7,9 @@ export interface ISessionPostRequestData {
 }
 
 export interface ISessionPostResponseData {
-	user: Pick<IUser, "id">
+	user: {
+		token: string
+	}
 }
 
 export interface ISessionGetResponseData {
@@ -20,8 +22,5 @@ export default {
 	},
 	post(data: ISessionPostRequestData): Promise<ISessionPostResponseData> {
 		return axiosInstance.post('/api/v1/session', data)
-	},
-	delete(): Promise<void> {
-		return axiosInstance.delete('/api/v1/session')
-	},
+	}
 }

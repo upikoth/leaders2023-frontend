@@ -78,11 +78,12 @@ async function handleFormSubmit() {
 	const { phone, password } = formData.value
 
 	try {
-		await api.session.post({
+		const { user } = await api.session.post({
 			password,
 			phone: unmaskPhone(phone),
 		})
 
+		userStore.setToken(user.token)
 		await userStore.checkAuthorization()
 		ionRouter.replace({ name: getMainViewName() })
 	} catch (err) {
