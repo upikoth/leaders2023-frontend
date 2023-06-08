@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import {
 	useIonRouter,
 	IonPage,
@@ -17,7 +17,7 @@ import { createOutline, trashOutline, logOutOutline, chevronBackOutline } from '
 
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
-import api from '@/api'
+import api, { DataLoadingStateEnum } from '@/api'
 
 import UserDetails from '@/components/users/user-details.vue'
 
@@ -27,6 +27,8 @@ const route = useRoute()
 const userStore = useUserStore()
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
+
+const userLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const userId = computed(() => {
 	return Number(route.params.userId)
@@ -132,30 +134,37 @@ async function handleLogoutButtonClick() {
 			</ion-toolbar>
 		</ion-header>
 		<ion-content class="users-details-view__content">
-			<user-details :id="userId" />
-			<ion-button
-				v-if="userStore.user.id !== userId"
-				class="users-details-view__delete-button"
-				color="danger"
-				fill="outline"
-				@click="handleDeleteUserButtonClick"
+			<user-details
+				:id="userId"
+				v-model:user-loading-state="userLoadingState"
+			/>
+			<template
+				v-if="userLoadingState === DataLoadingStateEnum.LoadedSuccess"
 			>
-				<ion-icon
-					:icon="trashOutline"
-				/>
-				Удалить пользователя
-			</ion-button>
-			<ion-button
-				v-else
-				class="users-details-view__logout-button"
-				fill="outline"
-				@click="handleLogoutButtonClick"
-			>
-				<ion-icon
-					:icon="logOutOutline"
-				/>
-				Выйти из приложения
-			</ion-button>
+				<ion-button
+					v-if="userStore.user.id !== userId"
+					class="users-details-view__delete-button"
+					color="danger"
+					fill="outline"
+					@click="handleDeleteUserButtonClick"
+				>
+					<ion-icon
+						:icon="trashOutline"
+					/>
+					Удалить пользователя
+				</ion-button>
+				<ion-button
+					v-else
+					class="users-details-view__logout-button"
+					fill="outline"
+					@click="handleLogoutButtonClick"
+				>
+					<ion-icon
+						:icon="logOutOutline"
+					/>
+					Выйти из приложения
+				</ion-button>
+			</template>
 		</ion-content>
 	</ion-page>
 </template>

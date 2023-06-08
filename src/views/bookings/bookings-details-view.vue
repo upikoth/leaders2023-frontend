@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import {
 	useIonRouter,
 	IonPage,
@@ -17,7 +17,7 @@ import { trashOutline, chevronBackOutline } from 'ionicons/icons';
 
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
-import api from '@/api'
+import api, { DataLoadingStateEnum } from '@/api'
 
 import BookingDetails from '@/components/bookings/booking-details.vue'
 
@@ -27,6 +27,8 @@ const route = useRoute()
 const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
 const userStore = useUserStore()
+
+const bookingLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const bookingId = computed(() => {
 	return Number(route.params.id)
@@ -110,8 +112,12 @@ async function deleteBooking() {
 		<ion-content class="bookings-details-view__content">
 			<booking-details
 				:id="bookingId"
+				v-model:booking-loading-state="bookingLoadingState"
 			/>
-			<div class="bookings-details-view__content-after">
+			<div 
+				v-if="bookingLoadingState === DataLoadingStateEnum.LoadedSuccess"
+				class="bookings-details-view__content-after"
+			>
 				<ion-button
 					v-if="canUserEditOrRemove"
 					class="bookings-details-view__delete-button"

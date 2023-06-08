@@ -651,7 +651,7 @@ onCreated()
 			<ion-row>
 				<ion-col
 					size="12"
-					size-md="6"
+					size-md="8"
 				>
 					<ion-input
 						v-model="formData.area"
@@ -669,7 +669,7 @@ onCreated()
 				</ion-col>
 				<ion-col
 					size="12"
-					size-md="6"
+					size-md="4"
 				>
 					<ion-input
 						v-model="formData.capacity"

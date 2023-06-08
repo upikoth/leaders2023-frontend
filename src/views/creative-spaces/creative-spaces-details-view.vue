@@ -17,7 +17,7 @@ import { createOutline, trashOutline, chevronBackOutline } from 'ionicons/icons'
 
 import { useScreenStore, useNotificationsStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router';
-import api, { CreativeSpaceStatusEnum } from '@/api'
+import api, { CreativeSpaceStatusEnum, DataLoadingStateEnum } from '@/api'
 import type { ICalendarEventFull } from '@/api'
 
 import CreativeSpaceDetails from '@/components/creative-spaces/creative-space-details.vue'
@@ -33,6 +33,7 @@ const creativeSpaceLandlordId = ref(NaN)
 const selectedCalendarDays = ref<string[]>([])
 const creativeSpaceEvents = ref<ICalendarEventFull[]>([])
 const creativeSpaceStatus = ref(CreativeSpaceStatusEnum.ConfirmationByAdmin)
+const creativeSpaceLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const creativeSpaceId = computed(() => {
 	return Number(route.params.id)
@@ -223,8 +224,12 @@ async function handleConfirmButtonClick() {
 				v-model:selected-calendar-days="selectedCalendarDays"
 				v-model:creative-space-events="creativeSpaceEvents"
 				v-model:creative-space-status="creativeSpaceStatus"
+				v-model:creative-space-loading-state="creativeSpaceLoadingState"
 			/>
-			<div class="creative-spaces-details-view__content-after">
+			<div
+				v-if="creativeSpaceLoadingState === DataLoadingStateEnum.LoadedSuccess"
+				class="creative-spaces-details-view__content-after"
+			>
 				<ion-button
 					v-if="canBookSpace"
 					class="creative-spaces-details-view__booking-button"

@@ -14,7 +14,7 @@ import {
 	IonButton,
 } from '@ionic/vue'
 
-import api, { BookingStatusEnum } from '@/api'
+import api, { BookingStatusEnum, DataLoadingStateEnum } from '@/api'
 import type { IBooking } from '@/api'
 import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
 import { bookingStatusNameMapping, bookingStatusBadgeColorMapping } from '@/constants'
@@ -37,9 +37,18 @@ const props = defineProps({
 		type: Number as PropType<number>,
 		required: true
 	},
+	bookingLoadingState: {
+		type: String as PropType<DataLoadingStateEnum>,
+		default: DataLoadingStateEnum.DidNotLoad
+	}
 })
 
+const emit = defineEmits({
+	'update:booking-loading-state': (value: string) => typeof value === 'string'
+});
+
 const booking = ref<IBooking | null>(null)
+const bookingLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const bookingDaysText = computed(() => {
 	return booking.value?.calendarEvents.map(event => format(new Date(event.date), "yyyy.MM.dd")).join('; ') || ''
@@ -86,11 +95,16 @@ async function updateBookingData() {
 	}
 
 	try {
+		bookingLoadingState.value = DataLoadingStateEnum.Loading
 		const { booking: newBooking } = await api.bookings.get(props.id)
 		booking.value = newBooking
+		bookingLoadingState.value = DataLoadingStateEnum.LoadedSuccess
 	} catch {
+		bookingLoadingState.value = DataLoadingStateEnum.LoadedError
 		notificationsStore.error('Не удалось получить информацию о заказе')
 		ionRouter.replace({ name: ViewName.BookingsView })
+	} finally {
+		emit('update:booking-loading-state', bookingLoadingState.value)
 	}
 }
 
@@ -151,7 +165,7 @@ onCreated()
 
 <template>
 	<ion-grid
-		v-if="booking"
+		v-if="bookingLoadingState === DataLoadingStateEnum.LoadedSuccess && booking"
 		class="booking-details"
 	>
 		<ion-row>

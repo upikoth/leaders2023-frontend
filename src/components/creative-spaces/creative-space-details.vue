@@ -14,7 +14,7 @@ import {
 } from '@ionic/vue'
 import type { DatetimeCustomEvent } from '@ionic/vue'
 
-import api from '@/api'
+import api, { DataLoadingStateEnum } from '@/api'
 import type { ICreativeSpace, ICalendarEventFull } from '@/api'
 import { useNotificationsStore, useScreenStore, useUserStore } from '@/stores'
 import { ViewName } from '@/router'
@@ -53,16 +53,22 @@ const props = defineProps({
 		type: Array as PropType<ICalendarEventFull[]>,
 		default: () => []
 	},
+	creativeSpaceLoadingState: {
+		type: String as PropType<DataLoadingStateEnum>,
+		default: DataLoadingStateEnum.DidNotLoad
+	}
 })
 
 const emit = defineEmits({
 	'update:landlord-id': (value: number) => typeof value === 'number',
 	'update:selected-calendar-days': (value: string[]) => Array.isArray(value),
 	'update:creative-space-events': (value: ICalendarEventFull[]) => Array.isArray(value),
-	'update:creative-space-status': (value: string) => typeof value === 'string'
+	'update:creative-space-status': (value: string) => typeof value === 'string',
+	'update:creative-space-loading-state': (value: string) => typeof value === 'string'
 });
 
 const creativeSpace = ref<ICreativeSpace | null>(null)
+const creativeSpaceLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const isStatusVisible = computed(() => {
 	return userStore.user.id === creativeSpace.value?.landlordInfo.id || userStore.isAdmin
@@ -80,15 +86,20 @@ async function updateCreativeSpaceData() {
 	}
 
 	try {
+		creativeSpaceLoadingState.value = DataLoadingStateEnum.Loading
 		const { creativeSpace: newCreativeSpace } = await api.creativeSpaces.get(props.id)
+		creativeSpaceLoadingState.value = DataLoadingStateEnum.LoadedSuccess
 		creativeSpace.value = newCreativeSpace
 
 		emit('update:landlord-id', creativeSpace.value.landlordInfo.id)
 		emit('update:creative-space-events', creativeSpace.value.calendar.events)
 		emit('update:creative-space-status', creativeSpace.value.status)
 	} catch {
+		creativeSpaceLoadingState.value = DataLoadingStateEnum.LoadedError
 		notificationsStore.error('Не удалось получить информацию о креативной площадке')
 		ionRouter.replace({ name: ViewName.CreativeSpacesView })
+	} finally {
+		emit('update:creative-space-loading-state', creativeSpaceLoadingState.value)
 	}
 }
 
@@ -185,7 +196,7 @@ onCreated()
 
 <template>
 	<ion-grid
-		v-if="creativeSpace"
+		v-if="creativeSpaceLoadingState === DataLoadingStateEnum.LoadedSuccess && creativeSpace"
 		class="creative-space-details"
 	>
 		<ion-row v-if="isStatusVisible">
@@ -254,7 +265,7 @@ onCreated()
 		<ion-row>
 			<ion-col
 				size="12"
-				size-md="6"
+				size-md="8"
 			>
 				<ion-item>
 					<ion-label>
@@ -265,7 +276,7 @@ onCreated()
 			</ion-col>
 			<ion-col
 				size="12"
-				size-md="6"
+				size-md="4"
 			>
 				<ion-item>
 					<ion-label>

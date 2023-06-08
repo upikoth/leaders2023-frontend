@@ -11,7 +11,7 @@ import {
 	IonBadge,
 } from '@ionic/vue'
 
-import api, { UserRole } from '@/api'
+import api, { UserRole, DataLoadingStateEnum } from '@/api'
 import type { IUser } from '@/api'
 import { useNotificationsStore } from '@/stores'
 import { ViewName } from '@/router';
@@ -26,9 +26,18 @@ const props = defineProps({
 		type: Number as PropType<number>,
 		required: true
 	},
+	userLoadingState: {
+		type: String as PropType<DataLoadingStateEnum>,
+		default: DataLoadingStateEnum.DidNotLoad
+	}
 })
 
+const emit = defineEmits({
+	'update:user-loading-state': (value: string) => typeof value === 'string'
+});
+
 const user = ref<IUser | null>(null)
+const userLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const fio = computed(() => {
 	if (!user.value) {
@@ -50,11 +59,16 @@ async function updateUserData() {
 	}
 
 	try {
+		userLoadingState.value = DataLoadingStateEnum.Loading
 		const { user: newUser } = await api.users.get(props.id)
 		user.value = newUser
+		userLoadingState.value = DataLoadingStateEnum.LoadedSuccess
 	} catch {
+		userLoadingState.value = DataLoadingStateEnum.LoadedError
 		notificationsStore.error('Не удалось получить информацию о пользователе')
 		ionRouter.replace({ name: ViewName.UsersView })
+	} finally {
+		emit('update:user-loading-state', userLoadingState.value)
 	}
 }
 
@@ -63,7 +77,7 @@ onCreated()
 
 <template>
 	<ion-grid
-		v-if="user"
+		v-if="userLoadingState === DataLoadingStateEnum.LoadedSuccess && user"
 		class="user-details__grid"
 	>
 		<ion-row>
