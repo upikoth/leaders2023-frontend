@@ -34,3 +34,10 @@ export default {
 	bookings,
 	scores,
 }
+
+export enum DataLoadingState {
+	DidNotLoad = 'DID_NOT_LOAD',
+	Loading = 'LOADING',
+	LoadedSuccess = 'LOADED_SUCCESS',
+	LoadedError = 'LOADED_ERROR'
+}

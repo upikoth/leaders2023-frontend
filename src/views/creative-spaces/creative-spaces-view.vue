@@ -22,21 +22,12 @@ import { getDay } from 'date-fns'
 
 import api, { CreativeSpaceStatusEnum } from '@/api'
 import type { ICreativeSpaceListItem } from '@/api'
-import { useNotificationsStore, useScreenStore, useUserStore, useFiltersStore } from '@/stores'
+import { useNotificationsStore, useScreenStore, useUserStore, useFiltersStore, useCreativeSpacesStore } from '@/stores'
 import { ViewName } from '@/router';
 
 import CreativeSpaceCard from '@/components/creative-spaces/creative-space-card.vue'
 import CreativeSpaceModal from '@/components/map/creative-space-modal.vue'
 import CreativeSpaceFiltersModal from '@/components/creative-spaces/creative-space-filters-modal.vue'
-
-enum CreativeSpaceDisplayType {
-	List = 'list',
-	Map = 'map'
-}
-
-//@ts-ignore
-// eslint-disable-next-line no-undef
-const ymaps: typeof ymaps3 | undefined = window.ymaps3
 
 const ionRouter = useIonRouter()
 
@@ -44,14 +35,17 @@ const notificationsStore = useNotificationsStore()
 const screenStore = useScreenStore()
 const userStore = useUserStore()
 const filtersStore = useFiltersStore()
+const creativeSpacesStore = useCreativeSpacesStore()
+
+//@ts-ignore
+// eslint-disable-next-line no-undef
+const ymaps: typeof ymaps3 | undefined = window.ymaps3
 
 const creativeSpaces = ref<ICreativeSpaceListItem[]>([])
 let creativeSpacesMarkers = new Map()
 
 const creativeSpaceMapRef = ref<HTMLDivElement>()
 let creativeSpaceMap: YMap | null = null
-
-const displayType = ref(CreativeSpaceDisplayType.List)
 
 const creativeSpacesFiltered = computed(() => {
 	return creativeSpaces.value.filter(space => {
@@ -145,7 +139,7 @@ onMounted(() => {
 
 watch(() => creativeSpacesFiltered.value, updateCreativeSpaceMarkers)
 
-watch(() => displayType.value, async () => {
+watch(() => creativeSpacesStore.displayType, async () => {
 	await nextTick()
 	initMap()
 })
@@ -241,7 +235,7 @@ async function initMap() {
 	const controls = new ymaps.YMapControls({ position: 'top left' });
 	const button = new ymaps.YMapControlButton({
 		text: 'Показать списком',
-		onClick: changeDisplayType,
+		onClick: creativeSpacesStore.changeDisplayType,
 	});
 
 	const filterButton = new ymaps.YMapControlButton({
@@ -256,19 +250,6 @@ async function initMap() {
 
 	if (creativeSpacesFiltered.value.length) {
 		updateCreativeSpaceMarkers(creativeSpacesFiltered.value, [])
-	}
-}
-
-function changeDisplayType() {
-	switch (displayType.value) {
-	case CreativeSpaceDisplayType.List:
-		displayType.value = CreativeSpaceDisplayType.Map
-		break;
-	case CreativeSpaceDisplayType.Map:
-		displayType.value = CreativeSpaceDisplayType.List
-		break;
-	default:
-		displayType.value = CreativeSpaceDisplayType.List
 	}
 }
 
@@ -309,7 +290,7 @@ async function handleFilterButtonClick() {
 		</ion-header>
 		<ion-content class="creative-spaces-view__content">
 			<ion-grid
-				v-if="displayType === CreativeSpaceDisplayType.List"
+				v-if="creativeSpacesStore.isDisplayList"
 				class="creative-spaces-view__list"
 			>
 				<ion-row>
@@ -318,7 +299,7 @@ async function handleFilterButtonClick() {
 							color="primary"
 							fill="outline"
 							:size="screenStore.isXs ? 'small' : 'default'"
-							@click="changeDisplayType"
+							@click="creativeSpacesStore.changeDisplayType"
 						>
 							<ion-icon
 								v-if="!screenStore.isXs"
@@ -374,7 +355,7 @@ async function handleFilterButtonClick() {
 				</ion-row>
 			</ion-grid>
 			<div
-				v-if="displayType === CreativeSpaceDisplayType.Map"
+				v-if="creativeSpacesStore.isDisplayMap"
 				ref="creativeSpaceMapRef"
 				class="creative-spaces-view__map"
 			/>

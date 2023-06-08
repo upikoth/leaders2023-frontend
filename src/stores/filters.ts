@@ -20,7 +20,7 @@ export interface ICreativeSpacesFilters {
 export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
 	const userStore = useUserStore()
 
-	function getFiltersDefaultValue() {
+	function getCreativeSpacesFiltersDefaultValue() {
 		return {
 			pricePerDayFrom: '',
 			pricePerDayTo: '',
@@ -33,7 +33,7 @@ export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
 		}
 	}
 
-	const creativeSpacesFilters = ref<ICreativeSpacesFilters>(getFiltersDefaultValue())
+	const creativeSpacesFilters = ref<ICreativeSpacesFilters>(getCreativeSpacesFiltersDefaultValue())
 
 	function patchCreativeSpacesFilters(newFilters: ICreativeSpacesFilters) {
 		creativeSpacesFilters.value = {
@@ -43,7 +43,7 @@ export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
 	}
 
 	function clearCreativeSpacesFilters() {
-		creativeSpacesFilters.value = getFiltersDefaultValue()
+		creativeSpacesFilters.value = getCreativeSpacesFiltersDefaultValue()
 	}
 
 	return {

@@ -3,4 +3,5 @@ export enum IStoreNameEnum {
 	User = 'USER',
 	Notifications = 'NOTIFICATIONS',
 	Filters = 'FILTERS',
+	CreativeSpaces = 'CREATIVE_SPACES',
 }
