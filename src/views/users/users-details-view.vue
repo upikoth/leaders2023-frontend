@@ -96,7 +96,10 @@ async function handleLogoutButtonClick() {
 	<ion-page class="users-details-view">
 		<ion-header>
 			<ion-toolbar>
-				<ion-buttons slot="start">
+				<ion-buttons
+					v-if="userStore.isAdmin && userStore.user.id !== userId"
+					slot="start"
+				>
 					<ion-button
 						slot="icon-only"
 						color="primary"
