@@ -101,7 +101,7 @@ function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) 
 						:checked="filters.status === CreativeSpaceStatusEnum.ConfirmationByAdmin"
 						@ion-change="handleOnlyNotConfirmedSpacesCheckboxChange"
 					>
-						Показывать только не подтвержденные площадки
+						Только не подтвержденные площадки
 					</ion-checkbox>
 					<ion-checkbox
 						v-if="userStore.isLandlord"
@@ -188,6 +188,7 @@ function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) 
 	&__card {
 		height: 100%;
 		margin: 0;
+		overflow-y: auto;
 	}
 
 	&__card-content {
@@ -200,6 +201,10 @@ function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) 
 			margin-bottom: 12px;
 			font-size: 15px;
 		}
+
+		> * {
+			flex-shrink: 0;
+		}
 	}
 
 	&__not-confirmed-filter,
@@ -209,6 +214,7 @@ function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) 
 	}
 
 	&__buttons {
+		padding-bottom: 16px;
 		margin-top: auto;
 		margin-left: auto;
 

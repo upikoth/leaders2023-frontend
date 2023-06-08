@@ -321,6 +321,7 @@ async function handleFilterButtonClick() {
 							@click="changeDisplayType"
 						>
 							<ion-icon
+								v-if="!screenStore.isXs"
 								:icon="mapOutline"
 							/>
 							Показать на карте
@@ -332,6 +333,7 @@ async function handleFilterButtonClick() {
 							@click="handleFilterButtonClick"
 						>
 							<ion-icon
+								v-if="!screenStore.isXs"
 								:icon="settingsOutline"
 							/>
 							Настроить фильтры
@@ -387,7 +389,7 @@ async function handleFilterButtonClick() {
 	}
 
 	&__top-controls {
-		> ion-button {
+		> ion-button:not(:last-child) {
 			margin-right: 20px;
 		}
 	}
