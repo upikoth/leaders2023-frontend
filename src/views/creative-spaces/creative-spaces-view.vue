@@ -20,12 +20,15 @@ import { addOutline, mapOutline, settingsOutline } from 'ionicons/icons';
 import type { YMap } from '@yandex/ymaps3-types'
 import { getDay } from 'date-fns'
 
-import api, { CreativeSpaceStatusEnum } from '@/api'
+import api, { CreativeSpaceStatusEnum, DataLoadingStateEnum } from '@/api'
 import type { ICreativeSpaceListItem } from '@/api'
 import { useNotificationsStore, useScreenStore, useUserStore, useFiltersStore, useCreativeSpacesStore } from '@/stores'
 import { ViewName } from '@/router';
 
+import UiAsyncDataWrapper from '@/components/ui/ui-async-data-wrapper.vue'
+
 import CreativeSpaceCard from '@/components/creative-spaces/creative-space-card.vue'
+import CreativeSpaceCardSkeleton from '@/components/creative-spaces/creative-space-card-skeleton.vue'
 import CreativeSpaceModal from '@/components/map/creative-space-modal.vue'
 import CreativeSpaceFiltersModal from '@/components/creative-spaces/creative-space-filters-modal.vue'
 
@@ -41,6 +44,9 @@ const creativeSpacesStore = useCreativeSpacesStore()
 // eslint-disable-next-line no-undef
 const ymaps: typeof ymaps3 | undefined = window.ymaps3
 
+const creativeSpacesPageRef = ref()
+
+const creativeSpacesLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 const creativeSpaces = ref<ICreativeSpaceListItem[]>([])
 let creativeSpacesMarkers = new Map()
 
@@ -203,8 +209,11 @@ function generateCreativeSpaceMarker(space: ICreativeSpaceListItem) {
 
 async function updateCreativeSpaces() {
 	try {
+		creativeSpacesLoadingState.value = DataLoadingStateEnum.Loading
 		creativeSpaces.value = (await api.creativeSpaces.getAll()).creativeSpaces
+		creativeSpacesLoadingState.value = DataLoadingStateEnum.LoadedSuccess
 	} catch {
+		creativeSpacesLoadingState.value = DataLoadingStateEnum.LoadedError
 		notificationsStore.error('Ошибка при получении списка креативных пространств')
 	}
 }
@@ -264,7 +273,10 @@ async function handleFilterButtonClick() {
 </script>
 
 <template>
-	<ion-page class="creative-spaces-view">
+	<ion-page
+		ref="creativeSpacesPageRef"
+		class="creative-spaces-view"
+	>
 		<ion-header>
 			<ion-toolbar>
 				<ion-title>
@@ -322,36 +334,51 @@ async function handleFilterButtonClick() {
 					</ion-col>
 				</ion-row>
 				<ion-row>
-					<template
-						v-if="creativeSpaces.length"
-					>
-						<template
-							v-if="creativeSpacesFiltered.length"
-						>
+					<ui-async-data-wrapper :state="creativeSpacesLoadingState">
+						<template #loading>
 							<ion-col
-								v-for="creativeSpace in creativeSpacesFiltered"
-								:key="creativeSpace.id"
+								v-for="i in 6"
+								:key="i"
 								size="12"
 								size-md="6"
 							>
-								<creative-space-card
-									:creative-space="creativeSpace"
-								/>
+								<creative-space-card-skeleton />
 							</ion-col>
 						</template>
-						<p 
+						<template #error>
+							Ошибка при загрузке креативных площадок. Попробуйте еще раз.
+						</template>
+						<template
+							v-if="creativeSpaces.length"
+						>
+							<template
+								v-if="creativeSpacesFiltered.length"
+							>
+								<ion-col
+									v-for="creativeSpace in creativeSpacesFiltered"
+									:key="creativeSpace.id"
+									size="12"
+									size-md="6"
+								>
+									<creative-space-card
+										:creative-space="creativeSpace"
+									/>
+								</ion-col>
+							</template>
+							<p 
+								v-else
+								class="creative-spaces-view__dummy"
+							>
+								Под выбранные фильтры не подходит ни одна площадка
+							</p>
+						</template>
+						<p
 							v-else
 							class="creative-spaces-view__dummy"
 						>
-							Под выбранные фильтры не подходит ни одна площадка
+							Пока нет ни одной креативной площадки для сдачи в аренду
 						</p>
-					</template>
-					<p
-						v-else
-						class="creative-spaces-view__dummy"
-					>
-						Пока нет ни одной креативной площадки для сдачи в аренду
-					</p>
+					</ui-async-data-wrapper>
 				</ion-row>
 			</ion-grid>
 			<div
