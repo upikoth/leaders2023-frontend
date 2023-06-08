@@ -33,7 +33,7 @@ export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
 		}
 	}
 
-  const creativeSpacesFilters = ref<ICreativeSpacesFilters>(getFiltersDefaultValue())
+	const creativeSpacesFilters = ref<ICreativeSpacesFilters>(getFiltersDefaultValue())
 
 	function patchCreativeSpacesFilters(newFilters: ICreativeSpacesFilters) {
 		creativeSpacesFilters.value = {
@@ -46,7 +46,7 @@ export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
 		creativeSpacesFilters.value = getFiltersDefaultValue()
 	}
 
-  return {
+	return {
 		creativeSpacesFilters,
 		patchCreativeSpacesFilters,
 		clearCreativeSpacesFilters,

@@ -42,7 +42,7 @@ export const useNotificationsStore = defineStore(IStoreNameEnum.Notifications, (
 		await toast.present()
 	}
 
-  return {
+	return {
 		success,
 		error,
 	}

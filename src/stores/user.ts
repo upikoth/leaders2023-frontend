@@ -57,7 +57,7 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 		setToken('')
 	}
 
-  return {
+	return {
 		user,
 		userToken,
 		isAuthorizationChecked,

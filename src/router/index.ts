@@ -23,8 +23,8 @@ export function checkIsView(view: unknown): view is ViewName {
 }
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
-  routes: [
+	history: createWebHashHistory(import.meta.env.BASE_URL),
+	routes: [
 		{
 			path: '',
 			component: () => import('@/layouts/base-layout.vue'),
@@ -121,7 +121,7 @@ const router = createRouter({
 				return userStore.userToken ? { name: ViewName.CreativeSpacesView } : { name: ViewName.SignInView }
 			},
 		},
-  ]
+	]
 })
 
 router.beforeEach((to, _, next) => {

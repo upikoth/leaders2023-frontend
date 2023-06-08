@@ -261,14 +261,14 @@ async function initMap() {
 
 function changeDisplayType() {
 	switch (displayType.value) {
-		case CreativeSpaceDisplayType.List:
-			displayType.value = CreativeSpaceDisplayType.Map
-			break;
-		case CreativeSpaceDisplayType.Map:
-			displayType.value = CreativeSpaceDisplayType.List
-			break;
-		default:
-			displayType.value = CreativeSpaceDisplayType.List
+	case CreativeSpaceDisplayType.List:
+		displayType.value = CreativeSpaceDisplayType.Map
+		break;
+	case CreativeSpaceDisplayType.Map:
+		displayType.value = CreativeSpaceDisplayType.List
+		break;
+	default:
+		displayType.value = CreativeSpaceDisplayType.List
 	}
 }
 

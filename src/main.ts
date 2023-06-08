@@ -23,5 +23,5 @@ app.use(IonicVue)
 app.use(router)
 
 router.isReady().then(() => {
-  app.mount('#app');
+	app.mount('#app');
 });
