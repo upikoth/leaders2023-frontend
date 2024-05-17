@@ -22,18 +22,21 @@ jobs:
       - run: npm ci
       - run: npm run lint
 
-  deploy:
+  deploy-to-s3:
     needs: lint
+    name: Deploy to s3
     runs-on: ubuntu-latest
-    environment:
-      name: prod
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
-      - uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - run: npm ci
       - run: npm run build
-      - run: rsync -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" --delete -r ./dist/ root@${{ secrets.SSH_HOST }}:${{ vars.APP_SERVER_PATH }}
+
+      - uses: MrMeison/yc-object-storage-action@v1
+        with:
+          accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}
+          secretAccessKey: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          bucketName: ${{ secrets.S3_BUCKET_NAME }}
+          sourceDir: ./dist
+          clear: true
