@@ -7,12 +7,12 @@ import type {
 } from '@/api'
 
 export interface ICreateBookingRequestData {
-	creativeSpaceId: number
+	creativeSpaceId: string
 	calendarEvents: ICalendarEvent[]
 }
 
 export interface ICreateBookingResponseData {
-	id: number
+	id: string
 }
 
 export interface IPatchBookingRequestBody {
@@ -35,13 +35,13 @@ export default {
 	getAll(): Promise<IGetBookingsResponseData> {
 		return axiosInstance.get('/api/v1/bookings')
 	},
-	get(id: number): Promise<IGetBookingResponseData> {
+	get(id: string): Promise<IGetBookingResponseData> {
 		return axiosInstance.get(`/api/v1/bookings/${id}`)
 	},
-	update(id: number, data: IPatchBookingRequestBody): Promise<void> {
+	update(id: string, data: IPatchBookingRequestBody): Promise<void> {
 		return axiosInstance.patch(`/api/v1/bookings/${id}`, data)
 	},
-	delete(id: number): Promise<void> {
+	delete(id: string): Promise<void> {
 		return axiosInstance.delete(`/api/v1/bookings/${id}`)
 	},
 }

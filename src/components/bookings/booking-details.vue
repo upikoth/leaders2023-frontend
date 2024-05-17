@@ -34,7 +34,7 @@ const ionRouter = useIonRouter()
 
 const props = defineProps({
 	id: {
-		type: Number as PropType<number>,
+		type: String as PropType<string>,
 		required: true
 	},
 	bookingLoadingState: {
@@ -128,7 +128,7 @@ async function onImageClick() {
 		return
 	}
 
-	const images = booking.value.creativeSpace.photos.map(el => `${environments.S3_ACCESS_DOMAIN_NAME}/${el}`)
+	const images = booking.value.creativeSpace.photos.split(';').map(el => `${environments.S3_ACCESS_DOMAIN_NAME}/${el}`)
 
 	const modal = await modalController.create({
 		component: UiCalendarModal,
@@ -323,7 +323,7 @@ onCreated()
 					class="booking-details__photos"
 				>
 					<ui-image
-						v-for="(photoName, i) in booking.creativeSpace.photos"
+						v-for="(photoName, i) in booking.creativeSpace.photos.split(';')"
 						:key="i"
 						class="booking-details__photo"
 						:src="`${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`"

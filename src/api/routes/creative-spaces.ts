@@ -8,10 +8,10 @@ export interface ICreateCreativeSpaceRequestData {
 	title: string
 	address: string
 	description: string
-	photos: string[]
+	photos: string
 	pricePerDay: number
 	metroStations: {
-		id: number
+		id: string
 		distanceInMinutes: number
 	}[]
 	coordinate: {
@@ -19,7 +19,7 @@ export interface ICreateCreativeSpaceRequestData {
 		longitude: number
 	}
 	calendar: {
-		workDayIndexes: number[]
+		workDayIndexes: string
 		events: ICalendarEvent[]
 		link?: string
 	}
@@ -27,7 +27,7 @@ export interface ICreateCreativeSpaceRequestData {
 
 export interface ICreateCreativeSpaceResponseData {
 	creativeSpace: {
-		id: number
+		id: string
 	}
 }
 
@@ -47,10 +47,10 @@ export interface IPatchCreativeSpaceRequestBody {
 	address?: string
 	status?: CreativeSpaceStatusEnum
 	description?: string
-	photos?: string[]
+	photos?: string
 	pricePerDay?: number
 	metroStations?: {
-		id: number
+		id: string
 		distanceInMinutes: number
 	}[]
 	coordinate?: {
@@ -58,7 +58,7 @@ export interface IPatchCreativeSpaceRequestBody {
 		longitude?: number
 	}
 	calendar?: {
-		workDayIndexes?: number[]
+		workDayIndexes?: string
 		events?: ICalendarEvent[]
 		link?: string
 	}
@@ -71,13 +71,13 @@ export default {
 	getAll(): Promise<IGetCreativeSpacesResponseData> {
 		return axiosInstance.get('/api/v1/creativeSpaces')
 	},
-	get(id: number): Promise<IGetCreativeSpaceResponseData> {
+	get(id: string): Promise<IGetCreativeSpaceResponseData> {
 		return axiosInstance.get(`/api/v1/creativeSpaces/${id}`)
 	},
-	update(id: number, data: IPatchCreativeSpaceRequestBody): Promise<void> {
+	update(id: string, data: IPatchCreativeSpaceRequestBody): Promise<void> {
 		return axiosInstance.patch(`/api/v1/creativeSpaces/${id}`, data)
 	},
-	delete(id: number): Promise<void> {
+	delete(id: string): Promise<void> {
 		return axiosInstance.delete(`/api/v1/creativeSpaces/${id}`)
 	},
 }

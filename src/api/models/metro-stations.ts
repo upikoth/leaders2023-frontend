@@ -1,5 +1,5 @@
 export interface IMetroStation {
-	id: number;
+	id: string;
 	name: string;
 	color: string;
 }

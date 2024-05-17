@@ -131,7 +131,7 @@ router.beforeEach((to, _, next) => {
 
 	const userStore = useUserStore()
 
-	// Если неавторизован и пытается перейти на страницы требующие авторизации, редиректим на страницу входа.
+	// Если не авторизован и пытается перейти на страницы требующие авторизации, редиректим на страницу входа.
 	if (
 		userStore.isAuthorizationChecked &&
 		!UNAUTHORIZED_VIEWS.has(to.name) &&

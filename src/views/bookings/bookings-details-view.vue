@@ -31,7 +31,7 @@ const userStore = useUserStore()
 const bookingLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const bookingId = computed(() => {
-	return Number(route.params.id)
+	return route.params.id ? String(route.params.id) : ''
 })
 
 const canUserEditOrRemove = computed(() => {

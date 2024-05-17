@@ -48,7 +48,7 @@ function redirectToUserDetailsPage() {
 			</ion-card-subtitle>
 		</ion-card-header>
 
-		<ion-card-content class="user-card__conent">
+		<ion-card-content class="user-card__content">
 			<p>
 				<b>Телефон:</b>
 				{{ maskPhone(props.user.phone) }}
@@ -87,7 +87,7 @@ function redirectToUserDetailsPage() {
 	flex-direction: column;
 	margin: 0;
 
-	&__conent {
+	&__content {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;

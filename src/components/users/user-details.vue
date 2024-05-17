@@ -23,7 +23,7 @@ const ionRouter = useIonRouter()
 
 const props = defineProps({
 	id: {
-		type: Number as PropType<number>,
+		type: String as PropType<string>,
 		required: true
 	},
 	userLoadingState: {

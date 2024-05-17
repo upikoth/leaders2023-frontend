@@ -48,8 +48,8 @@ const MAX_PHOTOS_COUNT = 10
 
 const props = defineProps({
 	id: {
-		type: Number as PropType<number>,
-		default: NaN,
+		type: String as PropType<string>,
+		default: '',
 	},
 	isEdit: {
 		type: Boolean as PropType<boolean>,
@@ -131,7 +131,7 @@ const photosInfoText = computed(() => {
 const spaceTypes = computed(() => {
 	return Object.keys(creativeSpaceTypeNameMapping).map(key => ({
 		value: key,
-		label: creativeSpaceTypeNameMapping[key]
+		label: creativeSpaceTypeNameMapping[key as keyof typeof creativeSpaceTypeNameMapping]
 	}))
 })
 
@@ -264,14 +264,14 @@ async function updateFormData() {
 			title,
 			description,
 			address,
-			photos,
+			photos: photos.split(';'),
 			pricePerDay: String(pricePerDay),
 			coordinate: {
 				latitude: String(coordinate.latitude),
 				longitude: String(coordinate.longitude),
 			},
 			calendar: {
-				workDayIndexes: calendar.workDayIndexes,
+				workDayIndexes: calendar.workDayIndexes.split(';').map(Number),
 				events: calendar.events,
 				link: calendar.link || ''
 			}
@@ -360,14 +360,14 @@ async function patchCreativeSpace() {
 			title: isEqual(initialFormData.title, title) ? undefined : title,
 			address: isEqual(initialFormData.address, address) ? undefined : address,
 			description: isEqual(initialFormData.description, description) ? undefined : description,
-			photos: isEqual(initialFormData.photos, photos) ? undefined : photos,
+			photos: isEqual(initialFormData.photos, photos) ? undefined : photos.join(';'),
 			metroStations: isEqual(initialFormData.metroStations, metroStations) ? undefined : metroStations,
 			coordinate: isEqual(initialFormData.coordinate, coordinate) ? undefined : {
 				latitude: Number.parseFloat(coordinate.latitude),
 				longitude: Number.parseFloat(coordinate.longitude)
 			},
 			calendar: {
-				workDayIndexes: isEqual(initialFormData.calendar.workDayIndexes, calendar.workDayIndexes) ? undefined : calendar.workDayIndexes,
+				workDayIndexes: isEqual(initialFormData.calendar.workDayIndexes, calendar.workDayIndexes) ? undefined : calendar.workDayIndexes.join(';'),
 				events: isEqual(initialFormData.calendar.events, calendar.events) ? undefined : calendar.events,
 				link: isEqual(initialFormData.calendar.link, calendar.link) ? undefined : calendar.link || undefined,
 			},
@@ -392,7 +392,7 @@ async function createCreativeSpace() {
 			title,
 			address,
 			description,
-			photos,
+			photos: photos.join(';'),
 			metroStations,
 			coordinate: {
 				latitude: Number.parseFloat(coordinate.latitude),
@@ -400,7 +400,7 @@ async function createCreativeSpace() {
 			},
 			pricePerDay: Number.parseInt(pricePerDay),
 			calendar: {
-				workDayIndexes: calendar.workDayIndexes,
+				workDayIndexes: calendar.workDayIndexes.join(';'),
 				events: calendar.events,
 				link: calendar.link || undefined,
 			}
@@ -806,7 +806,7 @@ onCreated()
 			<ion-row>
 				<ion-col>
 					<ion-button
-						class="creative-space-form__submit-buttton"
+						class="creative-space-form__submit-button"
 						type="submit"
 					>
 						{{ props.isEdit ? 'Обновить площадку' : 'Создать площадку' }}
@@ -836,7 +836,7 @@ onCreated()
 		gap: 12px;
 	}
 
-	&__submit-buttton {
+	&__submit-button {
 		margin-top: 32px;
 	}
 

@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
 		const userStore = useUserStore()
 
 		if (req.headers) {
-			req.headers['Authorization'] = userStore.userToken
+			req.headers['MyAuthorization'] = userStore.userToken
 		}
 
 		return req

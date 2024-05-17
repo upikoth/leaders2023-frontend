@@ -1,19 +1,19 @@
 import type { ICalendarEvent, ICalendarEventFull, UserRole } from '@/api'
 
 export interface ICreativeSpaceListItem {
-	id: number
+	id: string
 	spaceType: CreativeSpaceType
 	area: number
 	capacity: number
 	title: string
 	address: string
 	status: CreativeSpaceStatusEnum
-	landlordId: number
+	landlordId: string
 	description: string
-	photos: string[]
+	photos: string
 	pricePerDay: number
 	metroStations: {
-		id: number
+		id: string
 		name: string
 		color: string
 		distanceInMinutes: number
@@ -23,16 +23,16 @@ export interface ICreativeSpaceListItem {
 		longitude: number
 	}
 	calendar: {
-		workDayIndexes: number[]
+		workDayIndexes: string
 		events: ICalendarEvent[]
 		link: string
 	}
 	scores: {
-		id: number
+		id: string
 		comment: string
 		rating: number
 		user: {
-			id: number
+			id: string
 			name: string
 			surname: string
 			patronymic: string
@@ -42,7 +42,7 @@ export interface ICreativeSpaceListItem {
 }
 
 export interface ICreativeSpace {
-	id: number
+	id: string
 	spaceType: CreativeSpaceType
 	area: number
 	capacity: number
@@ -50,10 +50,10 @@ export interface ICreativeSpace {
 	address: string
 	status: CreativeSpaceStatusEnum
 	description: string
-	photos: string[]
+	photos: string
 	pricePerDay: number
 	metroStations: {
-		id: number
+		id: string
 		name: string
 		color: string
 		distanceInMinutes: number
@@ -63,12 +63,12 @@ export interface ICreativeSpace {
 		longitude: number
 	}
 	calendar: {
-		workDayIndexes: number[]
+		workDayIndexes: string
 		events: ICalendarEventFull[]
 		link: string
 	},
 	landlordInfo: {
-		id: number
+		id: string
 		phone: string
 		role: UserRole
 		name: string
@@ -79,11 +79,11 @@ export interface ICreativeSpace {
 		legalEntityName: string
 	}
 	scores: {
-		id: number
+		id: string
 		comment: string
 		rating: number
 		user: {
-			id: number
+			id: string
 			name: string
 			surname: string
 			patronymic: string

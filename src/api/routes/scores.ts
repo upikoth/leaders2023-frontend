@@ -3,8 +3,8 @@ import { axiosInstance } from '@/api/axios'
 export interface ICreateScoreRequestData {
 	comment: string
 	rating: number
-	bookingId: number
-	creativeSpaceId: number
+	bookingId: string
+	creativeSpaceId: string
 }
 
 export default {

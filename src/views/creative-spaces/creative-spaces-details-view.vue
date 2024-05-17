@@ -29,14 +29,14 @@ const screenStore = useScreenStore()
 const notificationsStore = useNotificationsStore()
 const userStore = useUserStore()
 
-const creativeSpaceLandlordId = ref(NaN)
+const creativeSpaceLandlordId = ref('')
 const selectedCalendarDays = ref<string[]>([])
 const creativeSpaceEvents = ref<ICalendarEventFull[]>([])
 const creativeSpaceStatus = ref(CreativeSpaceStatusEnum.ConfirmationByAdmin)
 const creativeSpaceLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const creativeSpaceId = computed(() => {
-	return Number(route.params.id)
+	return route.params.id ? String(route.params.id) : ''
 })
 
 const canUserEditSpace = computed(() => {

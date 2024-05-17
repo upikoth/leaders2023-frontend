@@ -95,7 +95,7 @@ const navigationItems = computed(() => (
 						:key="navigationItem.name"
 						class="base-layout__sidebar-navigation-item"
 						:class="{
-							'base-layout__sidebar-navigation-item_selected': route.name === navigationItem.name
+							'base-layout__sidebar-navigation-item_selected': navigationItem.href.endsWith(route.path)
 						}"
 						router-direction="root"
 						lines="none"

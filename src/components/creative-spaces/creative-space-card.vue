@@ -46,10 +46,10 @@ const emit = defineEmits({
 });
 
 const workDaysText = computed(() => {
-	return props.creativeSpace.calendar.workDayIndexes.map(index => workDayIndexShortNameMapping[index]).join(', ')
+	return props.creativeSpace.calendar.workDayIndexes.split(';').map(Number).map(index => workDayIndexShortNameMapping[String(index) as keyof typeof workDayIndexShortNameMapping]).join(', ')
 })
 
-const images = computed((): string[] => props.creativeSpace.photos.map(photoName => `${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`))
+const images = computed((): string[] => props.creativeSpace.photos.split(';').map(photoName => `${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`))
 
 function redirectToCreativeSpacesDetailsPage() {
 	emit('before-redirect-to-details-page')
@@ -75,7 +75,7 @@ function redirectToCreativeSpacesDetailsPage() {
 			</ion-card-subtitle>
 		</ion-card-header>
 
-		<ion-card-content class="creative-space-card__conent">
+		<ion-card-content class="creative-space-card__content">
 			<p
 				v-if="isStatusVisible"
 				class="creative-space-card__status"
@@ -128,7 +128,7 @@ function redirectToCreativeSpacesDetailsPage() {
 	flex-direction: column;
 	margin: 0;
 
-	&__conent {
+	&__content {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;

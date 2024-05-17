@@ -22,7 +22,7 @@ const route = useRoute()
 const ionRouter = useIonRouter()
 
 const creativeSpaceId = computed(() => {
-	return Number(route.params.id)
+	return route.params.id ? String(route.params.id) : ''
 })
 
 function redirectToCreativeSpacesDetailsPage() {

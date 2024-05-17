@@ -10,7 +10,7 @@ export interface ICreativeSpacesFilters {
 	pricePerDayFrom: string
 	pricePerDayTo: string
 	freeDates: string[]
-	landlordId: number
+	landlordId: string
 	status: CreativeSpaceStatusEnum | null
 	spaceType: string
 	area: number
@@ -25,7 +25,7 @@ export const useFiltersStore = defineStore(IStoreNameEnum.Filters, () => {
 			pricePerDayFrom: '',
 			pricePerDayTo: '',
 			freeDates: [],
-			landlordId: userStore.isLandlord ? userStore.user.id : 0,
+			landlordId: userStore.isLandlord ? userStore.user.id : "",
 			status: null,
 			spaceType: '',
 			area: 0,

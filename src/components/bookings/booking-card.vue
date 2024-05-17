@@ -69,7 +69,7 @@ const bookingDaysText = computed(() => {
 	return props.booking.calendarEvents.map(event => format(new Date(event.date), "yyyy.MM.dd")).join('; ')
 })
 
-const images = computed((): string[] => props.booking.creativeSpace.photos.map(photoName => `${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`))
+const images = computed((): string[] => props.booking.creativeSpace.photos.split(';').map(photoName => `${environments.S3_ACCESS_DOMAIN_NAME}/${photoName}`))
 
 function redirectToBookingDetailsPage() {
 	emit('before-redirect-to-details-page')
@@ -120,7 +120,7 @@ async function handleCreateScoreButtonClick() {
 			</ion-card-subtitle>
 		</ion-card-header>
 
-		<ion-card-content class="booking-card__conent">
+		<ion-card-content class="booking-card__content">
 			<p class="booking-card__status">
 				<b>Статус:</b>
 				<ion-badge
@@ -195,7 +195,7 @@ async function handleCreateScoreButtonClick() {
 	flex-direction: column;
 	margin: 0;
 
-	&__conent {
+	&__content {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;

@@ -16,7 +16,7 @@ export const useUserStore = defineStore(IStoreNameEnum.User, () => {
 	const userToken = ref(window.localStorage.getItem("userToken") || '')
 
 	const user = ref<IUser>({
-		id: NaN,
+		id: '',
 		phone: '',
 		role: UserRole.Tenant,
 		name: '',

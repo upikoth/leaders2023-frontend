@@ -1,15 +1,15 @@
 import type { ICalendarEvent, UserRole } from '@/api'
 
 export interface IBookingCreativeSpace {
-	id: number
+	id: string
 	title: string
 	address: string
 	description: string
-	photos: string[]
+	photos: string
 }
 
 export interface IBooking {
-	id: number
+	id: string
 	creativeSpaceId: number
 	status: BookingStatusEnum
 	fullPrice: number
@@ -17,7 +17,7 @@ export interface IBooking {
 	creativeSpace: IBookingCreativeSpace
 	scoreId: number
 	landlordInfo: {
-		id: number
+		id: string
 		phone: string
 		role: UserRole
 		name: string
@@ -28,7 +28,7 @@ export interface IBooking {
 		legalEntityName: string
 	}
 	tenantInfo: {
-		id: number
+		id: string
 		phone: string
 		role: UserRole
 		name: string
@@ -39,22 +39,22 @@ export interface IBooking {
 }
 
 export interface IBookingListItemCreativeSpace {
-	id: number
+	id: string
 	title: string
 	address: string
 	description: string
-	photos: string[]
+	photos: string
 }
 
 export interface IBookingListItem {
-	id: number
+	id: string
 	status: BookingStatusEnum
 	fullPrice: number
 	calendarEvents: ICalendarEvent[]
 	creativeSpace: IBookingListItemCreativeSpace
 	scoreId: number
 	landlordInfo: {
-		id: number
+		id: string
 		phone: string
 		role: UserRole
 		name: string
@@ -65,7 +65,7 @@ export interface IBookingListItem {
 		legalEntityName: string
 	}
 	tenantInfo: {
-		id: number
+		id: string
 		phone: string
 		role: UserRole
 		name: string

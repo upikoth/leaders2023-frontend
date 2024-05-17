@@ -25,8 +25,8 @@ const ionRouter = useIonRouter()
 
 const props = defineProps({
 	id: {
-		type: Number as PropType<number>,
-		default: NaN,
+		type: String as PropType<string>,
+		default: "",
 	},
 	isEdit: {
 		type: Boolean as PropType<boolean>,
@@ -299,7 +299,7 @@ onCreated()
 			<ion-row>
 				<ion-col>
 					<ion-button
-						class="user-form__submit-buttton"
+						class="user-form__submit-button"
 						type="submit"
 					>
 						Обновить информацию
@@ -318,7 +318,7 @@ onCreated()
 		padding: 0;
 	}
 
-	&__submit-buttton {
+	&__submit-button {
 		margin-top: 32px;
 	}
 }

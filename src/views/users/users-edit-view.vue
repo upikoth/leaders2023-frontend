@@ -22,7 +22,7 @@ const route = useRoute()
 const ionRouter = useIonRouter()
 
 const userId = computed(() => {
-	return Number(route.params.userId)
+	return route.params.userId ? String(route.params.userId) : ''
 })
 
 function redirectToUserDetailPage() {

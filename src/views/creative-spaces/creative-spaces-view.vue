@@ -75,7 +75,7 @@ const creativeSpacesFiltered = computed(() => {
 				// Даты из фильтра не должно быть в событиях.
 				filtersStore.creativeSpacesFilters.freeDates.some(date => space.calendar.events.some(event => event.date === date)) ||
 				// Даты из фильтра должны быть в рабочих днях.
-				filtersStore.creativeSpacesFilters.freeDates.some(date => !space.calendar.workDayIndexes.some(dayIndex => dayIndex === getDay(new Date(date))))
+				filtersStore.creativeSpacesFilters.freeDates.some(date => !space.calendar.workDayIndexes.split(';').map(Number).some(dayIndex => dayIndex === getDay(new Date(date))))
 			)
 		) {
 			return false

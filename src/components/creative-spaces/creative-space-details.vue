@@ -38,12 +38,12 @@ const ionRouter = useIonRouter()
 
 const props = defineProps({
 	id: {
-		type: Number as PropType<number>,
+		type: String as PropType<string>,
 		required: true
 	},
 	landlordId: {
-		type: Number as PropType<number>,
-		default: NaN
+		type: String as PropType<string>,
+		default: ''
 	},
 	selectedCalendarDays: {
 		type: Array as PropType<string[]>,
@@ -60,14 +60,23 @@ const props = defineProps({
 })
 
 const emit = defineEmits({
-	'update:landlord-id': (value: number) => typeof value === 'number',
+	'update:landlord-id': (value: string) => typeof value === 'string',
 	'update:selected-calendar-days': (value: string[]) => Array.isArray(value),
 	'update:creative-space-events': (value: ICalendarEventFull[]) => Array.isArray(value),
 	'update:creative-space-status': (value: string) => typeof value === 'string',
 	'update:creative-space-loading-state': (value: string) => typeof value === 'string'
 });
 
-const creativeSpace = ref<ICreativeSpace | null>(null)
+const creativeSpace = ref<
+	Omit<ICreativeSpace, 'photos' | 'calendar'> &
+	{
+		photos: string[],
+		calendar: Omit<ICreativeSpace['calendar'], 'workDayIndexes'> &
+		{ 
+			workDayIndexes: number[]
+		}
+	} | null>(null)
+
 const creativeSpaceLoadingState = ref(DataLoadingStateEnum.DidNotLoad)
 
 const isStatusVisible = computed(() => {
@@ -89,7 +98,14 @@ async function updateCreativeSpaceData() {
 		creativeSpaceLoadingState.value = DataLoadingStateEnum.Loading
 		const { creativeSpace: newCreativeSpace } = await api.creativeSpaces.get(props.id)
 		creativeSpaceLoadingState.value = DataLoadingStateEnum.LoadedSuccess
-		creativeSpace.value = newCreativeSpace
+		creativeSpace.value = {
+			...newCreativeSpace,
+			photos: newCreativeSpace.photos.split(';'),
+			calendar: {
+				...newCreativeSpace.calendar,
+				workDayIndexes: newCreativeSpace.calendar.workDayIndexes.split(';').map(Number)
+			}
+		}
 
 		emit('update:landlord-id', creativeSpace.value.landlordInfo.id)
 		emit('update:creative-space-events', creativeSpace.value.calendar.events)
@@ -188,7 +204,7 @@ function onCalendarChange(event: DatetimeCustomEvent) {
 }
 
 async function downloadContract() {
-	saveFile(`${environments.S3_ACCESS_DOMAIN_NAME}/e2f81ac3-4967-41b2-a9b3-e232d4f58819.pdf`, 'Договор оферты.pdf')
+	saveFile(`${environments.S3_ACCESS_DOMAIN_NAME}/43e8c200-e5d8-4633-b870-c8982c266d49.pdf`, 'Договор оферты.pdf')
 }
 
 onCreated()

@@ -34,7 +34,7 @@ const filters = ref({
 const spaceTypes = computed(() => {
 	return Object.keys(creativeSpaceTypeNameMapping).map(key => ({
 		value: key,
-		label: creativeSpaceTypeNameMapping[key]
+		label: creativeSpaceTypeNameMapping[key  as keyof typeof creativeSpaceTypeNameMapping]
 	}))
 })
 
@@ -70,7 +70,7 @@ function sumbit() {
 }
 
 function handleOnlyMySpacesCheckboxChange(event: CheckboxCustomEvent) {
-	filters.value.landlordId = event.detail.checked ? userStore.user.id : 0;
+	filters.value.landlordId = event.detail.checked ? userStore.user.id : "";
 }
 
 function handleOnlyNotConfirmedSpacesCheckboxChange(event: CheckboxCustomEvent) {
